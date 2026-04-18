@@ -52,14 +52,18 @@ export const Timeline = () => {
       </div>
       
       <div className="flex flex-col">
-        {points.map((point, index) => (
-          <React.Fragment key={point.id}>
-            <TimelineItem point={point} />
-            {index < points.length - 1 && <TransitCard />}
-          </React.Fragment>
-        ))}
+        {points.map((point, index) => {
+          const nextPoint = points[index + 1];
+          return (
+            <React.Fragment key={point.id}>
+              <TimelineItem point={point} />
+              {nextPoint && <TransitCard from={point} to={nextPoint} />}
+            </React.Fragment>
+          );
+        })}
         
         {points.length === 0 && (
+
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center mb-6">
               <Plus className="w-10 h-10 text-muted-foreground" />
