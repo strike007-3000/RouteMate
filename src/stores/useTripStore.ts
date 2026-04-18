@@ -29,7 +29,7 @@ interface TripState {
   
   // Itinerary Actions
   addPoint: (point: Omit<ItineraryItem, 'id'>) => Promise<void>;
-  removePoint: (id: string) => Promise<void>;
+  removePoint: (id: number) => Promise<void>;
 }
 
 export const useTripStore = create<TripState>((set, get) => ({
@@ -109,5 +109,4 @@ export const useTripStore = create<TripState>((set, get) => ({
     const updated = get().points.filter((p) => p.id !== id);
     set({ points: updated });
   },
-
-
+}));
