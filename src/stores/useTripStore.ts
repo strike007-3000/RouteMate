@@ -4,7 +4,7 @@ import { db, Trip, ItineraryItem } from '@/lib/db';
 export type PointType = 'hotel' | 'flight' | 'attraction' | 'transit';
 
 export interface TripPoint {
-  id: string;
+  id?: number;
   type: PointType;
   title: string;
   address: string;
@@ -103,12 +103,11 @@ export const useTripStore = create<TripState>((set, get) => ({
     set({ points: updated.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()) });
   },
 
-  removePoint: async (id) => {
+  removePoint: async (id: number) => {
     if (!get().activeTrip?.id) return;
     await db.itineraryItems.where('id').equals(id).delete();
     const updated = get().points.filter((p) => p.id !== id);
     set({ points: updated });
   },
-}));
 
 
