@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     const clientKey = req.headers.get('x-user-nvidia-key');
     const apiKey = serverKey && serverKey !== 'your_nvidia_api_key_here' ? serverKey : clientKey;
     
-    const model = process.env.NVIDIA_MODEL_PRIMARY || 'mistralai/mistral-large-3-2412';
+    const model = process.env.NVIDIA_MODEL_PRIMARY || 'mistralai/mistral-large-3-675b-instruct-2512';
 
     // Mock logic if no API key is provided anywhere
     if (!apiKey || apiKey === 'your_nvidia_api_key_here') {
