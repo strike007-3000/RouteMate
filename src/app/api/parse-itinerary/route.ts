@@ -75,7 +75,17 @@ export async function POST(req: Request) {
     });
 
     const data = await response.json();
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('AI Provider Error:', data);
+      return NextResponse.json({ error: 'AI provider failed to return a response' }, { status: 502 });
+    }
+
     const content = data.choices[0].message.content;
+    
+    if (!content) {
+      return NextResponse.json({ points: [] });
+    }
     
     // Clean up markdown if present
     const cleanContent = content.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -83,6 +93,7 @@ export async function POST(req: Request) {
       ...p,
       id: Math.random().toString(36).substr(2, 9)
     }));
+
 
     return NextResponse.json({ points: parsedPoints });
 
