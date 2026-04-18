@@ -2,6 +2,10 @@
 
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { useTripStore } from '@/stores/useTripStore';
+import { Header } from '@/components/layout/Header';
+import { BentoGrid } from '@/components/dashboard/BentoGrid';
+import { Timeline } from '@/components/timeline/Timeline';
 import { BottomNav } from '@/components/layout/BottomNav';
 
 export default function TripPage() {
@@ -36,5 +40,3 @@ export default function TripPage() {
     </main>
   );
 }
-
-
