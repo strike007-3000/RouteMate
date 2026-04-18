@@ -1,3 +1,8 @@
+'use client';
+
+import React, { useState } from 'react';
+import { MapPin, User, Settings } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useTripStore } from '@/stores/useTripStore';
 import { SettingsModal } from './SettingsModal';
 
@@ -24,7 +29,6 @@ export const Header = () => {
           </div>
         </motion.div>
 
-        
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -48,4 +52,3 @@ export const Header = () => {
     </>
   );
 };
-
