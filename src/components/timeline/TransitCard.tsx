@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Bus, Train, Footprints, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TripPoint } from '@/stores/useTripStore';
-import { TransitSuggestion } from '@/lib/transit';
+import { TransitSuggestion } from '@/services/transit/types';
 
 interface TransitCardProps {
   from: TripPoint;
