@@ -15,9 +15,14 @@ Thank you for your interest in contributing to RouteMate! We are excited to buil
 ### Pull Requests
 1. **Fork the repo** and create your branch from `main`.
 2. **Setup environment**: Use the `Settings` UI in the app to add your API keys for testing.
-3. **Write clean code**: Follow the existing pattern (Next.js App Router, Tailwind, Framer Motion).
-4. **Test your changes**: Verify on mobile viewport (390x844).
-5. **Submit your PR**: Describe your changes in detail.
+3. **Commit Messages**: We use [Conventional Commits](https://www.conventionalcommits.org/). This automates our release cycle:
+    - `feat:` for a new feature.
+    - `fix:` for a bug fix.
+    - `perf:` for performance improvements.
+    - `docs:` for documentation changes.
+4. **Test your changes**: Verify on mobile viewport (500x855).
+5. **Submit your PR**: The automated system will create a Release PR if your changes are merged.
+
 
 ## Style Guide
 

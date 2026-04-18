@@ -71,5 +71,13 @@ If you discover a security vulnerability, please review our [SECURITY.md](SECURI
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 🚀 Project Lifecycle & Releases
+
+RouteMate uses an automated delivery pipeline:
+- **Versioning**: Managed by `release-please` based on [Conventional Commits](https://www.conventionalcommits.org/).
+- **Automatic Changelogs**: Every merged feature automatically generates a professional changelog entry.
+- **Milestones**: Check the [Releases](https://github.com/strike007-3000/RouteMate/releases) tab for the latest stable builds and artifacts.
+
 ---
 Built with ❤️ for travelers by the RouteMate Community.
+
