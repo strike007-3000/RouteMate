@@ -13,10 +13,8 @@ export const Timeline = () => {
   const { points } = useTripStore();
 
   return (
-
-
-  return (
     <div className="p-6">
+
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-black tracking-tighter text-white">Your Itinerary</h2>
         <div className="flex gap-2">
