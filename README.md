@@ -9,11 +9,13 @@ RouteMate is a mobile-first, offline-capable travel itinerary application design
 ### 1. Magic Extraction (Powered by NVIDIA NIM)
 Paste your messy confirmation emails, flight details, or hotel bookings. Our AI engine (Mistral/Step-3.5) extracts the structured data and injects it directly into your timeline.
 
-### 2. Automatic Logistics (Cheap Route)
-Whenever a gap is detected between two events (e.g., Airport Arrival → Hotel), RouteMate automatically suggests the **cheapest and most efficient** public transport route.
+### 2. Hybrid Logistics Engine
+Whenever a gap is detected between two events (e.g., Airport Arrival → Hotel), RouteMate calculates the best path:
+- **Short-Range (< 2km)**: Precise walking directions via **OpenRouteService**.
+- **Long-Range (> 2km)**: One-tap redirection to **Google Maps Transit** for real-time public transport schedules.
 
 ### 3. Offline-First & Private
-Built with **Dexie.js (IndexedDB)** and **Zustand**, your data never leaves your device unless you choose to. Perfect for international travel without a data plan.
+Built with **Dexie.js (IndexedDB)** and **Zustand**, your data never leaves your device. Perfect for international travel without a data plan.
 
 ### 4. Hybrid Secret Management (BYOK)
 Use your own API keys for AI and Map features. Key handling is hybrid: set them as environment variables for production or use the in-app Settings UI for local development.
@@ -23,7 +25,8 @@ Use your own API keys for AI and Map features. Key handling is hybrid: set them 
 - **Framework**: Next.js 14 (App Router)
 - **Styling**: Tailwind CSS + Framer Motion
 - **Database**: Dexie.js (IndexedDB)
-- **AI**: NVIDIA NIM (Mistral Large 3 / Step-3.5 Flash)
+- **AI**: NVIDIA NIM (Mistral Large 3 / Step 3.5 Flash)
+- **Maps**: OpenRouteService (OSM)
 - **State**: Zustand
 
 ## 🚀 Getting Started

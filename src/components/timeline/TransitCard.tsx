@@ -106,10 +106,18 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                 </div>
               </div>
               
-              <button className="w-full mt-4 py-2.5 rounded-2xl bg-zinc-900 border border-white/5 text-white text-[10px] font-black hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
-                Save to Itinerary
-                <ArrowRight className="w-3 h-3" />
+              <button 
+                onClick={() => {
+                  if (suggestion.externalUrl) {
+                    window.open(suggestion.externalUrl, '_blank');
+                  }
+                }}
+                className="w-full mt-4 py-3 rounded-2xl bg-zinc-900 border border-white/5 text-white text-[10px] font-black hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 uppercase tracking-widest group/btn"
+              >
+                {suggestion.externalUrl ? "Check Google Maps" : "Save to Itinerary"}
+                <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
               </button>
+
             </motion.div>
           ) : null}
         </AnimatePresence>

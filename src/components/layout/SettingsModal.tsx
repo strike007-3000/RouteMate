@@ -11,24 +11,31 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
     setNvidiaApiKey, 
     clearNvidiaApiKey,
     hereApiKey,
-    setHereApiKey
+    setHereApiKey,
+    orsApiKey,
+    setOrsApiKey
   } = useSettingsStore();
 
   const [tempNvidiaKey, setTempNvidiaKey] = useState(nvidiaApiKey);
   const [tempHereKey, setTempHereKey] = useState(hereApiKey || '');
+  const [tempOrsKey, setTempOrsKey] = useState(orsApiKey || '');
   const [showNvidiaKey, setShowNvidiaKey] = useState(false);
   const [showHereKey, setShowHereKey] = useState(false);
+  const [showOrsKey, setShowOrsKey] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
   const handleSave = () => {
     setNvidiaApiKey(tempNvidiaKey);
     setHereApiKey(tempHereKey);
+    setOrsApiKey(tempOrsKey);
     setIsSaved(true);
     setTimeout(() => {
       setIsSaved(false);
       onClose();
     }, 1000);
   };
+// ... rest of the component
+
 
   return (
     <AnimatePresence>
@@ -67,9 +74,10 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
                 <div className="relative">
                   <input
                     type={showNvidiaKey ? "text" : "password"}
-                    value={tempNvidiaNKey}
+                    value={tempNvidiaKey}
                     onChange={(e) => setTempNvidiaKey(e.target.value)}
                     placeholder="nvapi-..."
+
                     className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
                   />
                   <button 
@@ -83,24 +91,33 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
 
               <div>
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 block">
-                  HERE Maps API Key (Premium Logistics)
+                  OpenRouteService API Key (Walking Logistics)
                 </label>
                 <div className="relative">
                   <input
-                    type={showHereKey ? "text" : "password"}
-                    value={tempHereKey}
-                    onChange={(e) => setTempHereKey(e.target.value)}
-                    placeholder="Premium routing key..."
+                    type={showOrsKey ? "text" : "password"}
+                    value={tempOrsKey}
+                    onChange={(e) => setTempOrsKey(e.target.value)}
+                    placeholder="5b3ce..."
                     className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
                   />
                   <button 
-                    onClick={() => setShowHereKey(!showHereKey)}
+                    onClick={() => setShowOrsKey(!showOrsKey)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showHereKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showOrsKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                <a 
+                  href="https://openrouteservice.org/dev/#/home" 
+                  target="_blank" 
+                  className="mt-3 flex items-center gap-1.5 text-[10px] font-bold text-primary hover:underline"
+                >
+                  Get your free ORS key
+                  <ExternalLink className="w-3 h-3" />
+                </a>
               </div>
+
 
               <div className="pt-4 flex gap-3">
                 <button

@@ -1,29 +1,49 @@
 import { TripPoint } from '@/stores/useTripStore';
 import { TransitProvider, TransitSuggestion } from './types';
 import { MockProvider } from './MockProvider';
-import { TransitousProvider } from './TransitousProvider';
-import { HereMapsProvider } from './HereMapsProvider';
+import { GoogleMapsProvider } from './GoogleMapsProvider';
+import { OpenRouteServiceProvider } from './OpenRouteServiceProvider';
 
 export class TransitService {
+
   private providers: TransitProvider[];
 
   constructor() {
-    // Priority order: HERE (if key present) -> Transitous -> Mock Fallback
-    const hereKey = process.env.HERE_API_KEY;
+    // Current configuration: 
+    // 1. OpenRouteService (High accuracy walking < 2km)
+    // 2. Transitous (Primary Open Transit)
+    // 3. Google Maps (Primary Deep Link for Transit > 2km)
+    // 4. Mock (Fallback)
+    
+    // Reading from Zustand persist storage in LocalStorage
+    let orsKey = process.env.ORS_API_KEY;
+    
+    if (typeof window !== 'undefined') {
+      const storage = localStorage.getItem('routemate-settings');
+      if (storage) {
+        try {
+          const parsed = JSON.parse(storage);
+          orsKey = parsed.state?.orsApiKey || orsKey;
+        } catch (e) {
+          console.error('Failed to parse settings for TransitService', e);
+        }
+      }
+    }
 
     this.providers = [
-      new HereMapsProvider(hereKey),
-      new TransitousProvider(),
-      new MockProvider() // Heuristic fallback is always last
+      new OpenRouteServiceProvider(orsKey || undefined),
+      new GoogleMapsProvider(), 
+      new MockProvider() 
     ];
+
   }
+
 
   async getCheapRoute(from: TripPoint, to: TripPoint): Promise<TransitSuggestion> {
     for (const provider of this.providers) {
       try {
         const suggestion = await provider.getRoute(from, to);
         if (suggestion) {
-          console.log(`Logistics source: ${provider.name}`);
           return suggestion;
         }
       } catch (err) {

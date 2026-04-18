@@ -7,8 +7,11 @@ export interface TransitSuggestion {
   duration: string;
   cost: string;
   description: string;
+  externalUrl?: string; // Deep link to Google Maps or other
+  distance?: number; // In meters, for internal logic
   departureTime?: string;
 }
+
 
 export interface TransitProvider {
   name: string;

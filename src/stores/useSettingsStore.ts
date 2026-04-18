@@ -4,8 +4,10 @@ import { persist } from 'zustand/middleware';
 interface SettingsState {
   nvidiaApiKey: string;
   hereApiKey: string;
+  orsApiKey: string;
   setNvidiaApiKey: (key: string) => void;
   setHereApiKey: (key: string) => void;
+  setOrsApiKey: (key: string) => void;
   clearNvidiaApiKey: () => void;
 }
 
@@ -14,10 +16,13 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       nvidiaApiKey: '',
       hereApiKey: '',
+      orsApiKey: '',
       setNvidiaApiKey: (key) => set({ nvidiaApiKey: key }),
       setHereApiKey: (key) => set({ hereApiKey: key }),
-      clearNvidiaApiKey: () => set({ nvidiaApiKey: '', hereApiKey: '' }),
+      setOrsApiKey: (key) => set({ orsApiKey: key }),
+      clearNvidiaApiKey: () => set({ nvidiaApiKey: '', hereApiKey: '', orsApiKey: '' }),
     }),
+
     {
       name: 'routemate-settings',
     }
