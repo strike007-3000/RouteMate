@@ -12,7 +12,8 @@ interface TripCardProps {
 }
 
 export const TripCard = ({ trip, onSelect }: TripCardProps) => {
-  const { deleteTrip } = useTripStore();
+  const { deleteTrip, duplicateTrip } = useTripStore();
+
 
   const statusColors = {
     upcoming: 'bg-primary/20 text-primary border-primary/30',
