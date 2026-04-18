@@ -16,17 +16,14 @@ export async function POST(req: Request) {
 
     // Mock logic if no API key is provided anywhere
     if (!apiKey || apiKey === 'your_nvidia_api_key_here') {
-      const source = serverKey && serverKey !== 'your_nvidia_api_key_here' ? 'Server Env' : clientKey ? 'Client Header' : 'None (Mock)';
-      console.log(`Using mock extraction logic (Source: ${source})`);
-      
       // Artificial delay for realism
       await new Promise(r => setTimeout(r, 1500));
 
       // Simple mock extraction for "Arrival at JFK" or similar
       if (text.toLowerCase().includes('jfk') || text.toLowerCase().includes('flight')) {
         return NextResponse.json({
-          debug: { source },
           points: [{
+
             id: Math.random().toString(36).substr(2, 9),
             type: 'flight',
             title: 'Flight to New York (JFK)',

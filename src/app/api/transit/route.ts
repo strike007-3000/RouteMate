@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCheapRoute } from '@/lib/transit';
+import { transitService } from '@/services/transit/TransitService';
 
 export async function POST(req: Request) {
   try {
@@ -9,10 +9,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing from/to points' }, { status: 400 });
     }
 
-    // Artificial delay to simulate real API latency
-    await new Promise(r => setTimeout(r, 1200));
+    // Artificial delay to simulate real API latency removed 
+    // because providers now handle their own latency/logic
 
-    const suggestion = getCheapRoute(from, to);
+    const suggestion = await transitService.getCheapRoute(from, to);
 
     return NextResponse.json({ suggestion });
 
@@ -21,3 +21,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to calculate route' }, { status: 500 });
   }
 }
+

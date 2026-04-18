@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RouteMate - The Pocket-Friendly Open-Source Travel Planner 🌍✈️
 
-## Getting Started
+RouteMate is a mobile-first, offline-capable travel itinerary application designed for the modern traveler. It focuses on **Automatic Logistics**: saving you from the "travel logistics gap" between your destinations.
 
-First, run the development server:
+![RouteMate Dashboard](file:///C:/Users/shrey/.gemini/antigravity/brain/0e01fd06-6822-4a3c-9a35-127841b6b242/routemate_timeline_mobile_1776541974050.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ Features
+
+### 1. Magic Extraction (Powered by NVIDIA NIM)
+Paste your messy confirmation emails, flight details, or hotel bookings. Our AI engine (Mistral/Step-3.5) extracts the structured data and injects it directly into your timeline.
+
+### 2. Automatic Logistics (Cheap Route)
+Whenever a gap is detected between two events (e.g., Airport Arrival → Hotel), RouteMate automatically suggests the **cheapest and most efficient** public transport route.
+
+### 3. Offline-First & Private
+Built with **Dexie.js (IndexedDB)** and **Zustand**, your data never leaves your device unless you choose to. Perfect for international travel without a data plan.
+
+### 4. Hybrid Secret Management (BYOK)
+Use your own API keys for AI and Map features. Key handling is hybrid: set them as environment variables for production or use the in-app Settings UI for local development.
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Styling**: Tailwind CSS + Framer Motion
+- **Database**: Dexie.js (IndexedDB)
+- **AI**: NVIDIA NIM (Mistral Large 3 / Step-3.5 Flash)
+- **State**: Zustand
+
+## 🚀 Getting Started
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/strike007-3000/RouteMate.git
+   ```
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+3. **Environment Setup**:
+   Copy `.env.example` to `.env` and add your `NVIDIA_API_KEY`. Alternatively, just run the app and enter your key in the **Settings** modal.
+4. **Run the app**:
+   ```bash
+   npm run dev
+   ```
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    A[User UI] --> B[Zustand Store]
+    B --> C[Dexie.js / IndexedDB]
+    A --> D[NVIDIA NIM API]
+    A --> E[Transit Logic Engine]
+    E --> F[Mock Provider]
+    E --> G[Transitous Provider]
+    E --> H[HERE Maps Provider]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🤝 Contributing
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛡️ Security
 
-## Learn More
+If you discover a security vulnerability, please review our [SECURITY.md](SECURITY.md) for reporting steps.
 
-To learn more about Next.js, take a look at the following resources:
+## 📜 License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Built with ❤️ for travelers by the RouteMate Community.

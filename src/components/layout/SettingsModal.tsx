@@ -6,13 +6,23 @@ import { Key, X, Check, ExternalLink, Eye, EyeOff } from 'lucide-react';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 
 export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
-  const { nvidiaApiKey, setNvidiaApiKey, clearNvidiaApiKey } = useSettingsStore();
-  const [tempKey, setTempKey] = useState(nvidiaApiKey);
-  const [showKey, setShowKey] = useState(false);
+  const { 
+    nvidiaApiKey, 
+    setNvidiaApiKey, 
+    clearNvidiaApiKey,
+    hereApiKey,
+    setHereApiKey
+  } = useSettingsStore();
+
+  const [tempNvidiaKey, setTempNvidiaKey] = useState(nvidiaApiKey);
+  const [tempHereKey, setTempHereKey] = useState(hereApiKey || '');
+  const [showNvidiaKey, setShowNvidiaKey] = useState(false);
+  const [showHereKey, setShowHereKey] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
   const handleSave = () => {
-    setNvidiaApiKey(tempKey);
+    setNvidiaApiKey(tempNvidiaKey);
+    setHereApiKey(tempHereKey);
     setIsSaved(true);
     setTimeout(() => {
       setIsSaved(false);
@@ -35,7 +45,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-x-4 top-[20%] md:max-w-md md:mx-auto glass-card rounded-[2.5rem] z-[101] p-8"
+            className="fixed inset-x-4 top-[10%] bottom-[10%] md:max-w-md md:mx-auto glass-card rounded-[2.5rem] z-[101] p-8 overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -49,42 +59,59 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
               </button>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 block">
-                  NVIDIA NIM API Key
+                  NVIDIA NIM API Key (AI Extraction)
                 </label>
                 <div className="relative">
                   <input
-                    type={showKey ? "text" : "password"}
-                    value={tempKey}
-                    onChange={(e) => setTempKey(e.target.value)}
+                    type={showNvidiaKey ? "text" : "password"}
+                    value={tempNvidiaNKey}
+                    onChange={(e) => setTempNvidiaKey(e.target.value)}
                     placeholder="nvapi-..."
                     className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
                   />
                   <button 
-                    onClick={() => setShowKey(!showKey)}
+                    onClick={() => setShowNvidiaKey(!showNvidiaKey)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showNvidiaKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
-                <a 
-                  href="https://build.nvidia.com/mistralai/mistral-large-3-2412" 
-                  target="_blank" 
-                  className="mt-3 flex items-center gap-1.5 text-[10px] font-bold text-primary hover:underline"
-                >
-                  Get your free key from NVIDIA Build
-                  <ExternalLink className="w-3 h-3" />
-                </a>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 block">
+                  HERE Maps API Key (Premium Logistics)
+                </label>
+                <div className="relative">
+                  <input
+                    type={showHereKey ? "text" : "password"}
+                    value={tempHereKey}
+                    onChange={(e) => setTempHereKey(e.target.value)}
+                    placeholder="Premium routing key..."
+                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+                  />
+                  <button 
+                    onClick={() => setShowHereKey(!showHereKey)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showHereKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
 
               <div className="pt-4 flex gap-3">
                 <button
-                  onClick={clearNvidiaApiKey}
+                  onClick={() => {
+                    clearNvidiaApiKey();
+                    setTempNvidiaKey('');
+                    setTempHereKey('');
+                  }}
                   className="flex-1 py-4 rounded-2xl bg-secondary text-xs font-bold hover:bg-muted transition-colors"
                 >
-                  Clear Key
+                  Reset
                 </button>
                 <button
                   onClick={handleSave}
@@ -96,14 +123,14 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
                       Saved!
                     </>
                   ) : (
-                    "Save Configuration"
+                    "Save & Sync"
                   )}
                 </button>
               </div>
             </div>
             
-            <p className="mt-8 text-[10px] text-center text-muted-foreground leading-relaxed">
-              Your key is stored locally in your browser's persistence layer and is only used to facilitate itinerary extraction.
+            <p className="mt-8 text-[10px] text-center text-muted-foreground leading-relaxed italic">
+              RouteMate is "Pocket-Friendly." Your keys are stored locally and never synced to a server.
             </p>
           </motion.div>
         </>
@@ -111,3 +138,4 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
     </AnimatePresence>
   );
 };
+
