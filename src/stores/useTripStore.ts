@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { db } from '@/lib/db';
+import { db, Trip, ItineraryItem } from '@/lib/db';
 
 export type PointType = 'hotel' | 'flight' | 'attraction' | 'transit';
 
@@ -14,63 +14,101 @@ export interface TripPoint {
 }
 
 interface TripState {
-  points: TripPoint[];
+  trips: Trip[];
+  activeTrip: Trip | null;
+  points: ItineraryItem[];
   isHydrated: boolean;
-  hydrate: () => Promise<void>;
-  addPoint: (point: TripPoint) => Promise<void>;
+  
+  // Trip Actions
+  fetchTrips: () => Promise<void>;
+  setActiveTrip: (id: number) => Promise<void>;
+  createTrip: (trip: Omit<Trip, 'id'>) => Promise<number>;
+  duplicateTrip: (id: number) => Promise<void>;
+  deleteTrip: (id: number) => Promise<void>;
+
+  
+  // Itinerary Actions
+  addPoint: (point: Omit<ItineraryItem, 'id'>) => Promise<void>;
   removePoint: (id: string) => Promise<void>;
-  setPoints: (points: TripPoint[]) => Promise<void>;
 }
 
 export const useTripStore = create<TripState>((set, get) => ({
+  trips: [],
+  activeTrip: null,
   points: [],
   isHydrated: false,
   
-  hydrate: async () => {
-    const allPoints = await db.points.toArray();
+  fetchTrips: async () => {
+    const allTrips = await db.trips.toArray();
+    set({ trips: allTrips });
+  },
+
+  setActiveTrip: async (id: number) => {
+    const trip = await db.trips.get(id);
+    if (trip) {
+      const points = await db.itineraryItems.where('tripId').equals(id).toArray();
+      set({ 
+        activeTrip: trip, 
+        points: points.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()) 
+      });
+    }
+  },
+
+  createTrip: async (trip) => {
+    const id = await db.trips.add(trip);
+    await get().fetchTrips();
+    return id as number;
+  },
+
+  duplicateTrip: async (id) => {
+    const trip = await db.trips.get(id);
+    if (!trip) return;
     
-    // Initial mock data if empty
-    if (allPoints.length === 0) {
-      const initial = [
-        {
-          id: '1',
-          type: 'flight',
-          title: 'Arrival at LHR',
-          address: 'Heathrow Airport, Longford TW6, UK',
-          startTime: '2026-05-20T10:00:00Z',
-          endTime: '2026-05-20T10:30:00Z',
-        },
-        {
-          id: '2',
-          type: 'hotel',
-          title: 'CitizenM Hotel',
-          address: '40 Marsh Wall, London E14 9TP, UK',
-          startTime: '2026-05-20T15:00:00Z',
-          endTime: '2026-05-25T11:00:00Z',
-        }
-      ] as TripPoint[];
-      await db.points.bulkAdd(initial);
-      set({ points: initial, isHydrated: true });
-    } else {
-      set({ points: allPoints.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()), isHydrated: true });
+    await db.transaction('rw', [db.trips, db.itineraryItems], async () => {
+      const { id: _, ...tripData } = trip;
+      const newTripId = await db.trips.add({ 
+        ...tripData, 
+        name: `${tripData.name} (Copy)`,
+        status: 'draft' 
+      });
+      
+      const points = await db.itineraryItems.where('tripId').equals(id).toArray();
+      const newPoints = points.map(({ id: _, ...item }) => ({
+        ...item,
+        tripId: newTripId as number
+      }));
+      
+      await db.itineraryItems.bulkAdd(newPoints);
+    });
+    await get().fetchTrips();
+  },
+
+  deleteTrip: async (id) => {
+
+    await db.transaction('rw', [db.trips, db.itineraryItems], async () => {
+      await db.itineraryItems.where('tripId').equals(id).delete();
+      await db.trips.delete(id);
+    });
+    await get().fetchTrips();
+    if (get().activeTrip?.id === id) {
+      set({ activeTrip: null, points: [] });
     }
   },
 
   addPoint: async (point) => {
-    await db.points.add(point);
-    const updated = [...get().points, point].sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
-    set({ points: updated });
+    if (!get().activeTrip?.id) return;
+    const item = { ...point, tripId: get().activeTrip!.id! } as ItineraryItem;
+    await db.itineraryItems.add(item);
+    const updated = await db.itineraryItems.where('tripId').equals(get().activeTrip!.id!).toArray();
+    set({ points: updated.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()) });
   },
 
   removePoint: async (id) => {
-    await db.points.delete(id);
-    set({ points: get().points.filter((p) => p.id !== id) });
-  },
-
-  setPoints: async (points) => {
-    await db.points.clear();
-    await db.points.bulkAdd(points);
-    set({ points: points.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()) });
+    if (!get().activeTrip?.id) return;
+    await db.itineraryItems.where('id').equals(id).delete();
+    const updated = get().points.filter((p) => p.id !== id);
+    set({ points: updated });
   },
 }));
+
 

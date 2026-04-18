@@ -1,15 +1,59 @@
 import Dexie, { type Table } from 'dexie';
 import { TripPoint } from '@/stores/useTripStore';
 
+export interface Trip {
+
+  id?: number;
+  name: string;
+  destination: string;
+  startDate: string;
+  endDate: string;
+  coverImage?: string;
+  status: 'upcoming' | 'past' | 'draft';
+}
+
+export interface ItineraryItem extends TripPoint {
+  tripId: number;
+}
+
 export class RouteMateDatabase extends Dexie {
-  points!: Table<TripPoint>;
+  trips!: Table<Trip>;
+  itineraryItems!: Table<ItineraryItem>;
+  points!: Table<TripPoint>; // Kept for v1 migration
 
   constructor() {
     super('RouteMateDB');
+    
     this.version(1).stores({
-      points: 'id, type, startTime' // primary key and indices
+      points: 'id, type, startTime'
+    });
+
+    this.version(2).stores({
+      trips: '++id, name, destination, startDate, status',
+      itineraryItems: '++id, tripId, type, startTime',
+      points: null // Delete the v1 table after successful migration
+    }).upgrade(async (tx) => {
+      // Migration Logic: Move v1 points to a default trip in v2
+      const oldPoints = await tx.table('points').toArray();
+      if (oldPoints.length > 0) {
+        const defaultTripId = await tx.table('trips').add({
+          name: 'My First Adventure',
+          destination: oldPoints[0].address || 'Unknown',
+          startDate: oldPoints[0].startTime,
+          endDate: oldPoints[oldPoints.length - 1].startTime,
+          status: 'draft'
+        });
+
+        const newItems = oldPoints.map(p => ({
+          ...p,
+          tripId: defaultTripId as number
+        }));
+        
+        await tx.table('itineraryItems').bulkAdd(newItems);
+      }
     });
   }
 }
 
 export const db = new RouteMateDatabase();
+

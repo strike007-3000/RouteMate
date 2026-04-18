@@ -1,12 +1,9 @@
-'use client';
-
-import React, { useState } from 'react';
-import { MapPin, User, Settings, Bell } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useTripStore } from '@/stores/useTripStore';
 import { SettingsModal } from './SettingsModal';
 
 export const Header = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { activeTrip } = useTripStore();
 
   return (
     <>
@@ -21,9 +18,12 @@ export const Header = () => {
           </div>
           <div>
             <h1 className="text-lg font-bold tracking-tight">RouteMate</h1>
-            <p className="text-xs text-muted-foreground font-medium">Summer Trip 2026</p>
+            <p className="text-[10px] text-primary font-black uppercase tracking-widest leading-none">
+              {activeTrip?.name || 'My Adventure'}
+            </p>
           </div>
         </motion.div>
+
         
         <motion.div 
           initial={{ opacity: 0, x: 20 }}

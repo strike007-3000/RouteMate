@@ -6,19 +6,18 @@ RouteMate is a mobile-first, offline-capable travel itinerary application design
 
 ## ✨ Features
 
-### 1. Magic Extraction (Powered by NVIDIA NIM)
-Paste your messy confirmation emails, flight details, or hotel bookings. Our AI engine (Mistral/Step-3.5) extracts the structured data and injects it directly into your timeline.
+### 1. Multi-Trip Management (Wanderlog Style)
+Plan multiple adventures simultaneously. Your dashboard categorizes trips into **Upcoming**, **Past**, and **Drafts**, each with its own dynamic timeline and logistics engine.
 
-### 2. Hybrid Logistics Engine
-Whenever a gap is detected between two events (e.g., Airport Arrival → Hotel), RouteMate calculates the best path:
-- **Short-Range (< 2km)**: Precise walking directions via **OpenRouteService**.
-- **Long-Range (> 2km)**: One-tap redirection to **Google Maps Transit** for real-time public transport schedules.
+### 2. Magic Extraction (Powered by NVIDIA NIM)
+Paste messy confirmation emails or flight details. Our AI engine (Mistral/Step-3.5) extracts structured data specifically for your active trip.
 
-### 3. Offline-First & Private
-Built with **Dexie.js (IndexedDB)** and **Zustand**, your data never leaves your device. Perfect for international travel without a data plan.
+### 3. Smart Handoff Logistics
+- **Walking (< 2km)**: Detailed steps directly in your timeline.
+- **Transit (> 2km)**: One-tap **Smart Handoff** to Google Maps Transit, pre-configured with your specific origin and destination.
 
-### 4. Hybrid Secret Management (BYOK)
-Use your own API keys for AI and Map features. Key handling is hybrid: set them as environment variables for production or use the in-app Settings UI for local development.
+### 4. Visual Excellence (Unsplash Integration)
+Every trip card automatically fetches a stunning cover photo from Unsplash based on the destination name, creating a premium, travel-editor aesthetic.
 
 ## 🛠️ Tech Stack
 
@@ -50,13 +49,14 @@ Use your own API keys for AI and Map features. Key handling is hybrid: set them 
 
 ```mermaid
 graph TD
-    A[User UI] --> B[Zustand Store]
-    B --> C[Dexie.js / IndexedDB]
-    A --> D[NVIDIA NIM API]
-    A --> E[Transit Logic Engine]
-    E --> F[Mock Provider]
-    E --> G[Transitous Provider]
-    E --> H[HERE Maps Provider]
+    A[User UI - Next.js 14] --> B[Zustand Multi-Trip Store]
+    B --> C[Dexie.js / IndexedDB v2]
+    C --> D[(Trips Table)]
+    C --> E[(Itinerary Table)]
+    A --> F[NVIDIA NIM AI]
+    A --> G[Logistics Engine]
+    G --> H[OpenRouteService - Walking]
+    G --> I[Google Maps - Smart Handoff]
 ```
 
 ## 🤝 Contributing

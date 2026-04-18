@@ -10,24 +10,10 @@ import { motion } from 'framer-motion';
 
 export const Timeline = () => {
   const [isSmartPasteOpen, setIsSmartPasteOpen] = useState(false);
-  const { points, hydrate, isHydrated } = useTripStore();
+  const { points } = useTripStore();
 
-  useEffect(() => {
-    hydrate();
-  }, [hydrate]);
+  return (
 
-  if (!isHydrated) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <motion.div 
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-        >
-          <Sparkles className="w-8 h-8 text-primary" />
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
     <div className="p-6">

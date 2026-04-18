@@ -106,17 +106,40 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                 </div>
               </div>
               
-              <button 
-                onClick={() => {
-                  if (suggestion.externalUrl) {
-                    window.open(suggestion.externalUrl, '_blank');
-                  }
-                }}
-                className="w-full mt-4 py-3 rounded-2xl bg-zinc-900 border border-white/5 text-white text-[10px] font-black hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 uppercase tracking-widest group/btn"
-              >
-                {suggestion.externalUrl ? "Check Google Maps" : "Save to Itinerary"}
-                <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
-              </button>
+              <div className="flex flex-col gap-2 mt-4">
+                {suggestion.externalUrl && (
+                  <button 
+                    onClick={() => {
+                      // Logic to use current location if possible
+                      if (confirm('Use your current GPS location as the origin?')) {
+                        navigator.geolocation.getCurrentPosition((pos) => {
+                          const origin = `${pos.coords.latitude},${pos.coords.longitude}`;
+                          const dest = encodeURIComponent(to.address);
+                          const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=transit`;
+                          window.open(url, '_blank');
+                        });
+                      } else {
+                        window.open(suggestion.externalUrl, '_blank');
+                      }
+                    }}
+                    className="w-full py-4 rounded-2xl bg-[#4285F4] text-white text-[10px] font-black hover:bg-[#357ABD] transition-all flex items-center justify-center gap-3 uppercase tracking-widest shadow-lg shadow-[#4285F4]/20 group/btn"
+                  >
+                    <Navigation className="w-4 h-4 fill-white animate-pulse" />
+                    Open Google Maps Transit
+                    <div className="w-3 h-3 rounded-full bg-white/20 flex items-center justify-center">
+                      <ArrowRight className="w-2 h-2 group-hover/btn:translate-x-0.5 transition-transform" />
+                    </div>
+                  </button>
+                )}
+                
+                {!suggestion.externalUrl && (
+                  <button className="w-full py-3 rounded-2xl bg-zinc-900 border border-white/5 text-white text-[10px] font-black hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 uppercase tracking-widest group/btn">
+                    Save to Itinerary
+                    <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                  </button>
+                )}
+              </div>
+
 
             </motion.div>
           ) : null}
