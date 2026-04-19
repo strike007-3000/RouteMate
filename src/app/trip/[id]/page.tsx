@@ -7,6 +7,8 @@ import { Header } from '@/components/layout/Header';
 import { BentoGrid } from '@/components/dashboard/BentoGrid';
 import { Timeline } from '@/components/timeline/Timeline';
 import { BottomNav } from '@/components/layout/BottomNav';
+import { SmartPaste } from '@/components/timeline/SmartPaste';
+import { useState } from 'react';
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
@@ -14,6 +16,7 @@ import { db } from '@/lib/db';
 export default function TripPage() {
   const { id } = useParams();
   const { setActiveTrip } = useTripStore();
+  const [isSmartAddOpen, setIsSmartAddOpen] = useState(false);
   
   const tripId = Number(id);
   const activeTrip = useLiveQuery(() => db.trips.get(tripId), [tripId]);
@@ -35,13 +38,14 @@ export default function TripPage() {
       <Header />
       
       <section className="mt-4">
-        <BentoGrid />
+        <BentoGrid onOpenSmartAdd={() => setIsSmartAddOpen(true)} />
       </section>
       
       <section className="mt-8">
-        <Timeline />
+        <Timeline onOpenSmartAdd={() => setIsSmartAddOpen(true)} />
       </section>
 
+      <SmartPaste isOpen={isSmartAddOpen} onClose={() => setIsSmartAddOpen(false)} />
       <BottomNav />
     </main>
   );
