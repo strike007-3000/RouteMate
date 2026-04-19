@@ -7,12 +7,14 @@ import { useTripStore } from '@/stores/useTripStore';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 import { cn } from '@/lib/utils';
 import { db } from '@/lib/db';
+import { UnsplashService } from '@/services/images/UnsplashService';
 
 export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
   const [text, setText] = useState('');
   const [status, setStatus] = useState<'idle' | 'parsing' | 'success' | 'error'>('idle');
   const addPoint = useTripStore((state) => state.addPoint);
   const nvidiaApiKey = useSettingsStore((state) => state.nvidiaApiKey);
+  const unsplashAccessKey = useSettingsStore((state) => state.unsplashAccessKey);
   const activeTrip = useTripStore((state) => state.activeTrip);
 
   const templates = [
@@ -70,6 +72,11 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
           
           if (Object.keys(updates).length > 0) {
             await db.trips.update(currentTrip.id, updates);
+            
+            // If destination was updated and no image exists, trigger Unsplash
+            if (updates.destination && !currentTrip.coverImage) {
+              UnsplashService.getTripImage(currentTrip.id, updates.destination, unsplashAccessKey);
+            }
           }
         }
 

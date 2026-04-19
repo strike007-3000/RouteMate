@@ -38,6 +38,7 @@ interface TripState {
   // Itinerary Actions
   addPoint: (point: Omit<ItineraryItem, 'id'>) => Promise<void>;
   removePoint: (id: number) => Promise<void>;
+  updatePointOrder: (points: ItineraryItem[]) => Promise<void>;
   sortItinerary: (points: ItineraryItem[]) => ItineraryItem[];
 }
 
@@ -147,6 +148,26 @@ export const useTripStore = create<TripState>((set, get) => ({
     set({ points: updated });
   },
 
+  updatePointOrder: async (orderedPoints: ItineraryItem[]) => {
+    if (!get().activeTrip?.id) return;
+    
+    // Update sortOrder for each item based on its index in the array
+    const updates = orderedPoints.map((p, idx) => ({
+      ...p,
+      sortOrder: idx
+    }));
+    
+    await db.transaction('rw', db.itineraryItems, async () => {
+      for (const p of updates) {
+        if (p.id) {
+          await db.itineraryItems.update(p.id, { sortOrder: p.sortOrder });
+        }
+      }
+    });
+
+    set({ points: updates });
+  },
+
   sortItinerary: (points) => {
     const getCategoryRank = (item: ItineraryItem) => {
       const title = item.title.toLowerCase();
@@ -177,7 +198,10 @@ export const useTripStore = create<TripState>((set, get) => ({
         return timeA - timeB;
       }
       
-      return getCategoryRank(a) - getCategoryRank(b);
+      const rankDiff = getCategoryRank(a) - getCategoryRank(b);
+      if (rankDiff !== 0) return rankDiff;
+
+      return (a.sortOrder || 0) - (b.sortOrder || 0);
     });
   },
 }));

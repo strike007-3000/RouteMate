@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Plane, Hotel, MapPin, Clock, Utensils, Train, Car } from 'lucide-react';
+import { Plane, Hotel, MapPin, Clock, Utensils, Train, Car, GripVertical } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ItineraryItem } from '@/lib/db';
 import { format } from 'date-fns';
@@ -55,21 +55,29 @@ export const TimelineItem = ({ point }: { point: ItineraryItem }) => {
           </div>
         </div>
         
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="text-xl font-black text-white tracking-tighter leading-none">
-            {point.title}
-          </h3>
-          {point.category === 'Flight' && point.metadata?.arrivalAirport && (
-            <div className="px-2 py-1 rounded-lg bg-blue-500/20 border border-blue-500/30">
-              <span className="text-[10px] font-black text-blue-400">
-                {point.metadata.arrivalAirport.match(/\b[A-Z]{3}\b/)?.[0] || 'APT'}
-              </span>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <div className="flex items-start justify-between mb-2">
+              <h3 className="text-xl font-black text-white tracking-tighter leading-none">
+                {point.title}
+              </h3>
+              {point.category === 'Flight' && point.metadata?.arrivalAirport && (
+                <div className="px-2 py-1 rounded-lg bg-blue-500/20 border border-blue-500/30">
+                  <span className="text-[10px] font-black text-blue-400">
+                    {point.metadata.arrivalAirport.match(/\b[A-Z]{3}\b/)?.[0] || 'APT'}
+                  </span>
+                </div>
+              )}
             </div>
-          )}
+            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest line-clamp-1">
+              {point.metadata?.fullAddress || point.address}
+            </p>
+          </div>
+          
+          <div className="pt-1 text-zinc-700 hover:text-zinc-500 transition-colors cursor-grab active:cursor-grabbing">
+            <GripVertical className="w-5 h-5" />
+          </div>
         </div>
-        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest line-clamp-1">
-          {point.metadata?.fullAddress || point.address}
-        </p>
       </motion.div>
     </div>
   );

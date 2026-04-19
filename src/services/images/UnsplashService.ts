@@ -1,23 +1,52 @@
-const UNSPLASH_ACCESS_KEY = typeof window !== 'undefined' ? localStorage.getItem('unsplash-key') : process.env.UNSPLASH_ACCESS_KEY;
+import { db } from '@/lib/db';
 
-export async function getDestinationImage(destination: string): Promise<string | null> {
-  // Fallback to high-end abstract travel if no destination provided or key missing
-  if (!UNSPLASH_ACCESS_KEY || UNSPLASH_ACCESS_KEY === 'your_key_here') {
-    return `https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1000&auto=format&fit=crop`;
-  }
+export class UnsplashService {
+  private static ACCESS_KEY = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY || '';
 
-  try {
-    const response = await fetch(
-      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(destination)}&orientation=landscape&per_page=1&client_id=${UNSPLASH_ACCESS_KEY}`
-    );
-    const data = await response.json();
+  static async getTripImage(tripId: number, query: string, userKey?: string): Promise<string | null> {
+    const key = userKey || this.ACCESS_KEY;
     
-    if (data.results && data.results.length > 0) {
-      return data.results[0].urls.regular;
+    // 1. Check if trip already has a cover image
+    const trip = await db.trips.get(tripId);
+    if (trip?.coverImage) return trip.coverImage;
+
+    if (!key || key === 'your_unsplash_access_key') {
+      console.warn('Unsplash API key missing. Using dynamic placeholder.');
+      return null;
     }
-  } catch (error) {
-    console.error('Unsplash fetch failed:', error);
+
+    try {
+      // 2. Fetch from Unsplash
+      const response = await fetch(
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query + ' landscape')}&orientation=landscape&per_page=1`,
+        {
+          headers: {
+            Authorization: `Client-ID ${key}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error('Unsplash API failed');
+
+      const data = await response.json();
+      const imageUrl = data.results?.[0]?.urls?.regular;
+
+      if (imageUrl) {
+        // 3. Cache in Dexie
+        await db.trips.update(tripId, { coverImage: imageUrl });
+        return imageUrl;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Unsplash Service Error:', error);
+      return null;
+    }
   }
 
-  return `https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1000&auto=format&fit=crop`;
+  static getPlaceholder(query: string): string {
+    // Premium dark gradient placeholder with query text center-aligned
+    // Using a reliable placeholder service or just a CSS-based approach in the component
+    return `https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1000`; // Default scenic placeholder
+  }
 }

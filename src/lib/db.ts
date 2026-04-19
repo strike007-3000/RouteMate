@@ -15,6 +15,7 @@ export interface Trip {
 export interface ItineraryItem extends TripPoint {
   tripId: number;
   category: 'Flight' | 'Lodging' | 'Train' | 'Food' | 'Activity' | 'Rental';
+  sortOrder: number;
   coordinates?: {
     lat: number;
     lng: number;
@@ -25,7 +26,7 @@ export class RouteMateDatabase extends Dexie {
   trips!: Table<Trip>;
   itineraryItems!: Table<ItineraryItem>;
   points!: Table<TripPoint>; // Kept for v1 migration
-
+  
   constructor() {
     super('RouteMateDB');
     
@@ -46,6 +47,16 @@ export class RouteMateDatabase extends Dexie {
       // Migration: Default existing items to 'Activity'
       await tx.table('itineraryItems').toCollection().modify(item => {
         if (!item.category) item.category = 'Activity';
+      });
+    });
+
+    this.version(4).stores({
+      trips: '++id, name, destination, startDate, status',
+      itineraryItems: '++id, tripId, type, startTime, category, sortOrder'
+    }).upgrade(async (tx) => {
+      // Migration: Initial sortOrder to 0
+      await tx.table('itineraryItems').toCollection().modify(item => {
+        if (item.sortOrder === undefined) item.sortOrder = 0;
       });
     });
   }

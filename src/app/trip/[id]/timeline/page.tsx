@@ -12,7 +12,7 @@ import { TimelineItem } from '@/components/timeline/TimelineItem';
 import { TransitCard } from '@/components/timeline/TransitCard';
 import { SmartPaste } from '@/components/timeline/SmartPaste';
 import { format, parseISO, differenceInDays, startOfDay, addDays, isSameDay } from 'date-fns';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Sparkles, Calendar } from 'lucide-react';
 
 export default function TimelinePage() {
@@ -74,10 +74,39 @@ export default function TimelinePage() {
 
   return (
     <main className="min-h-screen bg-black pb-32 w-full max-w-md mx-auto border-x border-border/50 shadow-2xl relative overflow-x-hidden flex flex-col">
+      {/* Hero Background Layer */}
+      <div className="absolute top-0 left-0 w-full h-64 overflow-hidden pointer-events-none">
+        {trip.coverImage && (
+          <>
+            <img 
+              src={trip.coverImage} 
+              alt="" 
+              className="w-full h-full object-cover blur-3xl opacity-40 scale-150"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black to-black" />
+          </>
+        )}
+      </div>
+
       <Header />
       
-      <div className="p-4 pt-10">
-        <h1 className="text-3xl font-black text-white tracking-tighter mb-6">Itinerary Flow</h1>
+      <div className="p-4 pt-10 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 p-6 rounded-[2.5rem] bg-zinc-900/40 backdrop-blur-xl border border-white/10 shadow-2xl"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="w-3 h-3 text-primary" />
+            <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">{trip.destination}</span>
+          </div>
+          <h1 className="text-3xl font-black text-white tracking-tighter leading-none">
+            {trip.name}
+          </h1>
+          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-2 italic">
+            {format(parseISO(trip.startDate), 'MMM dd')} — {format(parseISO(trip.endDate), 'MMM dd, yyyy')}
+          </p>
+        </motion.div>
         
         <div className="space-y-4">
           {groupedTimeline.map((day) => {
@@ -104,17 +133,32 @@ export default function TimelinePage() {
                     >
                       <div className="px-2 pb-6 space-y-0">
                         {day.items.length > 0 ? (
-                          <motion.div layout className="space-y-0">
+                          <Reorder.Group 
+                            axis="y" 
+                            values={day.items} 
+                            onReorder={(newOrder) => {
+                              // We only update the order if it actually changed
+                              const { updatePointOrder } = useTripStore.getState();
+                              updatePointOrder(newOrder);
+                            }}
+                            className="space-y-0"
+                          >
                             {day.items.map((item, idx) => {
                               const nextItem = day.items[idx + 1];
                               return (
-                                <React.Fragment key={item.id}>
+                                <Reorder.Item 
+                                  key={item.id} 
+                                  value={item}
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                >
                                   <TimelineItem point={item} />
                                   {nextItem && <TransitCard from={item} to={nextItem} />}
-                                </React.Fragment>
+                                </Reorder.Item>
                               );
                             })}
-                          </motion.div>
+                          </Reorder.Group>
                         ) : (
                           <div className="py-10 text-center flex flex-col items-center gap-3">
                             <Calendar className="w-8 h-8 text-zinc-700" />

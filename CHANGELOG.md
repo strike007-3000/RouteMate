@@ -2,8 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.3.0](https://github.com/strike007-3000/RouteMate/compare/v2.2.0...v2.3.0) (2026-04-19)
+## [2.6.0] - 2026-04-19
 
+### 🔀 Hybrid Intelligence (Manual Reordering)
+- **Fluid Reorder API**: Integrated `framer-motion` Reorder API for "elastic" drag-and-drop timeline management.
+- **Transactional Persistence**: Manual order changes are now persisted to Dexie v4 as a `sortOrder` override.
+- **Visual Affordance**: Added dedicated **Grip Handles** to all itinerary cards for intuitive interaction.
+
+### 🧠 Performance & Logic Hardening
+- **Mistral Small Pivot**: Switched AI engine to `mistralai/mistral-small-3.1-24b-instruct-2503` for near-instant responses.
+- **Smart Time Buffers**: Explicitly hardcoded logical offsets for time-less entries (Arrival 08:00 / Departure 20:00).
+- **Dexie v4 Schema**: Upgraded database to support the manual sorting layer.
+
+## [2.5.0] - 2026-04-19
+
+### 📍 Intelligent Routing Refinement
+- **Airport Precision**: Improved flight metadata extraction to capture specific terminals and gate locations.
+- **Transit UX**: Enhanced `TransitCard` to handle ambiguous addresses with smarter Google Maps API parameters.
+
+## [2.4.0] - 2026-04-19
+
+### 🖼️ Unsplash Visual Suite
+- **Hero Trip Cards**: Trip tiles now feature full-bleed destination imagery with layered gradient overlays.
+- **Atmospheric Itinerary**: Added a blurred hero-background system with glassmorphism overlays for trip titles.
+- **Dexie Image Cache**: Implemented an `UnsplashService` that caches destination imagery locally to minimize API hits.
+
+## [2.3.0](https://github.com/strike007-3000/RouteMate/compare/v2.2.0...v2.3.0) (2026-04-19)
 
 ### Features
 

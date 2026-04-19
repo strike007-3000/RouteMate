@@ -1,4 +1,4 @@
-# RouteMate v2.3 - The Smart Travel Companion 🌍✈️
+# RouteMate v2.6 - The Hybrid Travel Engine 🌍✨
 
 RouteMate is a mobile-first, offline-capable travel intelligence application. Version 2.0 introduced a massive architectural shift from simple itineraries to a **Date-Grouped Intelligence Engine** that manages your entire travel flow.
 
@@ -28,18 +28,20 @@ Uniform, high-end "ROUTEMATE" signature across all screens with contextual back-
 ### 📅 Interactive Creation (v2.1)
 Replaced instant placeholders with a premium **New Trip Modal** to capture precise destinations and dates before planning begins.
 
-### 🔀 Smart Sorting & Lifecycle (v2.2)
-Introduced a global **Chronological Sorting Engine** and **Lodging Split** logic.
-
-### 🎯 Precision Logic (v2.3)
-Upgraded to pinpoint accuracy with **True Origin Routing** (airport-to-hotel) and **Category-Tiered Sorting** to resolve itinerary conflicts.
+### 🎯 Hybrid Intelligence (v2.4 - v2.6)
+We've moved beyond purely automatic sorting to a system that respects your manual intent.
+- **Fluid Reorder API**: Drag-and-drop any item on your timeline with an elastic, premium physical feel.
+- **Unsplash Visual Engine**: Trips now feature full-bleed destination imagery, atmospheric blurred backgrounds, and glassmorphism headers.
+- **Mistral Small 24B Core**: Near-instant AI extraction with hardened chronological buffers (Arrival 08:00 / Departure 20:00).
+- **Persistent Local Cache**: Images and manual sort orders are saved directly to **Dexie v4**.
 
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js 16 (App Router)
-- **Styling**: Tailwind CSS 4 + Framer Motion (Accordion Physics)
-- **Database**: Dexie.js (IndexedDB) v3 (Grouped Schema)
-- **AI**: NVIDIA NIM (Llama 3.1 70B Instruct)
+- **Styling**: Tailwind CSS 4 + Framer Motion (Accordion & Reorder)
+- **Database**: Dexie.js (IndexedDB) v4 (Manual Sorting Support)
+- **AI**: NVIDIA NIM (Mistral Small 24B Instruct)
+- **Imaging**: Unsplash API (Landscape Architecture)
 - **Logistics**: Google Maps Directory API + Haversine Distance Logic
 
 ## 🏗️ Architecture v2.0
@@ -48,12 +50,13 @@ Upgraded to pinpoint accuracy with **True Origin Routing** (airport-to-hotel) an
 graph TD
     A[User UI - Next.js 16] --> B[Zustand Trip Intelligence Store]
     A --> J[LiveQuery Subscriptions]
-    J --> C[Dexie.js v3 - Grouped Schema]
+    J --> C[Dexie.js v4 - Grouped & Manual Schema]
     B --> C
     C --> D[(Trips Table)]
-    C --> E[(Itinerary v3 Table - Categories & Coordinates)]
-    A --> F[NVIDIA NIM - Coordinate Extraction]
+    C --> E[(Itinerary v4 Table - Categories & CustomOrder)]
+    A --> F[NVIDIA NIM - Mistral 24B Extraction]
     A --> G[Logistics Engine - 50km Rule]
+    A --> K[Unsplash Image Engine - Caching Service]
     G --> H[Google Maps - Transit Mode]
     G --> I[Google Maps - Driving Mode]
 ```

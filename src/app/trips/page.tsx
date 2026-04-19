@@ -11,6 +11,8 @@ import { BottomNav } from '@/components/layout/BottomNav';
 import { NewTripModal } from '@/components/trips/NewTripModal';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
+import { UnsplashService } from '@/services/images/UnsplashService';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 
 export default function Dashboard() {
   const { createTrip } = useTripStore();
@@ -18,6 +20,18 @@ export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const trips = useLiveQuery(() => db.trips.toArray(), []) || [];
+  const { unsplashAccessKey } = useSettingsStore();
+  
+  // Dashboard Fetcher: Background fetch images for trips missing them
+  useEffect(() => {
+    if (trips.length > 0) {
+      trips.forEach(trip => {
+        if (!trip.coverImage && trip.id) {
+          UnsplashService.getTripImage(trip.id, trip.destination, unsplashAccessKey);
+        }
+      });
+    }
+  }, [trips, unsplashAccessKey]);
 
   const upcomingTrips = trips.filter(t => t.status === 'upcoming');
   const pastTrips = trips.filter(t => t.status === 'past');
@@ -31,6 +45,12 @@ export default function Dashboard() {
       endDate: data.endDate,
       status: 'upcoming'
     });
+    
+    // Trigger Unsplash fetch immediately
+    if (id) {
+      UnsplashService.getTripImage(id, data.destination, unsplashAccessKey);
+    }
+
     setIsModalOpen(false);
     router.push(`/trip/${id}`);
   };
