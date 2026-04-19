@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.1](https://github.com/strike007-3000/RouteMate/compare/v2.3.0...v2.3.1) (2026-04-19)
+
+
+### Bug Fixes
+
+* resolve missing parseISO import for production build ([aa92537](https://github.com/strike007-3000/RouteMate/commit/aa9253722b7a38d04a5f7378dd034b18edc1fa6a))
+* total production hardening - resolve build blockers, lint errors, and ci deprecations ([c48bd57](https://github.com/strike007-3000/RouteMate/commit/c48bd57089f3b0e918b888de4caaf6ee359bf962))
+* v2.6.1 repairs AI failover and visual hero gradients ([d59e2db](https://github.com/strike007-3000/RouteMate/commit/d59e2dba159e97f6b085831ff372ce05e33311f2))
+
 ## [2.6.3] - 2026-04-19
 
 ### 🛡️ Build & Stability
