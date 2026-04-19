@@ -3,12 +3,17 @@
 import React, { useState } from 'react';
 import { MapPin, User, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useTripStore } from '@/stores/useTripStore';
 import { SettingsModal } from './SettingsModal';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '@/lib/db';
+import { useParams } from 'next/navigation';
 
 export const Header = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const { activeTrip } = useTripStore();
+  const { id } = useParams();
+  const tripId = Number(id);
+  
+  const activeTrip = useLiveQuery(() => db.trips.get(tripId || -1), [tripId]);
 
   return (
     <>

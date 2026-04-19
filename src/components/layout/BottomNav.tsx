@@ -15,19 +15,19 @@ export const BottomNav = () => {
       label: 'Trips', 
       icon: Globe, 
       path: '/trips',
-      active: pathname === '/trips'
+      active: pathname === '/trips' || pathname === '/'
     },
     { 
       label: 'Explore', 
       icon: Search, 
-      path: '#',
-      active: false
+      path: '/explore',
+      active: pathname === '/explore'
     },
     { 
       label: 'Radar', 
       icon: Navigation, 
-      path: '#',
-      active: false
+      path: '/radar',
+      active: pathname === '/radar'
     }
   ];
 

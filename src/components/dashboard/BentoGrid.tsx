@@ -4,6 +4,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, CreditCard, Navigation, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db, ItineraryItem } from '@/lib/db';
 import { useTripStore } from '@/stores/useTripStore';
 
 interface BentoBoxProps {
@@ -40,7 +42,12 @@ const BentoBox = ({ title, value, icon, className, delay = 0 }: BentoBoxProps) =
 );
 
 export const BentoGrid = () => {
-  const { points } = useTripStore();
+  const { activeTrip } = useTripStore();
+  
+  const points = useLiveQuery<ItineraryItem[]>(
+    () => activeTrip?.id ? db.itineraryItems.where('tripId').equals(activeTrip.id).toArray() : Promise.resolve([] as ItineraryItem[]),
+    [activeTrip?.id]
+  ) || [];
   
   // Logic for Next Action
   const now = new Date();
@@ -53,26 +60,26 @@ export const BentoGrid = () => {
   const transitStatus = points.length > 0 ? "Logistics Ready" : "Add a stop";
 
   return (
-    <div className="grid grid-cols-2 gap-3 p-6 pt-2">
+    <div className="grid grid-cols-2 gap-4 p-6 pt-4">
       <BentoBox 
         title="Next Action" 
         value={nextAction} 
         icon={<Calendar className="w-12 h-12" />}
-        className="col-span-1"
+        className="col-span-1 aspect-square"
         delay={0.1}
       />
       <BentoBox 
         title="Logistics" 
         value={transitStatus} 
         icon={<Sparkles className="w-12 h-12" />}
-        className="col-span-1"
+        className="col-span-1 aspect-square"
         delay={0.2}
       />
       <BentoBox 
         title="Itinerary Status" 
         value={`${stopsCount} Points Planned`} 
         icon={<Navigation className="w-12 h-12" />}
-        className="col-span-2 aspect-[3/1]"
+        className="col-span-2 aspect-[2/1] min-h-[120px]"
         delay={0.3}
       />
     </div>

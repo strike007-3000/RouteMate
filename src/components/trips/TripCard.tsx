@@ -37,7 +37,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center rounded-2xl border border-white/5">
             <MapPin className="w-8 h-8 text-white/10" />
           </div>
         )}
@@ -67,16 +67,18 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
         </div>
 
         {/* Actions bar */}
-        <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
+        <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between gap-8">
           <div className="flex items-center gap-1">
             <button 
+              type="button"
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 if (confirm('Delete this trip and all its items?')) {
                   deleteTrip(trip.id!);
                 }
               }}
-              className="p-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
+              className="p-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors cursor-pointer relative z-20"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>

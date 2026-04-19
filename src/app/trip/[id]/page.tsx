@@ -8,15 +8,21 @@ import { BentoGrid } from '@/components/dashboard/BentoGrid';
 import { Timeline } from '@/components/timeline/Timeline';
 import { BottomNav } from '@/components/layout/BottomNav';
 
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '@/lib/db';
+
 export default function TripPage() {
   const { id } = useParams();
-  const { setActiveTrip, activeTrip } = useTripStore();
+  const { setActiveTrip } = useTripStore();
+  
+  const tripId = Number(id);
+  const activeTrip = useLiveQuery(() => db.trips.get(tripId), [tripId]);
 
   useEffect(() => {
-    if (id) {
-      setActiveTrip(Number(id));
+    if (tripId) {
+      setActiveTrip(tripId);
     }
-  }, [id, setActiveTrip]);
+  }, [tripId, setActiveTrip]);
 
   if (!activeTrip) return (
     <div className="min-h-screen flex items-center justify-center bg-background">

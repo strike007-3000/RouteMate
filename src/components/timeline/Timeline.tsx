@@ -1,21 +1,30 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTripStore } from '@/stores/useTripStore';
 import { TimelineItem } from './TimelineItem';
 import { TransitCard } from './TransitCard';
 import { SmartPaste } from './SmartPaste';
 import { Plus, Sparkles } from 'lucide-react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db, ItineraryItem } from '@/lib/db';
 import { motion } from 'framer-motion';
 
 export const Timeline = () => {
   const [isSmartPasteOpen, setIsSmartPasteOpen] = useState(false);
-  const { points } = useTripStore();
+  const { activeTrip } = useTripStore();
+  
+  const points = useLiveQuery<ItineraryItem[]>(
+    () => activeTrip?.id ? db.itineraryItems.where('tripId').equals(activeTrip.id).toArray() : Promise.resolve([] as ItineraryItem[]),
+    [activeTrip?.id]
+  ) || [];
+
+  const sortedPoints = points ? [...points].sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()) : [];
 
   return (
-    <div className="p-6">
+    <div className="p-6 pt-12">
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between w-full mb-6">
         <h2 className="text-2xl font-black tracking-tighter text-white">Your Itinerary</h2>
         <div className="flex gap-2">
           <motion.button 
@@ -36,8 +45,8 @@ export const Timeline = () => {
       </div>
       
       <div className="flex flex-col">
-        {points.map((point, index) => {
-          const nextPoint = points[index + 1];
+        {sortedPoints.map((point, index) => {
+          const nextPoint = sortedPoints[index + 1];
           return (
             <React.Fragment key={point.id}>
               <TimelineItem point={point} />

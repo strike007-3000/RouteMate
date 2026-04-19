@@ -19,14 +19,18 @@ Paste messy confirmation emails or flight details. Our AI engine (Mistral/Step-3
 ### 4. Visual Excellence (Unsplash Integration)
 Every trip card automatically fetches a stunning cover photo from Unsplash based on the destination name, creating a premium, travel-editor aesthetic.
 
+### 5. Destination Discovery & Radar
+- **Explore**: Curated destination recommendations for the modern nomad.
+- **Radar**: Satellite-level scanning for nearby transit hubs using the browser Geolocation API, with global fallbacks for restricted environments.
+
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js 14 (App Router)
 - **Styling**: Tailwind CSS + Framer Motion
-- **Database**: Dexie.js (IndexedDB)
+- **Database**: Dexie.js (IndexedDB) + `dexie-react-hooks`
 - **AI**: NVIDIA NIM (Mistral Large 3 / Step 3.5 Flash)
 - **Maps**: OpenRouteService (OSM)
-- **State**: Zustand
+- **State**: Zustand + LiveQuery Subscriptions
 
 ## 🚀 Getting Started
 
@@ -50,7 +54,9 @@ Every trip card automatically fetches a stunning cover photo from Unsplash based
 ```mermaid
 graph TD
     A[User UI - Next.js 14] --> B[Zustand Multi-Trip Store]
-    B --> C[Dexie.js / IndexedDB v2]
+    A --> J[LiveQuery Subscriptions]
+    J --> C[Dexie.js / IndexedDB v2]
+    B --> C
     C --> D[(Trips Table)]
     C --> E[(Itinerary Table)]
     A --> F[NVIDIA NIM AI]
