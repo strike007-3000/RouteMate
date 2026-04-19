@@ -26,7 +26,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="group relative bg-zinc-900/50 border border-white/5 rounded-3xl overflow-hidden hover:border-primary/30 transition-all duration-500"
+      className="group relative w-full bg-zinc-900/50 border border-white/5 rounded-3xl overflow-hidden hover:border-primary/30 transition-all duration-500"
     >
       {/* Cover Image with Glass Overlay */}
       <div className="h-32 relative overflow-hidden">

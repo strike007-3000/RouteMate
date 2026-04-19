@@ -33,9 +33,9 @@ export default function Dashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-background pb-32 max-w-md mx-auto border-x border-border/50 shadow-2xl shadow-black/50 overflow-x-hidden relative">
+    <main className="min-h-screen bg-black pb-32 w-full max-w-md mx-auto border-x border-border/50 shadow-2xl shadow-black/50 overflow-x-hidden relative flex flex-col">
       {/* Premium Header */}
-      <header className="p-8 pb-10 pt-16 relative">
+      <header className="px-6 pb-10 pt-16 relative">
         <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
           <Globe className="w-60 h-60 rotate-12" />
         </div>

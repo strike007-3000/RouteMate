@@ -31,7 +31,7 @@ export default function TripPage() {
   );
 
   return (
-    <main className="min-h-screen bg-background pb-32 max-w-md mx-auto border-x border-border/50 shadow-2xl shadow-black/50 relative overflow-x-hidden">
+    <main className="min-h-screen bg-black pb-32 w-full max-w-md mx-auto border-x border-border/50 shadow-2xl shadow-black/50 relative overflow-x-hidden flex flex-col">
       <Header />
       
       <section className="mt-4">
