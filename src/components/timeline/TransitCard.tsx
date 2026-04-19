@@ -121,7 +121,7 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                     </div>
                     <span className="text-xs font-bold text-muted-foreground">{suggestion.duration}</span>
                   </div>
-                  <p className="text-[10px] text-muted-foreground leading-tight italic">"{suggestion.description}"</p>
+                  <p className="text-[10px] text-muted-foreground leading-tight italic">&quot;{suggestion.description}&quot;</p>
                 </div>
               </div>
               
@@ -132,13 +132,13 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                       e.stopPropagation();
                       
                       // True Origin Routing Logic
-                      const getPreciseLocation = (item: TripPoint) => {
+                      const getPreciseLocation = (item: TripPoint): string => {
                         if (item.category === 'Flight') {
                           // Prioritize arrival airport metadata if it exists
-                          return item.metadata?.arrivalAirport || item.address;
+                          return (item.metadata?.arrivalAirport as string) || item.address;
                         }
                         // For hotels/activities, use the full address
-                        return item.metadata?.fullAddress || item.address;
+                        return (item.metadata?.fullAddress as string) || item.address;
                       };
 
                       const origin = getPreciseLocation(from);

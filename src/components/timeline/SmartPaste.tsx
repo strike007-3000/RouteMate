@@ -6,7 +6,7 @@ import { Sparkles, X, Loader2, CheckCircle2, AlertCircle, Plane, Hotel, Train, U
 import { useTripStore } from '@/stores/useTripStore';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 import { cn } from '@/lib/utils';
-import { db } from '@/lib/db';
+import { db, Trip } from '@/lib/db';
 import { UnsplashService } from '@/services/images/UnsplashService';
 
 export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
@@ -56,7 +56,7 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
           const isDefaultName = !currentTrip.name || currentTrip.name === 'New Adventure';
           const isDefaultDest = !currentTrip.destination || currentTrip.destination === 'Select Destination';
           
-          const updates: any = {};
+          const updates: Partial<Trip> = {};
           if (isDefaultName) updates.name = data.points[0].title;
           if (isDefaultDest) updates.destination = data.points[0].address;
           

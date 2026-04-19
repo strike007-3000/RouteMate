@@ -61,16 +61,16 @@ export const TimelineItem = ({ point }: { point: ItineraryItem }) => {
               <h3 className="text-xl font-black text-white tracking-tighter leading-none">
                 {point.title}
               </h3>
-              {point.category === 'Flight' && point.metadata?.arrivalAirport && (
+              {point.category === 'Flight' && (point.metadata?.arrivalAirport as string) && (
                 <div className="px-2 py-1 rounded-lg bg-blue-500/20 border border-blue-500/30">
                   <span className="text-[10px] font-black text-blue-400">
-                    {point.metadata.arrivalAirport.match(/\b[A-Z]{3}\b/)?.[0] || 'APT'}
+                    {(point.metadata?.arrivalAirport as string).match(/\b[A-Z]{3}\b/)?.[0] || 'APT'}
                   </span>
                 </div>
               )}
             </div>
             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest line-clamp-1">
-              {point.metadata?.fullAddress || point.address}
+              {(point.metadata?.fullAddress as string) || point.address}
             </p>
           </div>
           

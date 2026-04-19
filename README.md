@@ -1,4 +1,4 @@
-# RouteMate v2.6 - The Hybrid Travel Engine 🌍✨
+# RouteMate v2.6.3 - The Hybrid Travel Engine 🌍✨
 
 RouteMate is a mobile-first, offline-capable travel intelligence application. Version 2.0 introduced a massive architectural shift from simple itineraries to a **Date-Grouped Intelligence Engine** that manages your entire travel flow.
 
@@ -32,7 +32,7 @@ Replaced instant placeholders with a premium **New Trip Modal** to capture preci
 We've moved beyond purely automatic sorting to a system that respects your manual intent.
 - **Fluid Reorder API**: Drag-and-drop any item on your timeline with an elastic, premium physical feel.
 - **Unsplash Visual Engine**: Trips now feature full-bleed destination imagery, atmospheric blurred backgrounds, and glassmorphism headers.
-- **Mistral Small 4 (119B) Core**: Ultra-fast AI extraction with 2026-hardened chronological buffers (Arrival 08:00 / Hotel 15:00).
+- **Mistral Small 4 (119B) Core**: Ultra-fast AI extraction with 2026-hardened chronological buffers (Arrival 08:00 / Hotel 15:00). Verified on mistral-small-4-119b-2603.
 - **Persistent Local Cache**: Images and manual sort orders are saved directly to **Dexie v4**.
 - **Integrity Diagnostic Suite**: Built-in pre-flight tool to verify API health and logic integrity.
 

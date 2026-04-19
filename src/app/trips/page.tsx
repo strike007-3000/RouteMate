@@ -126,7 +126,7 @@ export default function Dashboard() {
                <Plane className="w-8 h-8 text-zinc-700" />
             </div>
             <h3 className="text-lg font-black text-white mb-2">Ready for a new adventure?</h3>
-            <p className="text-xs text-zinc-500 font-bold mb-8">Start by creating your first itinerary. We'll handle the logistics.</p>
+            <p className="text-xs text-zinc-500 font-bold mb-8">Start by creating your first itinerary. We&apos;ll handle the logistics.</p>
             <button 
               onClick={() => setIsModalOpen(true)}
               className="px-8 py-4 rounded-2xl border border-primary/20 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 transition-colors"

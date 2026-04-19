@@ -48,6 +48,7 @@ const BentoBox = ({ title, value, icon, className, delay = 0, subValue, onClick 
 
 export const BentoGrid = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) => {
   const { activeTrip } = useTripStore();
+  const now = new Date();
   
   const points = useLiveQuery<ItineraryItem[]>(
     async () => {

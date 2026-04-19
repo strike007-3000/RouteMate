@@ -14,8 +14,8 @@ interface NewTripModalProps {
 
 export const NewTripModal = ({ isOpen, onClose, onCreate }: NewTripModalProps) => {
   const [destination, setDestination] = useState('');
-  const [startDate, setStartDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [endDate, setEndDate] = useState(format(new Date(Date.now() + 86400000 * 7), 'yyyy-MM-dd'));
+  const [startDate, setStartDate] = useState(() => format(new Date(), 'yyyy-MM-dd'));
+  const [endDate, setEndDate] = useState(() => format(new Date(Date.now() + 86400000 * 7), 'yyyy-MM-dd'));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -28,7 +28,9 @@ export const GeolocationProvider = ({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setState(s => ({ ...s, error: 'Geolocation not supported', loading: false }));
+      Promise.resolve().then(() => {
+        setState(s => ({ ...s, error: 'Geolocation not supported', loading: false }));
+      });
       return;
     }
 

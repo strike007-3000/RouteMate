@@ -98,7 +98,7 @@ export async function POST(req: Request) {
     try {
       const jsonMatch = content.match(/\[[\s\S]*\]/);
       const jsonString = jsonMatch ? jsonMatch[0] : content;
-      parsedPoints = JSON.parse(jsonString.trim()).map((p: any) => ({
+      parsedPoints = JSON.parse(jsonString.trim()).map((p: Record<string, unknown>) => ({
         ...p,
         id: Math.random().toString(36).substr(2, 9)
       }));
@@ -111,7 +111,7 @@ export async function POST(req: Request) {
         const secondaryContent = secondaryData.choices?.[0]?.message?.content;
         const jsonMatch = secondaryContent.match(/\[[\s\S]*\]/);
         const jsonString = jsonMatch ? jsonMatch[0] : secondaryContent;
-        parsedPoints = JSON.parse(jsonString.trim()).map((p: any) => ({
+        parsedPoints = JSON.parse(jsonString.trim()).map((p: Record<string, unknown>) => ({
           ...p,
           id: Math.random().toString(36).substr(2, 9)
         }));

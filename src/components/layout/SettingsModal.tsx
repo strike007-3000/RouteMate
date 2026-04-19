@@ -147,7 +147,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
             </div>
             
             <p className="mt-8 text-[10px] text-center text-muted-foreground leading-relaxed italic">
-              RouteMate is "Pocket-Friendly." Your keys are stored locally and never synced to a server.
+              RouteMate is &quot;Pocket-Friendly.&quot; Your keys are stored locally and never synced to a server.
             </p>
           </motion.div>
         </>

@@ -12,7 +12,7 @@ export interface TripPoint {
   startTime: string; // ISO string
   endTime: string;   // ISO string
   coordinates?: { lat: number; lng: number };
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface TripState {
