@@ -50,7 +50,13 @@ export const BentoGrid = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) =>
   const { activeTrip } = useTripStore();
   
   const points = useLiveQuery<ItineraryItem[]>(
-    () => activeTrip?.id ? db.itineraryItems.where('tripId').equals(activeTrip.id).toArray() : Promise.resolve([] as ItineraryItem[]),
+    async () => {
+      if (activeTrip?.id) {
+        return db.itineraryItems.where('tripId').equals(activeTrip.id).toArray();
+      }
+      // If no active trip (dashboard), find the next point across ALL trips
+      return db.itineraryItems.toArray();
+    },
     [activeTrip?.id]
   ) || [];
   

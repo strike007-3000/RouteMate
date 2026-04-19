@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.6.1] - 2026-04-19
+
+### 🛡️ AI Reliability & Failover
+- **Mistral Large Fallback**: Implemented an automatic failover to **Mistral Large 3** if the primary Small model fails or returns malformed JSON.
+- **Model ID Correction**: Standardized on full `mistralai/` identifiers for optimized NIM routing.
+
+### 💎 Visual Hardening & Telemetry
+- **Hero Gradient System**: Added premium sapphire-to-charcoal gradients behind all trip cards and timeline headers. No more "Black Cards" when Unsplash is unavailable.
+- **Global Dashboard Telemetry**: Repaired the "Countdown" widget to scan for upcoming points across ALL trips when no specific trip is active.
+- **Service Resilience**: Added a scenic fallback asset to the `UnsplashService`.
+
 ## [2.6.0] - 2026-04-19
 
 ### 🔀 Hybrid Intelligence (Manual Reordering)

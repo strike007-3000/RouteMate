@@ -76,7 +76,8 @@ export default function TimelinePage() {
     <main className="min-h-screen bg-black pb-32 w-full max-w-md mx-auto border-x border-border/50 shadow-2xl relative overflow-x-hidden flex flex-col">
       {/* Hero Background Layer */}
       <div className="absolute top-0 left-0 w-full h-64 overflow-hidden pointer-events-none">
-        {trip.coverImage && (
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-black/80 to-black z-0" />
+        {trip.coverImage && trip.coverImage !== "" && (
           <>
             <img 
               src={trip.coverImage} 

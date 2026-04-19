@@ -12,7 +12,7 @@ export class UnsplashService {
 
     if (!key || key === 'your_unsplash_access_key') {
       console.warn('Unsplash API key missing. Using dynamic placeholder.');
-      return null;
+      return this.getPlaceholder(query);
     }
 
     try {
@@ -40,7 +40,7 @@ export class UnsplashService {
       return null;
     } catch (error) {
       console.error('Unsplash Service Error:', error);
-      return null;
+      return this.getPlaceholder(query);
     }
   }
 

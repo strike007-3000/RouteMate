@@ -31,14 +31,14 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
     >
       {/* Hero Background */}
       <div className="absolute inset-0">
-        {trip.coverImage ? (
+        {trip.coverImage && trip.coverImage !== "" ? (
           <img 
             src={trip.coverImage} 
             alt={trip.name} 
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-950" />
+          <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-primary/5 to-black" />
         )}
         {/* Multi-layer Overlay for readability */}
         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-700" />
