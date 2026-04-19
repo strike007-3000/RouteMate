@@ -1,0 +1,10 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "routemate",
+      "changelog-path": "CHANGELOG.md"
+    }
+  },
+  "last-release-sha": "HEAD"
+}
