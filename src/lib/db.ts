@@ -14,6 +14,11 @@ export interface Trip {
 
 export interface ItineraryItem extends TripPoint {
   tripId: number;
+  category: 'Flight' | 'Lodging' | 'Train' | 'Food' | 'Activity' | 'Rental';
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
 }
 
 export class RouteMateDatabase extends Dexie {
@@ -31,26 +36,17 @@ export class RouteMateDatabase extends Dexie {
     this.version(2).stores({
       trips: '++id, name, destination, startDate, status',
       itineraryItems: '++id, tripId, type, startTime',
-      points: null // Delete the v1 table after successful migration
-    }).upgrade(async (tx) => {
-      // Migration Logic: Move v1 points to a default trip in v2
-      const oldPoints = await tx.table('points').toArray();
-      if (oldPoints.length > 0) {
-        const defaultTripId = await tx.table('trips').add({
-          name: 'My First Adventure',
-          destination: oldPoints[0].address || 'Unknown',
-          startDate: oldPoints[0].startTime,
-          endDate: oldPoints[oldPoints.length - 1].startTime,
-          status: 'draft'
-        });
+      points: null
+    });
 
-        const newItems = oldPoints.map(p => ({
-          ...p,
-          tripId: defaultTripId as number
-        }));
-        
-        await tx.table('itineraryItems').bulkAdd(newItems);
-      }
+    this.version(3).stores({
+      trips: '++id, name, destination, startDate, status',
+      itineraryItems: '++id, tripId, type, startTime, category'
+    }).upgrade(async (tx) => {
+      // Migration: Default existing items to 'Activity'
+      await tx.table('itineraryItems').toCollection().modify(item => {
+        if (!item.category) item.category = 'Activity';
+      });
     });
   }
 }

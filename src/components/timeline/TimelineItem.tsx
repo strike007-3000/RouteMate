@@ -1,39 +1,54 @@
 'use client';
 
 import React from 'react';
-import { Plane, Building, MapPin, Clock } from 'lucide-react';
+import { Plane, Hotel, MapPin, Clock, Utensils, Train, Car } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { TripPoint } from '@/stores/useTripStore';
+import { ItineraryItem } from '@/lib/db';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
-export const TimelineItem = ({ point }: { point: TripPoint }) => {
-  const Icon = point.type === 'flight' ? Plane : point.type === 'hotel' ? Building : MapPin;
+const categoryConfig = {
+  Flight: { icon: Plane, color: 'text-blue-400', glow: 'shadow-blue-500/20', border: 'border-blue-500/30', bg: 'bg-blue-500/10' },
+  Lodging: { icon: Hotel, color: 'text-emerald-400', glow: 'shadow-emerald-500/20', border: 'border-emerald-500/30', bg: 'bg-emerald-500/10' },
+  Food: { icon: Utensils, color: 'text-amber-400', glow: 'shadow-amber-500/20', border: 'border-amber-500/30', bg: 'bg-amber-500/10' },
+  Activity: { icon: MapPin, color: 'text-purple-400', glow: 'shadow-purple-500/20', border: 'border-purple-500/30', bg: 'bg-purple-500/10' },
+  Train: { icon: Train, color: 'text-zinc-400', glow: 'shadow-zinc-500/20', border: 'border-zinc-500/30', bg: 'bg-zinc-500/10' },
+  Rental: { icon: Car, color: 'text-teal-400', glow: 'shadow-teal-500/20', border: 'border-teal-500/30', bg: 'bg-teal-500/10' },
+};
+
+export const TimelineItem = ({ point }: { point: ItineraryItem }) => {
+  const config = categoryConfig[point.category as keyof typeof categoryConfig] || categoryConfig.Activity;
+  const Icon = config.icon;
   
   return (
-    <div className="relative pl-10 pb-8 last:pb-0">
+    <div className="relative pl-10 pb-4">
       <div className="absolute left-0 top-0 w-10 h-full flex flex-col items-center">
-        <div className="w-4 h-4 rounded-full bg-primary border-4 border-background z-10" />
-        <div className="w-0.5 flex-1 bg-border" />
+        <div className={cn("w-3 h-3 rounded-full border-2 border-black z-10", config.color.replace('text-', 'bg-'))} />
+        <div className="w-0.5 flex-1 bg-white/5" />
       </div>
       
       <motion.div 
-        whileHover={{ scale: 1.01 }}
-        className="glass-card p-5 rounded-3xl"
+        whileHover={{ scale: 1.01, y: -2 }}
+        className={cn(
+          "p-5 rounded-3xl bg-zinc-900/50 border backdrop-blur-xl transition-all duration-500",
+          config.border,
+          config.glow,
+          "shadow-lg"
+        )}
       >
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
-            <Icon className="w-3.5 h-3.5 text-primary" />
-            <span className="text-[10px] font-bold text-primary uppercase tracking-wider">{point.type}</span>
+        <div className="flex items-start justify-between mb-4">
+          <div className={cn("flex items-center gap-2 px-3 py-1 rounded-full border", config.bg, config.border)}>
+            <Icon className={cn("w-3.5 h-3.5", config.color)} />
+            <span className={cn("text-[9px] font-black uppercase tracking-[0.2em]", config.color)}>{point.category}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Clock className="w-3.5 h-3.5" />
-            <span className="text-xs font-semibold">{format(new Date(point.startTime), 'HH:mm')}</span>
+          <div className="flex items-center gap-2 text-zinc-500">
+            <Clock className="w-3 h-3" />
+            <span className="text-[10px] font-black tracking-widest">{format(new Date(point.startTime), 'HH:mm')}</span>
           </div>
         </div>
         
-        <h3 className="text-lg font-bold mb-1">{point.title}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-1">{point.address}</p>
+        <h3 className="text-xl font-black text-white tracking-tighter leading-none mb-2">{point.title}</h3>
+        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest line-clamp-1">{point.address}</p>
       </motion.div>
     </div>
   );

@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+import { useTripStore } from '@/stores/useTripStore';
 import { TimelineItem } from './TimelineItem';
 import { TransitCard } from './TransitCard';
 import { Plus, Sparkles } from 'lucide-react';
@@ -63,8 +65,6 @@ export const Timeline = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) => 
             </p>
           </div>
         )}
-      </div>
-
       </div>
     </div>
   );

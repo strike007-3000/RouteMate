@@ -66,9 +66,21 @@ export async function POST(req: Request) {
             role: 'system',
             content: `You are a travel logistics assistant. Extract trip itinerary details from the text. 
             Return ONLY a JSON array of objects with this schema:
-            [{ "type": "hotel" | "flight" | "attraction", "title": string, "address": string, "startTime": ISO_DATE_STRING, "endTime": ISO_DATE_STRING }]
-            If date/time is missing, estimate based on context or use tomorrow at 10:00 AM.
-            Output ONLY the raw JSON array, no explanation.`
+            [{ 
+               "category": "Flight" | "Lodging" | "Train" | "Food" | "Activity" | "Rental", 
+               "title": string, 
+               "address": string, 
+               "startTime": ISO_DATE_STRING, 
+               "endTime": ISO_DATE_STRING,
+               "coordinates": { "lat": number, "lng": number } 
+            }]
+            
+            RULES:
+            - If it's a hotel/stay, category is 'Lodging'.
+            - If it's a restaurant/bar, category is 'Food'.
+            - If it's a flight, category is 'Flight'.
+            - Extract the most accurate coordinates available for the address.
+            - Output ONLY the raw JSON array, no explanation.`
           },
           {
             role: 'user',

@@ -1,14 +1,25 @@
 'use client';
 
 import React from 'react';
-import { Globe, Navigation, Clock, Search } from 'lucide-react';
+import { Globe, Clock, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useRouter, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useTripStore } from '@/stores/useTripStore';
 
 export const BottomNav = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const { getBestTimelineTrip } = useTripStore();
+
+  const handleTimelineClick = async () => {
+    const tripId = await getBestTimelineTrip();
+    if (tripId) {
+      router.push(`/trip/${tripId}/timeline`);
+    } else {
+      router.push('/trips');
+    }
+  };
 
   const navItems = [
     { 
@@ -18,16 +29,16 @@ export const BottomNav = () => {
       active: pathname === '/trips' || pathname === '/'
     },
     { 
+      label: 'Timeline', 
+      icon: Clock, 
+      action: handleTimelineClick,
+      active: pathname.includes('/timeline')
+    },
+    { 
       label: 'Explore', 
       icon: Search, 
       path: '/explore',
       active: pathname === '/explore'
-    },
-    { 
-      label: 'Radar', 
-      icon: Navigation, 
-      path: '/radar',
-      active: pathname === '/radar'
     }
   ];
 
@@ -36,7 +47,13 @@ export const BottomNav = () => {
       {navItems.map((item, index) => (
         <button
           key={item.label}
-          onClick={() => item.path !== '#' && router.push(item.path)}
+          onClick={() => {
+            if (item.action) {
+              item.action();
+            } else if (item.path) {
+              router.push(item.path);
+            }
+          }}
           className={cn(
             "flex flex-col items-center gap-1.5 transition-all duration-300 relative px-4",
             item.active ? "opacity-100 scale-110" : "opacity-30 hover:opacity-50"

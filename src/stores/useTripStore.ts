@@ -6,10 +6,12 @@ export type PointType = 'hotel' | 'flight' | 'attraction' | 'transit';
 export interface TripPoint {
   id?: number;
   type: PointType;
+  category?: 'Flight' | 'Lodging' | 'Train' | 'Food' | 'Activity' | 'Rental';
   title: string;
   address: string;
   startTime: string; // ISO string
   endTime: string;   // ISO string
+  coordinates?: { lat: number; lng: number };
   metadata?: Record<string, any>;
 }
 
@@ -18,6 +20,12 @@ interface TripState {
   activeTrip: Trip | null;
   points: ItineraryItem[];
   isHydrated: boolean;
+  expandedDays: string[]; // ['YYYY-MM-DD'] towns that are open
+  
+  // App Logic
+  getBestTimelineTrip: () => Promise<number | null>;
+  toggleDay: (date: string) => void;
+  setExpandedDays: (dates: string[]) => void;
   
   // Trip Actions
   fetchTrips: () => Promise<void>;
@@ -37,6 +45,34 @@ export const useTripStore = create<TripState>((set, get) => ({
   activeTrip: null,
   points: [],
   isHydrated: false,
+  expandedDays: [],
+
+  toggleDay: (date) => set((state) => ({
+    expandedDays: state.expandedDays.includes(date)
+      ? state.expandedDays.filter(d => d !== date)
+      : [...state.expandedDays, date]
+  })),
+
+  setExpandedDays: (dates) => set({ expandedDays: dates }),
+
+  getBestTimelineTrip: async () => {
+    const state = get();
+    // 1. If activeTrip is set, use it
+    if (state.activeTrip?.id) return state.activeTrip.id;
+
+    // 2. Find closest future trip
+    const now = new Date().toISOString();
+    const futureTrip = await db.trips
+      .where('startDate')
+      .aboveOrEqual(now)
+      .sortBy('startDate');
+    
+    if (futureTrip.length > 0) return futureTrip[0].id!;
+
+    // 3. Fallback to any trip
+    const anyTrip = await db.trips.orderBy('startDate').reverse().first();
+    return anyTrip?.id || null;
+  },
   
   fetchTrips: async () => {
     const allTrips = await db.trips.toArray();

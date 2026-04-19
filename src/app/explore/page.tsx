@@ -45,7 +45,7 @@ export default function ExplorePage() {
           animate={{ opacity: 1, x: 0 }}
           className="relative z-10"
         >
-          <span className="text-xs font-black text-primary uppercase tracking-[0.5em] mb-4 block">RouteMate</span>
+          <span className="text-[10px] font-black text-primary uppercase tracking-[0.5em] mb-4 block">ROUTEMATE</span>
           <h1 className="text-4xl font-black text-white tracking-tighter leading-none mb-3">Explore</h1>
           <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
             Curated escapes for the modern nomad.

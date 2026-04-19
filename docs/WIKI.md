@@ -1,56 +1,54 @@
 # RouteMate Engineering Wiki 🛠️
 
-Welcome to the internal engineering wiki for RouteMate. This document serves as a deep dive into the architectural decisions and internal mechanics of the system as of v1.2.0.
+Deep-dive documentation for RouteMate v2.0 Architecture.
 
 ---
 
-## 1. Real-Time Reactivity (Dexie + LiveQuery)
+## 1. Timeline Data Intelligence (v3 Schema)
 
-RouteMate follows a **DB-First Architecture**. Instead of relying solely on a global state manager (Zustand) for transient data, we subscribe directly to the Promised-based IndexedDB via `useLiveQuery` from `dexie-react-hooks`.
+Version 2.0 migrates the database to a grouped logic. Itinerary items now carry classification metadata.
 
-### Why?
-- **Persistence by Default**: Every change is instantly saved to the user's device.
-- **Cross-Tab Synchronization**: Changes in one part of the app (e.g., Smart Add modal) reflect instantly across all other components (Header, Dashboard, Timeline) without manual state syncing.
-- **Offline Reliability**: The app remains functional and reactive even with zero network connectivity.
+- **Category Mapping**: AI extracts entries into `Flight`, `Lodging`, `Food`, `Train`, `Activity`, or `Rental`.
+- **Coordinate Fidelity**: Every item stores a `coordinates` object (`{lat, lng}`) allowing the logistics engine to function without additional API lookups during the "Timeline Flow" view.
+
+### Grouping Logic
+To avoid timezone regressions (where items "disappear" across the UTC boundary), we use **String-Based Date Comparison**:
+`format(parseISO(startTime), 'yyyy-MM-dd') === format(currentDay, 'yyyy-MM-dd')`.
+
+---
+
+## 2. The 50km Transit Rule
+
+The logistics engine now features a switch logic based on distance thresholds calculated via the **Haversine Formula**.
 
 ```typescript
-const points = useLiveQuery(() => 
-  db.itineraryItems.where('tripId').equals(id).toArray()
-) || [];
+// Formula implementation in TransitCard.tsx
+const R = 6371; // Earth's Radius (KM)
+const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1) * Math.cos(lat2) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+const distance = R * c;
 ```
 
----
-
-## 2. Magic Extraction (NVIDIA NIM)
-
-The "Smart Add" feature utilizes the NVIDIA NIM API to parse unstructured travel text into a valid JSON itinerary schema.
-
-### Prompt Logic
-We use a high-instruction system prompt to ensure the AI returns ONLY the raw JSON array.
-- **Fallback Mechanism**: If no API key is provided, the system enters **Mock Mode**, providing realistic extraction samples for JFK and CitizenM bookings to ensure the app remains usable for demo purposes.
-- **Metadata Patching**: The extraction logic only overwrites the Trip Name and Destination if the current trip is still using "Project Defaults", ensuring user customizations are never accidentally destroyed.
+### Thresholds:
+- **Intra-city (< 50km)**: Uses `travelmode=transit`. Best for subway/bus handoffs.
+- **Inter-city (>= 50km)**: Uses `travelmode=driving`. Best for cross-city train/car connections where subway routing fails.
 
 ---
 
-## 3. Radar System & Logistics
+## 3. UI/UX: Minimalist Premium Design
 
-The Radar tab is designed to solve the "last mile" travel gap.
-
-### Geolocation Strategy
-1. **Satellite Sync**: Attempts to fetch the browser's high-accuracy coordinates.
-2. **Permission Denied Fallback**: If a user denies location access, the system checks for an `activeTrip`.
-   - If an active trip exists, it shows transit hubs for that specific destination.
-   - If no trip is active, it defaults to a curated list of **Global Strategic Hubs** (London St Pancras, Grand Central NYC, Tokyo Station).
+We follow a **"Quiet Luxury"** design philosophy:
+- **Identity**: Centered/Left-aligned `ROUTEMATE` tag in `text-[10px] tracking-[0.5em]`.
+- **Color Glows**: Category specific cards use `shadow-category/20` and `border-category/30` to provide visual grouping without excessive color noise.
+- **16px Grid System**: Every component is strictly aligned to a 4-unit grid system (`p-4`, `gap-4`).
 
 ---
 
-## 4. Design System
+## 4. AI Prompt Engineering (Smart Add)
 
-RouteMate uses a custom **Glassmorphic Design System** built on Tailwind CSS:
-- **Rich Aesthetics**: High use of `backdrop-blur-xl`, `border-white/5`, and `bg-zinc-900/50`.
-- **Dynamic Grid**: The dashboard uses a responsive grid with fixed aspect ratios (`aspect-square` for small cards, `aspect-[2/1]` for featured status cards) to maintain a premium, data-driven look.
-
----
-
-### Contributing to this Wiki
-Contributions to this wiki are welcome! Please follow the `docs:` commit convention when updating this file.
+The extraction prompt in `/api/parse-itinerary` is hardened for JSON fidelity. 
+- **Instruction**: Return ONLY a JSON array.
+- **Classification Rules**: Explicit mapping for hotel -> Lodging, restaurant -> Food, etc.
+- **Mock Fallback**: If no NVIDIA key is provided, the mock system provides `Extracted Event` samples to ensure the UI can be validated offline.
