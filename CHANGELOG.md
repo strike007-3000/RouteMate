@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.2](https://github.com/strike007-3000/RouteMate/compare/v2.3.1...v2.3.2) (2026-04-19)
+
+
+### Bug Fixes
+
+* v2.6.4 aesthetics & logic - repair manual reordering, glassmorphism, and trip card image fidelity ([66a2a2a](https://github.com/strike007-3000/RouteMate/commit/66a2a2a99ca3b72c4b40bf7c46d021c069246159))
+
 ## [2.3.1](https://github.com/strike007-3000/RouteMate/compare/v2.3.0...v2.3.1) (2026-04-19)
 
 
