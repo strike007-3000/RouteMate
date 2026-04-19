@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.6.2] - 2026-04-19
+
+### 🧬 Sequencing & extraction Hardening
+- **Mistral v4 Transition**: Successfully migrated to the **Mistral Small 4 (119B)** engine (`2603` snapshot) to resolve 410 'Gone' errors and improve extraction speed.
+- **Chronological Enforcement**: Refined system prompts to strictly lock **Hotel Check-ins at 15:00** and arrivals at 08:00, preventing itinerary overlaps.
+- **Flat Array Enforcement**: Implemented strict JSON schema rules to prevent nested objects in AI responses.
+
+### 🛡️ Diagnostic Tooling (Pre-Flight)
+- **Integrity Utility**: Introduced `npm run test:integrity`, a robust diagnostic suite to verify API connectivity (Unsplash, ORS, NVIDIA) and logic sequencing before deployment.
+- **Spatial Accuracy**: Verified **OpenRouteService (ORS)** geocoding and coordinate resolution.
+
+
 ## [2.6.1] - 2026-04-19
 
 ### 🛡️ AI Reliability & Failover

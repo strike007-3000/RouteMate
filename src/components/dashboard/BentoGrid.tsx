@@ -60,9 +60,15 @@ export const BentoGrid = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) =>
     [activeTrip?.id]
   ) || [];
   
-  const now = new Date();
   const nextPoint = points
-    .filter(p => new Date(p.startTime) > now)
+    .filter(p => {
+      try {
+        const itemTime = parseISO(p.startTime);
+        return itemTime.getTime() > now.getTime();
+      } catch (e) {
+        return false;
+      }
+    })
     .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())[0];
 
   const flightRegex = /[A-Z]{2,3}\s?\d{3,4}/i;

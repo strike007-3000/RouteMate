@@ -32,17 +32,18 @@ Replaced instant placeholders with a premium **New Trip Modal** to capture preci
 We've moved beyond purely automatic sorting to a system that respects your manual intent.
 - **Fluid Reorder API**: Drag-and-drop any item on your timeline with an elastic, premium physical feel.
 - **Unsplash Visual Engine**: Trips now feature full-bleed destination imagery, atmospheric blurred backgrounds, and glassmorphism headers.
-- **Mistral Small 24B Core**: Near-instant AI extraction with hardened chronological buffers (Arrival 08:00 / Departure 20:00).
+- **Mistral Small 4 (119B) Core**: Ultra-fast AI extraction with 2026-hardened chronological buffers (Arrival 08:00 / Hotel 15:00).
 - **Persistent Local Cache**: Images and manual sort orders are saved directly to **Dexie v4**.
+- **Integrity Diagnostic Suite**: Built-in pre-flight tool to verify API health and logic integrity.
 
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js 16 (App Router)
 - **Styling**: Tailwind CSS 4 + Framer Motion (Accordion & Reorder)
 - **Database**: Dexie.js (IndexedDB) v4 (Manual Sorting Support)
-- **AI**: NVIDIA NIM (Mistral Small 24B Instruct)
+- **AI**: NVIDIA NIM (Mistral Small 4 119B Instruct / Mistral Large 3 Fallback)
 - **Imaging**: Unsplash API (Landscape Architecture)
-- **Logistics**: Google Maps Directory API + Haversine Distance Logic
+- **Logistics**: OpenRouteService (ORS) + Google Maps Handoff + Haversine Logic
 
 ## 🏗️ Architecture v2.0
 
@@ -54,11 +55,11 @@ graph TD
     B --> C
     C --> D[(Trips Table)]
     C --> E[(Itinerary v4 Table - Categories & CustomOrder)]
-    A --> F[NVIDIA NIM - Mistral 24B Extraction]
+    A --> F[NVIDIA NIM Core - Mistral v4 Extraction]
     A --> G[Logistics Engine - 50km Rule]
     A --> K[Unsplash Image Engine - Caching Service]
-    G --> H[Google Maps - Transit Mode]
-    G --> I[Google Maps - Driving Mode]
+    G --> L[OpenRouteService - Geocoding & Local Routes]
+    G --> H[Google Maps - Transit & Driving Handoff]
 ```
 
 ## 🚀 Getting Started
@@ -69,8 +70,13 @@ graph TD
    npm install
    ```
 2. **Environment**:
-   Add `NVIDIA_API_KEY` to your `.env` or via the in-app settings.
-3. **Run**:
+   Add `NVIDIA_API_KEY`, `NEXT_PUBLIC_UNSPLASH_ACCESS_KEY`, and `ORS_API_KEY` to your `.env`.
+3. **Pre-flight Integrity Check**:
+   Before deploying or testing, verify your configuration and AI logic:
+   ```bash
+   npm run test:integrity
+   ```
+4. **Run**:
    ```bash
    npm run dev
    ```

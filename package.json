@@ -1,12 +1,13 @@
 {
   "name": "routemate",
-  "version": "2.6.0",
+  "version": "2.6.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "test:integrity": "node scripts/integrity-check.js"
   },
   "dependencies": {
     "clsx": "^2.1.1",

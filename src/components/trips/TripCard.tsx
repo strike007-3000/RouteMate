@@ -38,7 +38,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-primary/5 to-black" />
+          <div className="w-full h-full bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#020617]" />
         )}
         {/* Multi-layer Overlay for readability */}
         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-700" />

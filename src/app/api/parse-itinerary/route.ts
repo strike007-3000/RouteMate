@@ -12,8 +12,8 @@ export async function POST(req: Request) {
     const clientKey = req.headers.get('x-user-nvidia-key');
     const apiKey = (serverKey && serverKey.startsWith('nvapi-')) ? serverKey : clientKey;
     
-    // Hierarchy: Primary (Small) -> Fallback (Large)
-    const primaryModel = process.env.NVIDIA_MODEL_PRIMARY || 'mistralai/mistral-small-3.1-24b-instruct-2503';
+    // Confirmed 2026 High-Fidelity Stack
+    const primaryModel = process.env.NVIDIA_MODEL_PRIMARY || 'mistralai/mistral-small-4-119b-2603';
     const fallbackModel = process.env.NVIDIA_MODEL_FALLBACK || 'mistralai/mistral-large-3-675b-instruct-2512';
 
     console.log('--- Extraction Attempt ---');
@@ -34,32 +34,31 @@ export async function POST(req: Request) {
             {
               role: 'system',
               content: `You are a travel logistics assistant. Extract trip itinerary details from the text. 
-              Return ONLY a JSON array of objects with this schema:
+              Return ONLY a flat JSON array of objects.
+              
+              SCHEMA (FLAT ARRAY ONLY):
               [{ 
                  "category": "Flight" | "Lodging" | "Train" | "Food" | "Activity" | "Rental", 
                  "title": string, 
                  "address": string, 
-                 "startTime": ISO_DATE_STRING, 
-                 "endTime": ISO_DATE_STRING,
+                 "startTime": "YYYY-MM-DDTHH:mm:ssZ", 
+                 "endTime": "YYYY-MM-DDTHH:mm:ssZ",
                  "coordinates": { "lat": number, "lng": number } 
               }]
               
-              RULES:
-              - If it's a hotel/stay, category is 'Lodging'. Provide the 'fullAddress' including street name.
-              - If it's a restaurant/bar, category is 'Food'.
-              - If it's a flight, category is 'Flight'. 
-                  - Prefix title with 'Arrival:' or 'Departure:' (e.g. 'Arrival: Oslo to Brussels').
-                  - Include 'arrivalAirport' (e.g., 'Brussels Airport BRU') and 'departureAirport' in the metadata object.
-              - SMART TIME BUFFERS (If no specific time is mentioned in text, use these defaults):
-                  - Flight Arrival: 08:00
-                  - Flight Departure: 20:00
-                  - Train Arrival: 09:00
-                  - Train Departure: 18:00
-              - LODGING SPLIT: If a stay covers a date range (e.g. June 1st to 5th), generate TWO objects: 
-                  1. 'Check-in at [Hotel]' on the start date (default 15:00) 
-                  2. 'Check-out from [Hotel]' on the end date (default 11:00).
-              - Extract the most accurate coordinates available for the address.
-              - Output ONLY the raw JSON array, no explanation.`
+              CRITICAL RULES:
+              - DO NOT return nested objects (no "itinerary", "flights", or "hotel" parent keys).
+              - Return ONLY the raw [ ... ] array.
+              
+              TIMES:
+              - Flight ARRIVAL: 08:00 (8 AM)
+              - Flight DEPARTURE: 20:00 (8 PM)
+              - Hotel CHECK-IN: MUST BE 15:00 (3 PM).
+              - Hotel CHECK-OUT: MUST BE 11:00 (11 AM).
+              - For all dates, use the year 2026.
+              
+              LODGING SPLIT:
+              - Generate TWO separate objects for a stay: 'Check-in...' at 15:00 and 'Check-out...' at 11:00.`
             },
             {
               role: 'user',
