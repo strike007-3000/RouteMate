@@ -18,7 +18,7 @@ export class UnsplashService {
     try {
       // 2. Fetch from Unsplash
       const response = await fetch(
-        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query + ' landscape')}&orientation=landscape&per_page=1`,
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query + ' landmark nature travel')}&orientation=landscape&per_page=5`,
         {
           headers: {
             Authorization: `Client-ID ${key}`,
@@ -26,10 +26,11 @@ export class UnsplashService {
         }
       );
 
-      if (!response.ok) throw new Error('Unsplash API failed');
+      if (!response.ok) throw new Error(`Unsplash API failed: ${response.status}`);
 
       const data = await response.json();
-      const imageUrl = data.results?.[0]?.urls?.regular;
+      const results = data.results || [];
+      const imageUrl = results[0]?.urls?.regular || results[1]?.urls?.regular;
 
       if (imageUrl) {
         // 3. Cache in Dexie
@@ -37,7 +38,7 @@ export class UnsplashService {
         return imageUrl;
       }
 
-      return null;
+      return this.getPlaceholder(query);
     } catch (error) {
       console.error('Unsplash Service Error:', error);
       return this.getPlaceholder(query);
@@ -45,8 +46,13 @@ export class UnsplashService {
   }
 
   static getPlaceholder(query: string): string {
-    // Premium dark gradient placeholder with query text center-aligned
-    // Using a reliable placeholder service or just a CSS-based approach in the component
-    return `https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1000`; // Default scenic placeholder
+    // Return a high-quality, reliable scenic placeholder if everything else fails
+    const fallbacks = [
+      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&q=80&w=1000', // Nature
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1000', // Landscape
+      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&q=80&w=1000', // Foggy forest
+    ];
+    // Seeded random based on query length for stability
+    return fallbacks[query.length % fallbacks.length];
   }
 }

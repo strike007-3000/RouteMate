@@ -13,12 +13,23 @@ interface TripCardProps {
 
 export const TripCard = ({ trip, onSelect }: TripCardProps) => {
   const { deleteTrip, duplicateTrip } = useTripStore();
+  const [imageUrl, setImageUrl] = React.useState(trip.coverImage || '');
 
-
+  // Status tokens for vibrant UI
   const statusColors = {
     upcoming: 'bg-primary/20 text-primary border-primary/30',
     past: 'bg-zinc-800 text-zinc-400 border-zinc-700',
     draft: 'bg-amber-500/20 text-amber-500 border-amber-500/30'
+  };
+
+  // Update image if trip data changes (live query)
+  React.useEffect(() => {
+    if (trip.coverImage) setImageUrl(trip.coverImage);
+  }, [trip.coverImage]);
+
+  const handleImageError = () => {
+    // If Unsplash fails to load, fallback to a reliable scenic asset
+    setImageUrl('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1000');
   };
 
   return (
@@ -30,20 +41,21 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
       className="group relative w-full h-[280px] rounded-[2.5rem] overflow-hidden border border-white/10 hover:border-primary/50 transition-all duration-700 cursor-pointer shadow-2xl shadow-black"
     >
       {/* Hero Background */}
-      <div className="absolute inset-0 bg-zinc-900">
-        {trip.coverImage ? (
+      <div className="absolute inset-0 bg-zinc-900 overflow-hidden">
+        {imageUrl ? (
           <img 
-            src={trip.coverImage} 
+            src={imageUrl} 
             alt={trip.name} 
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 select-none"
+            onError={handleImageError}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2000ms] select-none"
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-zinc-800 to-black animate-pulse" />
+          <div className="w-full h-full bg-gradient-to-br from-primary/20 via-zinc-900 to-black animate-pulse" />
         )}
         {/* Multi-layer Overlay for readability */}
         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-700" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
       </div>
 
       {/* Top Bar: Status */}
@@ -63,12 +75,12 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
             <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{trip.destination}</span>
           </div>
           
-          <h3 className="text-2xl font-black text-white tracking-tighter leading-none mb-2">
+          <h3 className="text-3xl font-black text-white tracking-tighter leading-none mb-2 drop-shadow-2xl">
             {trip.name}
           </h3>
           
-          <div className="flex items-center gap-3 text-[10px] text-zinc-300 font-bold uppercase tracking-widest opacity-80">
-            <Calendar className="w-3 h-3" />
+          <div className="flex items-center gap-3 text-[10px] text-zinc-100 font-bold uppercase tracking-widest drop-shadow-md">
+            <Calendar className="w-3 h-3 text-primary" />
             <span>{new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}</span>
           </div>
         </div>

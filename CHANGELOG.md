@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.7.0] - 2026-04-19
+
+### 🧠 The "Implicit Hub" Engine (Logistics Phase 2)
+- **Implicit Airport Routing**: Refactored the core transit logic to treat airports as "Implicit Hubs." Directions now point directly from your hotel/home to the gate without redundant itinerary stops.
+- **Ocean Crossing Suppressor**: Implemented a distance-based filter (>500km) to hide illogical driving connections across oceans when flights are detected.
+- **Flight Migration Logic**: Upgraded the AI parser to anchor flights as the primary timeline events (Early Departure $\rightarrow$ Mid-day Arrival).
+
+### 🛡️ Dashboard Resilience (Visual Pass 2)
+- **Fail-Soft Imagery**: Added a robust `onError` fallback system in `TripCard.tsx`. If Unsplash fails, the dashboard automatically swaps to a vibrant, high-quality scenic asset. No more black cards.
+- **Contrast Typography**: Applied high-contrast `drop-shadow-2xl` and `tracking-tighter` styles to all trip titles for maximum legibility over photography.
+
+### 🧬 Temporal Logic & Hardening
+- **Strict Sequencing**: Hardcoded logical ranks (Departure 08:00 > Check-out 10:00 > Arrival 14:00 > Check-in 16:00) to solve the 'Hotel-First' paradox.
+- **Transactional Persistence**: Fixed an issue where manual reordering didn't persist correctly across sessions.
+
+---
+
 ## [2.6.4] - 2026-04-19
 
 ### 🧠 Logic & Reordering (Fixing "Not Moving")

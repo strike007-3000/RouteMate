@@ -174,20 +174,17 @@ export const useTripStore = create<TripState>((set, get) => ({
       const category = item.category;
 
       if (category === 'Flight') {
-        if (title.includes('arrival')) return 1;
-        if (title.includes('departure')) return 6;
-        return 1; // Default flight to top
-      }
-      if (category === 'Train') {
-        if (title.includes('arrival')) return 2;
-        return 2;
+        if (title.includes('departure')) return 1;
+        if (title.includes('arrival')) return 3;
+        return 1;
       }
       if (category === 'Lodging') {
-        if (title.includes('check-in')) return 3;
-        if (title.includes('check-out')) return 5;
-        return 3;
+        if (title.includes('check-out')) return 2;
+        if (title.includes('check-in')) return 4;
+        return 4;
       }
-      return 4; // Food, Activity, Rental, etc.
+      if (category === 'Train') return 3;
+      return 5; // Food, Activity, Rental, etc.
     };
 
     return [...points].sort((a, b) => {

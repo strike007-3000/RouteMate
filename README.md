@@ -1,4 +1,4 @@
-# RouteMate v2.6.4 - The Hybrid Travel Engine 🌍✨
+# RouteMate v2.7.0 - The Hybrid Travel Engine 🌍✨
 
 RouteMate is a mobile-first, offline-capable travel intelligence application. Version 2.0 introduced a massive architectural shift from simple itineraries to a **Date-Grouped Intelligence Engine** that manages your entire travel flow.
 

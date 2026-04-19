@@ -34,31 +34,36 @@ export async function POST(req: Request) {
             {
               role: 'system',
               content: `You are a travel logistics assistant. Extract trip itinerary details from the text. 
-              Return ONLY a flat JSON array of objects.
               
-              SCHEMA (FLAT ARRAY ONLY):
+              CONTENT_RULES:
+              - Return ONLY a flat JSON array of objects.
+              - FLIGHTS: "Flight from A to B" MUST generate TWO separate objects: 
+                1. "Departure from [Market/City]" at 08:00.
+                2. "Arrival at [Destination/City]" at 14:00.
+              - IMPLICIT HUBS: For Flight objects, include a metadata field:
+                "metadata": { 
+                  "departureAirport": string, // e.g. "Brussels Airport (BRU)"
+                  "arrivalAirport": string,   // e.g. "Tokyo Narita (NRT)"
+                  "departureCoords": { "lat": number, "lng": number },
+                  "arrivalCoords": { "lat": number, "lng": number }
+                }
+              - NO AIRPORT STOPS: Do NOT create separate "Airport" category cards.
+              
+              TIMES (STRICT):
+              - Flight DEPARTURE: 08:00.
+              - Hotel CHECK-OUT: 10:00.
+              - Flight ARRIVAL: 14:00.
+              - Hotel CHECK-IN: 16:00.
+              - Activities: 17:00.
+              
+              SCHEMA:
               [{ 
-                 "category": "Flight" | "Lodging" | "Train" | "Food" | "Activity" | "Rental", 
+                 "category": "Flight" | "Lodging" | "Train" | "Food" | "Activity", 
                  "title": string, 
                  "address": string, 
                  "startTime": "YYYY-MM-DDTHH:mm:ssZ", 
-                 "endTime": "YYYY-MM-DDTHH:mm:ssZ",
-                 "coordinates": { "lat": number, "lng": number } 
-              }]
-              
-              CRITICAL RULES:
-              - DO NOT return nested objects (no "itinerary", "flights", or "hotel" parent keys).
-              - Return ONLY the raw [ ... ] array.
-              
-              TIMES:
-              - Flight ARRIVAL: 08:00 (8 AM)
-              - Flight DEPARTURE: 20:00 (8 PM)
-              - Hotel CHECK-IN: MUST BE 15:00 (3 PM).
-              - Hotel CHECK-OUT: MUST BE 11:00 (11 AM).
-              - For all dates, use the year 2026.
-              
-              LODGING SPLIT:
-              - Generate TWO separate objects for a stay: 'Check-in...' at 15:00 and 'Check-out...' at 11:00.`
+                 "metadata": object
+              }]`
             },
             {
               role: 'user',

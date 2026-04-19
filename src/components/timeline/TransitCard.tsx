@@ -29,15 +29,35 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
   }, [from.coordinates, to.coordinates]);
 
   const isInterCity = distance !== null && distance >= 50;
+  const isOceanCrossing = distance !== null && distance > 500;
+
+  // Hub Handoff Detection
+  const isRoutingToFlight = to.category === 'Flight';
+  const isRoutingFromFlight = from.category === 'Flight';
 
   useEffect(() => {
+    if (isOceanCrossing) {
+      setLoading(false);
+      return;
+    }
+
     const fetchTransit = async () => {
       setLoading(true);
       try {
+        // Prepare precise locations for API
+        const getHubCoords = (p: TripPoint, type: 'departure' | 'arrival') => {
+          const meta = p.metadata as any;
+          if (type === 'departure') return meta?.departureCoords;
+          return meta?.arrivalCoords;
+        };
+
+        const finalFrom = isRoutingFromFlight ? { ...from, coordinates: getHubCoords(from, 'arrival') || from.coordinates } : from;
+        const finalTo = isRoutingToFlight ? { ...to, coordinates: getHubCoords(to, 'departure') || to.coordinates } : to;
+
         const response = await fetch('/api/transit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ from, to }),
+          body: JSON.stringify({ from: finalFrom, to: finalTo }),
         });
         const data = await response.json();
         if (data.suggestion) {
@@ -51,7 +71,9 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
     };
 
     fetchTransit();
-  }, [from, to]);
+  }, [from, to, isRoutingFromFlight, isRoutingToFlight, isOceanCrossing]);
+
+  if (isOceanCrossing) return null;
 
   const Icon = suggestion?.mode === 'train' || suggestion?.mode === 'subway' ? Train : suggestion?.mode === 'walk' ? Footprints : Bus;
 
@@ -95,10 +117,10 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                   </div>
                   <div>
                     <span className="text-xs font-bold text-primary uppercase tracking-tighter">
-                      {isInterCity ? 'Inter-city Connection' : 'Cheap Route Suggested'}
+                      {isRoutingToFlight ? 'Route to Airport' : isInterCity ? 'Inter-city Connection' : 'Cheap Route Suggested'}
                     </span>
                     <p className="text-[10px] text-muted-foreground font-medium">
-                      {isInterCity ? `${Math.round(distance || 0)}km distance` : 'Logistics detected'}
+                      {isRoutingToFlight ? 'Implicit Hub detected' : isInterCity ? `${Math.round(distance || 0)}km distance` : 'Logistics detected'}
                     </p>
                   </div>
                 </div>
@@ -131,18 +153,19 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                     onClick={(e) => {
                       e.stopPropagation();
                       
-                      // True Origin Routing Logic
-                      const getPreciseLocation = (item: TripPoint): string => {
+                      // True Hub Routing Logic
+                      const getPreciseLocation = (item: TripPoint, hubType: 'departure' | 'arrival'): string => {
+                        const meta = item.metadata as any;
                         if (item.category === 'Flight') {
-                          // Prioritize arrival airport metadata if it exists
-                          return (item.metadata?.arrivalAirport as string) || item.address;
+                           return hubType === 'departure' 
+                             ? (meta?.departureAirport as string) || item.address
+                             : (meta?.arrivalAirport as string) || item.address;
                         }
-                        // For hotels/activities, use the full address
-                        return (item.metadata?.fullAddress as string) || item.address;
+                        return (meta?.fullAddress as string) || item.address;
                       };
 
-                      const origin = getPreciseLocation(from);
-                      const destination = getPreciseLocation(to);
+                      const origin = getPreciseLocation(from, 'arrival');
+                      const destination = getPreciseLocation(to, 'departure');
                       const mode = isInterCity ? 'driving' : 'transit';
                       
                       const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;
@@ -151,7 +174,7 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                     className="w-full py-4 rounded-2xl bg-[#4285F4] text-white text-[10px] font-black hover:bg-[#357ABD] transition-all flex items-center justify-center gap-3 uppercase tracking-widest shadow-lg shadow-[#4285F4]/20 group/btn"
                   >
                     <Navigation className="w-4 h-4 fill-white animate-pulse" />
-                    {isInterCity ? 'Open Driving Directions' : 'Open Google Maps Transit'}
+                    {isRoutingToFlight ? 'Navigate to Airport' : isInterCity ? 'Open Driving Directions' : 'Open Google Maps Transit'}
                     <div className="w-3 h-3 rounded-full bg-white/20 flex items-center justify-center">
                       <ArrowRight className="w-2 h-2 group-hover/btn:translate-x-0.5 transition-transform" />
                     </div>
