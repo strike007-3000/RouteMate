@@ -31,7 +31,7 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
 
       const data = await response.json();
       
-      if (data.points && data.points.length > 0) {
+      if (response.ok && data.points && data.points.length > 0) {
         for (const point of data.points) {
           await addPoint(point);
         }
@@ -68,6 +68,8 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
           setText('');
         }, 1500);
       } else {
+        const errorMsg = data.details || data.error || 'Empty response';
+        console.error('Extraction Failed:', errorMsg, data.raw || '');
         setStatus('error');
       }
     } catch (err) {

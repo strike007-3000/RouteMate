@@ -50,7 +50,7 @@ export default function RadarPage() {
           animate={{ opacity: 1, x: 0 }}
           className="relative z-10"
         >
-          <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-4 block">Transit Radar</span>
+          <span className="text-xs font-black text-primary uppercase tracking-[0.5em] mb-4 block">RouteMate</span>
           <h1 className="text-4xl font-black text-white tracking-tighter leading-none mb-3">Radar</h1>
           <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
             Scanning for nearby logistics & transit hubs.

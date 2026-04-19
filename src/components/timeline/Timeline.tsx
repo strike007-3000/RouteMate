@@ -1,17 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useTripStore } from '@/stores/useTripStore';
 import { TimelineItem } from './TimelineItem';
 import { TransitCard } from './TransitCard';
-import { SmartPaste } from './SmartPaste';
 import { Plus, Sparkles } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, ItineraryItem } from '@/lib/db';
 import { motion } from 'framer-motion';
 
-export const Timeline = () => {
-  const [isSmartPasteOpen, setIsSmartPasteOpen] = useState(false);
+export const Timeline = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) => {
   const { activeTrip } = useTripStore();
   
   const points = useLiveQuery<ItineraryItem[]>(
@@ -29,7 +25,7 @@ export const Timeline = () => {
         <div className="flex gap-2">
           <motion.button 
             whileTap={{ scale: 0.95 }}
-            onClick={() => setIsSmartPasteOpen(true)}
+            onClick={onOpenSmartAdd}
             className="px-4 h-10 rounded-2xl bg-primary text-white flex items-center justify-center gap-2 text-xs font-bold shadow-lg shadow-primary/20"
           >
             <Sparkles className="w-4 h-4" />
@@ -69,7 +65,7 @@ export const Timeline = () => {
         )}
       </div>
 
-      <SmartPaste isOpen={isSmartPasteOpen} onClose={() => setIsSmartPasteOpen(false)} />
+      </div>
     </div>
   );
 };

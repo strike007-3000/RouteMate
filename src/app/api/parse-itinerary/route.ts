@@ -12,9 +12,13 @@ export async function POST(req: Request) {
     const clientKey = req.headers.get('x-user-nvidia-key');
     const apiKey = (serverKey && serverKey.startsWith('nvapi-')) ? serverKey : clientKey;
     
-    const model = process.env.NVIDIA_MODEL_PRIMARY || 'stepfun-ai/step-3.5-flash';
+    // Switch to a high-capacity model known for JSON fidelity
+    const model = process.env.NVIDIA_MODEL_PRIMARY || 'meta/llama-3.1-70b-instruct';
 
-    console.log('Extraction Request:', { hasKey: !!apiKey, textLength: text.length });
+    console.log('--- Extraction Attempt ---');
+    console.log('Text Length:', text.length);
+    console.log('Model:', model);
+    console.log('Using Key Path:', serverKey ? 'Server' : 'Client');
 
     // Mock logic if no valid API key is provided
     if (!apiKey || apiKey === 'your_nvidia_api_key_here' || !apiKey.startsWith('nvapi-')) {
@@ -76,7 +80,16 @@ export async function POST(req: Request) {
       }),
     });
 
+    console.log('NVIDIA API Response Status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('NVIDIA API Error:', errorText);
+      return NextResponse.json({ error: 'AI provider rejected request', details: errorText }, { status: response.status });
+    }
+
     const data = await response.json();
+    console.log('AI Raw Content (First 200 chars):', data.choices?.[0]?.message?.content?.substring(0, 200) || 'EMPTY');
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
       console.error('AI Provider Error Details:', JSON.stringify(data));
@@ -92,12 +105,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ points: [] });
     }
     
-    // Clean up markdown if present
-    const cleanContent = content.replace(/```json/g, '').replace(/```/g, '').trim();
-    const parsedPoints = JSON.parse(cleanContent).map((p: any) => ({
-      ...p,
-      id: Math.random().toString(36).substr(2, 9)
-    }));
+    // Clean up markdown and extract JSON array
+    let parsedPoints = [];
+    try {
+      const jsonMatch = content.match(/\[[\s\S]*\]/);
+      const jsonString = jsonMatch ? jsonMatch[0] : content;
+      parsedPoints = JSON.parse(jsonString.trim()).map((p: any) => ({
+        ...p,
+        id: Math.random().toString(36).substr(2, 9)
+      }));
+    } catch (parseError) {
+      console.error('JSON Parse Error:', parseError, 'Raw Content:', content);
+      return NextResponse.json({ 
+        error: 'Failed to parse AI response', 
+        raw: content.substring(0, 100) 
+      }, { status: 422 });
+    }
 
 
     return NextResponse.json({ points: parsedPoints });
