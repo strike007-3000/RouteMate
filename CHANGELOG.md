@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0](https://github.com/strike007-3000/RouteMate/compare/v2.0.0...v2.1.0) (2026-04-19)
+
+
+### Features
+
+* itinerary ux refinement v2.1.0 - interactive trip creation, compact widgets, and smart transit logic ([66c0344](https://github.com/strike007-3000/RouteMate/commit/66c034470aae4a891185a697eae241b205cb50cb))
+
 ## [2.1.0] - 2026-04-19
 
 ### ✨ Interactive UX
