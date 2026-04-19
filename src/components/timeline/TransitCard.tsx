@@ -117,10 +117,10 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                   </div>
                   <div>
                     <span className="text-xs font-bold text-primary uppercase tracking-tighter">
-                      {isRoutingToFlight ? 'Route to Airport' : isInterCity ? 'Inter-city Connection' : 'Cheap Route Suggested'}
+                      {isRoutingToFlight ? 'Route to Airport' : isRoutingFromFlight ? 'Route to Hotel/City' : isInterCity ? 'Inter-city Connection' : 'Cheap Route Suggested'}
                     </span>
                     <p className="text-[10px] text-muted-foreground font-medium">
-                      {isRoutingToFlight ? 'Implicit Hub detected' : isInterCity ? `${Math.round(distance || 0)}km distance` : 'Logistics detected'}
+                      {isRoutingToFlight || isRoutingFromFlight ? 'Implicit Hub detected' : isInterCity ? `${Math.round(distance || 0)}km distance` : 'Logistics detected'}
                     </p>
                   </div>
                 </div>
@@ -157,11 +157,21 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                       const getPreciseLocation = (item: TripPoint, hubType: 'departure' | 'arrival'): string => {
                         const meta = item.metadata as any;
                         if (item.category === 'Flight') {
-                           return hubType === 'departure' 
-                             ? (meta?.departureAirport as string) || item.address
-                             : (meta?.arrivalAirport as string) || item.address;
+                           // If we are looking for the ARRIVAL hub (transit AFTER flight)
+                           if (hubType === 'arrival') {
+                             return (meta?.arrivalAirport as string) || item.address;
+                           }
+                           // If we are looking for the DEPARTURE hub (transit BEFORE flight)
+                           return (meta?.departureAirport as string) || item.address;
                         }
-                        return (meta?.fullAddress as string) || item.address;
+                        
+                        // For Lodging, Food, and Activities: Combine Place Name + City
+                        // Strip common prefixes for a cleaner search
+                        const cleanTitle = item.title.replace(/Check-in at |Check-out from |Stay at |Visit |Dinner at |Flight to |Returning to /g, '');
+                        if (item.address.toLowerCase().includes(cleanTitle.toLowerCase())) {
+                            return item.address;
+                        }
+                        return `${cleanTitle}, ${item.address}`;
                       };
 
                       const origin = getPreciseLocation(from, 'arrival');
@@ -174,7 +184,7 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                     className="w-full py-4 rounded-2xl bg-[#4285F4] text-white text-[10px] font-black hover:bg-[#357ABD] transition-all flex items-center justify-center gap-3 uppercase tracking-widest shadow-lg shadow-[#4285F4]/20 group/btn"
                   >
                     <Navigation className="w-4 h-4 fill-white animate-pulse" />
-                    {isRoutingToFlight ? 'Navigate to Airport' : isInterCity ? 'Open Driving Directions' : 'Open Google Maps Transit'}
+                    {isRoutingToFlight ? 'Navigate to Airport' : isRoutingFromFlight ? 'Open Google Maps Transit' : isInterCity ? 'Open Driving Directions' : 'Open Google Maps Transit'}
                     <div className="w-3 h-3 rounded-full bg-white/20 flex items-center justify-center">
                       <ArrowRight className="w-2 h-2 group-hover/btn:translate-x-0.5 transition-transform" />
                     </div>

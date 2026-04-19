@@ -16,6 +16,7 @@ export interface ItineraryItem extends TripPoint {
   tripId: number;
   category: 'Flight' | 'Lodging' | 'Train' | 'Food' | 'Activity' | 'Rental';
   sortOrder: number;
+  isTimeExplicit?: boolean;
   coordinates?: {
     lat: number;
     lng: number;
@@ -57,6 +58,16 @@ export class RouteMateDatabase extends Dexie {
       // Migration: Initial sortOrder to 0
       await tx.table('itineraryItems').toCollection().modify(item => {
         if (item.sortOrder === undefined) item.sortOrder = 0;
+      });
+    });
+
+    this.version(5).stores({
+      trips: '++id, name, destination, startDate, status',
+      itineraryItems: '++id, tripId, type, startTime, category, sortOrder, isTimeExplicit'
+    }).upgrade(async (tx) => {
+      // Migration: Default isTimeExplicit to true for legacy items
+      await tx.table('itineraryItems').toCollection().modify(item => {
+        if (item.isTimeExplicit === undefined) item.isTimeExplicit = true;
       });
     });
   }

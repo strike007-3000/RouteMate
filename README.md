@@ -1,8 +1,8 @@
-# RouteMate v2.7.0 - The Hybrid Travel Engine 🌍✨
+# RouteMate v2.7.1 - The Hybrid Travel Engine 🌍✨
 
 RouteMate is a mobile-first, offline-capable travel intelligence application. Version 2.0 introduced a massive architectural shift from simple itineraries to a **Date-Grouped Intelligence Engine** that manages your entire travel flow.
 
-![RouteMate v2.2 Dashboard](file:///C:/Users/shrey/.gemini/antigravity/brain/37aba8b9-8c19-4ec5-afe1-67743f820829/routemate_v2_dashboard.png)
+![RouteMate v2.7 Dashboard](file:///Users/shreyasgore/Code/RouteMate/docs/dashboard_v2.7.png)
 
 ## ✨ New in v2.0-v2.2
 
@@ -28,13 +28,14 @@ Uniform, high-end "ROUTEMATE" signature across all screens with contextual back-
 ### 📅 Interactive Creation (v2.1)
 Replaced instant placeholders with a premium **New Trip Modal** to capture precise destinations and dates before planning begins.
 
-### 🎯 Hybrid Intelligence (v2.4 - v2.6)
+### 🎯 Hybrid Intelligence (v2.7.1 Stability Patch)
 We've moved beyond purely automatic sorting to a system that respects your manual intent.
-- **Fluid Reorder API**: Drag-and-drop any item on your timeline with an elastic, premium physical feel.
-- **Unsplash Visual Engine**: Trips now feature full-bleed destination imagery, atmospheric blurred backgrounds, and glassmorphism headers.
-- **Mistral Small 4 (119B) Core**: Ultra-fast AI extraction with 2026-hardened chronological buffers (Arrival 08:00 / Hotel 15:00). Verified on mistral-small-4-119b-2603.
-- **Persistent Local Cache**: Images and manual sort orders are saved directly to **Dexie v4**.
-- **Integrity Diagnostic Suite**: Built-in pre-flight tool to verify API health and logic integrity.
+- **Precision Reordering**: Fully restored Framer Motion drag-and-drop handles. Manual order now overrides predicted times within a day.
+- **Logical Flow**: Automatic sorting now follows a proven "Travel Day" sequence (Checkout -> Departure -> Arrival -> Checkin).
+- **Hardened Routing**: Google Maps links now accurately identify arrival hubs and exact place names, resolving all airport-to-hotel loops.
+- **Unsplash Visual Engine**: Trips feature high-fidelity destination imagery with atmospheric glassmorphism.
+- **Mistral Small 4 (119B) Core**: Ultra-fast AI extraction with 2026-hardened chronological buffers and strict key validation.
+- **Persistent Local Cache**: Manual sort orders and images are saved directly to **Dexie v4**.
 
 ## 🛠️ Tech Stack
 
@@ -45,7 +46,7 @@ We've moved beyond purely automatic sorting to a system that respects your manua
 - **Imaging**: Unsplash API (Landscape Architecture)
 - **Logistics**: OpenRouteService (ORS) + Google Maps Handoff + Haversine Logic
 
-## 🏗️ Architecture v2.0
+## 🏗️ Architecture v2.7
 
 ```mermaid
 graph TD

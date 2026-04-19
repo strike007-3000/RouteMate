@@ -11,9 +11,18 @@ export interface TripPoint {
   address: string;
   startTime: string; // ISO string
   endTime: string;   // ISO string
+  isTimeExplicit?: boolean;
   coordinates?: { lat: number; lng: number };
   metadata?: Record<string, unknown>;
 }
+
+const CATEGORY_DEFAULTS = {
+  CHECK_OUT: 10,       // 10:00 AM
+  FLIGHT_DEPARTURE: 11, // 11:00 AM
+  ACTIVITY: 13,        // 01:00 PM
+  FLIGHT_ARRIVAL: 16,  // 04:00 PM
+  CHECK_IN: 18,       // 06:00 PM
+};
 
 interface TripState {
   trips: Trip[];
@@ -135,9 +144,48 @@ export const useTripStore = create<TripState>((set, get) => ({
 
   addPoint: async (point) => {
     if (!get().activeTrip?.id) return;
-    const item = { ...point, tripId: get().activeTrip!.id! } as ItineraryItem;
-    await db.itineraryItems.add(item);
-    const updated = await db.itineraryItems.where('tripId').equals(get().activeTrip!.id!).toArray();
+    const tripId = get().activeTrip!.id!;
+    
+    // Remote temporary id to avoid ConstraintError (Key already exists)
+    const { id: _, ...pointData } = point as any;
+
+    // Auto-Split Lodging Logic
+    if (pointData.category === 'Lodging') {
+      const start = new Date(pointData.startTime);
+      const end = new Date(pointData.endTime);
+      const isMultiDay = start.toDateString() !== end.toDateString();
+
+      if (isMultiDay) {
+        // Create Check-in
+        const checkIn: ItineraryItem = {
+          ...pointData,
+          tripId,
+          title: `Check-in at ${pointData.title}`,
+          endTime: pointData.startTime, // One-point event
+          sortOrder: 0,
+          isTimeExplicit: pointData.isTimeExplicit ?? false
+        } as ItineraryItem;
+
+        // Create Check-out
+        const checkOut: ItineraryItem = {
+          ...pointData,
+          tripId,
+          title: `Check-out from ${pointData.title}`,
+          startTime: pointData.endTime,
+          endTime: pointData.endTime,
+          sortOrder: 0,
+          isTimeExplicit: pointData.isTimeExplicit ?? false
+        } as ItineraryItem;
+
+        await db.itineraryItems.bulkAdd([checkIn, checkOut]);
+      } else {
+        await db.itineraryItems.add({ ...pointData, tripId, sortOrder: 0 } as ItineraryItem);
+      }
+    } else {
+      await db.itineraryItems.add({ ...pointData, tripId, sortOrder: 0 } as ItineraryItem);
+    }
+
+    const updated = await db.itineraryItems.where('tripId').equals(tripId).toArray();
     set({ points: get().sortItinerary(updated) });
   },
 
@@ -169,38 +217,62 @@ export const useTripStore = create<TripState>((set, get) => ({
   },
 
   sortItinerary: (points) => {
+    const getSortTime = (item: ItineraryItem) => {
+      const date = new Date(item.startTime);
+      if (item.isTimeExplicit === false) {
+        const title = item.title.toLowerCase();
+        let hour = CATEGORY_DEFAULTS.ACTIVITY;
+
+        if (item.category === 'Lodging') {
+          hour = title.includes('check-out') ? CATEGORY_DEFAULTS.CHECK_OUT : CATEGORY_DEFAULTS.CHECK_IN;
+        } else if (item.category === 'Flight') {
+          hour = title.includes('arrival') ? CATEGORY_DEFAULTS.FLIGHT_ARRIVAL : CATEGORY_DEFAULTS.FLIGHT_DEPARTURE;
+        }
+
+        date.setHours(hour, 0, 0, 0);
+      }
+      return date.getTime();
+    };
+
     const getCategoryRank = (item: ItineraryItem) => {
       const title = item.title.toLowerCase();
       const category = item.category;
 
-      if (category === 'Flight') {
-        if (title.includes('departure')) return 1;
-        if (title.includes('arrival')) return 3;
-        return 1;
-      }
       if (category === 'Lodging') {
-        if (title.includes('check-out')) return 2;
-        if (title.includes('check-in')) return 4;
-        return 4;
+        if (title.includes('check-out')) return 1;
+        if (title.includes('check-in')) return 5;
+        return 5;
+      }
+      if (category === 'Flight') {
+        if (title.includes('arrival')) return 4;
+        if (title.includes('departure')) return 3;
+        return 2;
       }
       if (category === 'Train') return 3;
-      return 5; // Food, Activity, Rental, etc.
+      return 6; // Activity, Food, etc.
     };
 
     return [...points].sort((a, b) => {
-      const timeA = new Date(a.startTime).getTime();
-      const timeB = new Date(b.startTime).getTime();
+      const dateA = new Date(a.startTime).toDateString();
+      const dateB = new Date(b.startTime).toDateString();
       
-      if (timeA !== timeB) {
-        return timeA - timeB;
+      // 1. Primary Sort: Day
+      if (dateA !== dateB) {
+        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
       }
       
-      const rankDiff = getCategoryRank(a) - getCategoryRank(b);
-      if (rankDiff !== 0) return rankDiff;
+      // 2. Secondary Sort: Manual sortOrder (if defined and non-zero)
+      const orderA = a.sortOrder || 0;
+      const orderB = b.sortOrder || 0;
+      if (orderA !== orderB) return orderA - orderB;
 
-      const orderA = a.sortOrder !== undefined ? a.sortOrder : 999;
-      const orderB = b.sortOrder !== undefined ? b.sortOrder : 999;
-      return orderA - orderB;
+      // 3. Tertiary Sort: Time (Explicit or Predicted)
+      const timeA = getSortTime(a);
+      const timeB = getSortTime(b);
+      if (timeA !== timeB) return timeA - timeB;
+
+      // 4. Final Tie-breaker: Category Rank
+      return getCategoryRank(a) - getCategoryRank(b);
     });
   },
 }));

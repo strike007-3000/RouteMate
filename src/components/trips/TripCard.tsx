@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Trash2, Copy, ArrowRight } from 'lucide-react';
 import { Trip } from '@/lib/db';
 import { useTripStore } from '@/stores/useTripStore';
+import { cn } from '@/lib/utils';
 
 interface TripCardProps {
   trip: Trip;
@@ -13,7 +14,8 @@ interface TripCardProps {
 
 export const TripCard = ({ trip, onSelect }: TripCardProps) => {
   const { deleteTrip, duplicateTrip } = useTripStore();
-  const [imageUrl, setImageUrl] = React.useState(trip.coverImage || '');
+  const [imageUrl, setImageUrl] = useState(trip.coverImage || '');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Status tokens for vibrant UI
   const statusColors = {
@@ -93,11 +95,22 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (confirm('Delete this trip?')) deleteTrip(trip.id!);
+                if (!isDeleting) {
+                  setIsDeleting(true);
+                  setTimeout(() => setIsDeleting(false), 3000);
+                } else {
+                  deleteTrip(trip.id!);
+                }
               }}
-              className="w-10 h-10 rounded-2xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center border border-red-500/20"
+              className={cn(
+                "h-10 rounded-2xl transition-all flex items-center justify-center gap-2 border",
+                isDeleting 
+                  ? "bg-red-600 text-white border-red-500 px-4 shadow-lg shadow-red-500/20" 
+                  : "bg-red-500/10 text-red-500 border-red-500/20 w-10 hover:bg-red-500 hover:text-white"
+              )}
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className={cn("w-4 h-4", isDeleting && "animate-pulse")} />
+              {isDeleting && <span className="text-[10px] font-black uppercase tracking-tighter">Confirm?</span>}
             </button>
             <button 
               type="button"

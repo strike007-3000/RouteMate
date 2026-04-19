@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Plane, Hotel, MapPin, Clock, Utensils, Train, Car, GripVertical } from 'lucide-react';
+import { Plane, Hotel, MapPin, Clock, Utensils, Train, Car, GripVertical, ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ItineraryItem } from '@/lib/db';
 import { format } from 'date-fns';
@@ -18,7 +18,13 @@ const categoryConfig = {
 
 export const TimelineItem = ({ point, dragControls }: { point: ItineraryItem, dragControls?: any }) => {
   const config = categoryConfig[point.category as keyof typeof categoryConfig] || categoryConfig.Activity;
-  const Icon = config.icon;
+  
+  // Lodging Life-cycle Icons
+  let Icon = config.icon;
+  if (point.category === 'Lodging') {
+    if (point.title.toLowerCase().includes('check-in')) Icon = ArrowDownToLine;
+    else if (point.title.toLowerCase().includes('check-out')) Icon = ArrowUpFromLine;
+  }
   
   return (
     <div className="relative pl-10 pb-4">
@@ -51,7 +57,9 @@ export const TimelineItem = ({ point, dragControls }: { point: ItineraryItem, dr
           </div>
           <div className="flex items-center gap-2 text-zinc-500">
             <Clock className="w-3 h-3" />
-            <span className="text-[10px] font-black tracking-widest">{format(new Date(point.startTime), 'HH:mm')}</span>
+            <span className="text-[10px] font-black tracking-widest uppercase">
+              {point.isTimeExplicit === false ? 'Time TBD' : format(new Date(point.startTime), 'HH:mm')}
+            </span>
           </div>
         </div>
         
@@ -76,7 +84,7 @@ export const TimelineItem = ({ point, dragControls }: { point: ItineraryItem, dr
           
           <div 
             className="pt-1 text-zinc-700 hover:text-zinc-500 transition-colors cursor-grab active:cursor-grabbing touch-none"
-            onPointerDown={(e) => dragControls.start(e)}
+            onPointerDown={(e) => dragControls?.start(e)}
           >
             <GripVertical className="w-5 h-5" />
           </div>

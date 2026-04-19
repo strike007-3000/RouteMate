@@ -13,21 +13,26 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
     hereApiKey,
     setHereApiKey,
     orsApiKey,
-    setOrsApiKey
+    setOrsApiKey,
+    unsplashAccessKey,
+    setUnsplashAccessKey
   } = useSettingsStore();
 
   const [tempNvidiaKey, setTempNvidiaKey] = useState(nvidiaApiKey);
   const [tempHereKey, setTempHereKey] = useState(hereApiKey || '');
   const [tempOrsKey, setTempOrsKey] = useState(orsApiKey || '');
+  const [tempUnsplashKey, setTempUnsplashKey] = useState(unsplashAccessKey || '');
   const [showNvidiaKey, setShowNvidiaKey] = useState(false);
   const [showHereKey, setShowHereKey] = useState(false);
   const [showOrsKey, setShowOrsKey] = useState(false);
+  const [showUnsplashKey, setShowUnsplashKey] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
   const handleSave = () => {
     setNvidiaApiKey(tempNvidiaKey);
     setHereApiKey(tempHereKey);
     setOrsApiKey(tempOrsKey);
+    setUnsplashAccessKey(tempUnsplashKey);
     setIsSaved(true);
     setTimeout(() => {
       setIsSaved(false);
@@ -91,6 +96,27 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
 
               <div>
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 block">
+                  Unsplash Access Key (Atmospheric Images)
+                </label>
+                <div className="relative">
+                  <input
+                    type={showUnsplashKey ? "text" : "password"}
+                    value={tempUnsplashKey}
+                    onChange={(e) => setTempUnsplashKey(e.target.value)}
+                    placeholder="Access Key..."
+                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+                  />
+                  <button 
+                    onClick={() => setShowUnsplashKey(!showUnsplashKey)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showUnsplashKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 block">
                   OpenRouteService API Key (Walking Logistics)
                 </label>
                 <div className="relative">
@@ -125,6 +151,8 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
                     clearNvidiaApiKey();
                     setTempNvidiaKey('');
                     setTempHereKey('');
+                    setTempOrsKey('');
+                    setTempUnsplashKey('');
                   }}
                   className="flex-1 py-4 rounded-2xl bg-secondary text-xs font-bold hover:bg-muted transition-colors"
                 >
