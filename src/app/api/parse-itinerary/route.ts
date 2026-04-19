@@ -10,12 +10,14 @@ export async function POST(req: Request) {
 
     const serverKey = process.env.NVIDIA_API_KEY;
     const clientKey = req.headers.get('x-user-nvidia-key');
-    const apiKey = serverKey && serverKey !== 'your_nvidia_api_key_here' ? serverKey : clientKey;
+    const apiKey = (serverKey && serverKey.startsWith('nvapi-')) ? serverKey : clientKey;
     
     const model = process.env.NVIDIA_MODEL_PRIMARY || 'stepfun-ai/step-3.5-flash';
 
-    // Mock logic if no API key is provided anywhere
-    if (!apiKey || apiKey === 'your_nvidia_api_key_here') {
+    console.log('Extraction Request:', { hasKey: !!apiKey, textLength: text.length });
+
+    // Mock logic if no valid API key is provided
+    if (!apiKey || apiKey === 'your_nvidia_api_key_here' || !apiKey.startsWith('nvapi-')) {
       // Artificial delay for realism
       await new Promise(r => setTimeout(r, 1500));
 
@@ -77,8 +79,11 @@ export async function POST(req: Request) {
     const data = await response.json();
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      console.error('AI Provider Error:', data);
-      return NextResponse.json({ error: 'AI provider failed to return a response' }, { status: 502 });
+      console.error('AI Provider Error Details:', JSON.stringify(data));
+      return NextResponse.json({ 
+        error: 'AI provider failed', 
+        details: data.error || 'Unknown provider error' 
+      }, { status: 502 });
     }
 
     const content = data.choices[0].message.content;

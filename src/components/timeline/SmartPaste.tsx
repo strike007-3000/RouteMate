@@ -6,6 +6,7 @@ import { Sparkles, X, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useTripStore } from '@/stores/useTripStore';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 import { cn } from '@/lib/utils';
+import { db } from '@/lib/db';
 
 export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
   const [text, setText] = useState('');
@@ -30,10 +31,36 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
 
       const data = await response.json();
       
-      if (data.points) {
+      if (data.points && data.points.length > 0) {
         for (const point of data.points) {
           await addPoint(point);
         }
+
+        // Update trip details if they are default/empty
+        const currentTrip = useTripStore.getState().activeTrip;
+        if (currentTrip && currentTrip.id) {
+          const isDefaultName = !currentTrip.name || currentTrip.name === 'New Adventure';
+          const isDefaultDest = !currentTrip.destination || currentTrip.destination === 'Select Destination';
+          
+          const updates: any = {};
+          if (isDefaultName) updates.name = data.points[0].title;
+          if (isDefaultDest) updates.destination = data.points[0].address;
+          
+          // Dates: If trip dates are very recent (default start is new Date()), overwrite
+          const tripStart = new Date(currentTrip.startDate).getTime();
+          const now = Date.now();
+          const isDefaultDates = Math.abs(tripStart - now) < 60000; // Created within last minute
+          
+          if (isDefaultDates) {
+            updates.startDate = data.points[0].startTime;
+            updates.endDate = data.points[data.points.length - 1].endTime || data.points[data.points.length - 1].startTime;
+          }
+          
+          if (Object.keys(updates).length > 0) {
+            await db.trips.update(currentTrip.id, updates);
+          }
+        }
+
         setStatus('success');
         setTimeout(() => {
           onClose();

@@ -8,14 +8,14 @@ import { TripCard } from '@/components/trips/TripCard';
 import { useRouter } from 'next/navigation';
 
 import { BottomNav } from '@/components/layout/BottomNav';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '@/lib/db';
 
 export default function Dashboard() {
-  const { trips, fetchTrips, createTrip } = useTripStore();
+  const { createTrip } = useTripStore();
   const router = useRouter();
 
-  useEffect(() => {
-    fetchTrips();
-  }, [fetchTrips]);
+  const trips = useLiveQuery(() => db.trips.toArray(), []) || [];
 
   const upcomingTrips = trips.filter(t => t.status === 'upcoming');
   const pastTrips = trips.filter(t => t.status === 'past');
@@ -45,8 +45,8 @@ export default function Dashboard() {
           animate={{ opacity: 1, x: 0 }}
           className="relative z-10"
         >
-          <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-4 block">RouteMate Premium</span>
-          <h1 className="text-5xl font-black text-white tracking-tighter leading-none mb-3">My Trips</h1>
+          <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-4 block">RouteMate</span>
+          <h1 className="text-4xl font-black text-white tracking-tighter leading-none mb-3">My Trips</h1>
           <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest leading-relaxed max-w-[200px]">
             Plan smarter, travel cheap. Pocket Intelligence active.
           </p>
