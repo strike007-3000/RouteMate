@@ -1,4 +1,4 @@
-# RouteMate v2.2 - The Smart Travel Companion 🌍✈️
+# RouteMate v2.3 - The Smart Travel Companion 🌍✈️
 
 RouteMate is a mobile-first, offline-capable travel intelligence application. Version 2.0 introduced a massive architectural shift from simple itineraries to a **Date-Grouped Intelligence Engine** that manages your entire travel flow.
 
@@ -29,7 +29,10 @@ Uniform, high-end "ROUTEMATE" signature across all screens with contextual back-
 Replaced instant placeholders with a premium **New Trip Modal** to capture precise destinations and dates before planning begins.
 
 ### 🔀 Smart Sorting & Lifecycle (v2.2)
-Introduced a global **Chronological Sorting Engine** and **Lodging Split** logic. Stays are now automatically parsed into separate Check-in and Check-out events to ensure perfect timeline alignment.
+Introduced a global **Chronological Sorting Engine** and **Lodging Split** logic.
+
+### 🎯 Precision Logic (v2.3)
+Upgraded to pinpoint accuracy with **True Origin Routing** (airport-to-hotel) and **Category-Tiered Sorting** to resolve itinerary conflicts.
 
 ## 🛠️ Tech Stack
 

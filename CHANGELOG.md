@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.0] - 2026-04-19
+
+### 🎯 Precision Architecture
+- **True Origin Routing**: Transit links now use the exact arrival airport or full street address of the previous item as the origin.
+- **Category-Tiered sorting**: Implemented a 6-tier rank system to resolve chronological conflicts (Arrivals > Check-in > Activity > Departures).
+- **Airport Code Badges**: Prominently display IATA codes (BRU, JFK) on flight cards for visual verification.
+
 ## [2.2.0] - 2026-04-19
 
 ### 📅 Itinerary Intelligence

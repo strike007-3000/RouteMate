@@ -1,6 +1,6 @@
 # RouteMate Engineering Wiki 🛠️
 
-Deep-dive documentation for RouteMate v2.2 Architecture.
+Deep-dive documentation for RouteMate v2.3 Architecture.
 
 ---
 
@@ -11,8 +11,11 @@ Version 2.0 migrated the database to a grouped logic. Itinerary items now carry 
 - **Category Mapping**: AI extracts entries into `Flight`, `Lodging`, `Food`, `Train`, `Activity`, or `Rental`.
 - **Coordinate Fidelity**: Every item stores a `coordinates` object (`{lat, lng}`) allowing the logistics engine to function without additional API lookups during the "Timeline Flow" view.
 
-### Grouping Logic (v2.2)
-To avoid timezone regressions, we use String-Based Date Comparison. v2.2 introduced a **Global Sorting Engine** that further refines internal grouping by prioritizing categories (`Flight` > `Train` > `Lodging`) when times are identical. This ensures that a flight arrival always precedes a hotel check-in in the UI.
+### Grouping Logic (v2.3)
+To avoid timezone regressions, we use String-Based Date Comparison. v2.3 introduced a **Category-Rank Sorting System** that resolves chronological conflicts when times are identical (or missing):
+- **Arrivals** (Rank 1-2): Always float to the top.
+- **Check-in/Food/Activities** (Rank 3-4): Sandwiched in the middle.
+- **Check-out/Departures** (Rank 5-6): Sunk to the bottom.
 
 ---
 
@@ -24,18 +27,14 @@ The logistics engine now features a switch logic based on distance thresholds ca
 // Formula implementation in TransitCard.tsx
 const R = 6371; // Earth's Radius (KM)
 const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(lat1) * Math.cos(lat2) *
+          Math.cos(from.coordinates.lat * Math.PI / 180) * Math.cos(to.coordinates.lat * Math.PI / 180) *
           Math.sin(dLon / 2) * Math.sin(dLon / 2);
 const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 const distance = R * c;
 ```
 
-### Thresholds:
-- **Intra-city (< 50km)**: Uses `travelmode=transit`. Best for subway/bus handoffs.
-- **Inter-city (>= 50km)**: Uses `travelmode=driving`. Best for cross-city train/car connections.
-
-### 2.1 Smart Origin Detection (Flight Segments)
-To handle multi-leg journeys correctly, the engine identifies `Flight` segments and parses arrival destinations (e.g., "Oslo to Brussels") to use as the starting point for subsequent transit directions, bypassing the departure airport address.
+### 2.1 True Origin Routing (v2.3)
+Transit links are now context-aware. The engine identifies the `arrivalAirport` (if preceding item is a flight) or `fullAddress` of the previous item and injects it as the `origin` for the next Google Maps leg. This replaces city-level routing with pinpoint point-to-point accuracy.
 
 ---
 
@@ -43,15 +42,15 @@ To handle multi-leg journeys correctly, the engine identifies `Flight` segments 
 
 We follow a **"Quiet Luxury"** design philosophy:
 - **Identity**: Centered/Left-aligned `ROUTEMATE` tag in `text-[10px] tracking-[0.5em]`.
-- **Color Glows**: Category specific cards use `shadow-category/20` and `border-category/30`.
-- **Compact Widget Bar (v2.1)**: Dashboard widgets use a single-row flex layout with `overflow-x-auto` to minimize vertical footprint.
-- **Layout Transitions (v2.2)**: Integrated `framer-motion` layout animations for smooth chronological reordering.
+- **Airport Code Badges (v2.3)**: Flight cards prominently display IATA codes (e.g., BRU) to provide visual confirmation of accurate landing data.
+- **Compact Widget Bar (v2.1)**: Dashboard widgets use a single-row flex layout.
+- **Layout Transitions (v2.2)**: Integrated `framer-motion` layout animations.
 
 ---
 
 ## 4. AI Prompt Engineering (Smart Add)
 
-The extraction prompt in `/api/parse-itinerary` is hardened for JSON fidelity. 
-- **Instruction**: Return ONLY a JSON array.
-- **Classification Rules**: Explicit mapping for hotel -> Lodging, restaurant -> Food, etc.
-- **Lodging Split (v2.2)**: Specifically instructs the AI to generate TWO distinct entries (Check-in/Check-out) for date-range hotel stays.
+The extraction prompt in `/api/parse-itinerary` is hardened for accuracy. 
+- **Precision Data (v2.3)**: Instructs the AI to capture `arrivalAirport`, `departureAirport`, and `fullAddress` metadata.
+- **Sorting Metadata**: AI prefixes flight titles with "Arrival:" or "Departure:" to facilitate the Category-Rank engine.
+- **Lodging Split (v2.2)**: Specifically instructs the AI to generate TWO distinct entries (Check-in/Check-out).

@@ -131,27 +131,18 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                     onClick={(e) => {
                       e.stopPropagation();
                       
-                      // Address Cleaning & Flight Destination Logic
-                      const cleanAddress = (addr: string) => {
-                        if (!addr) return '';
-                        return addr.split(/\s(to|from)\s/i)[0].trim();
+                      // True Origin Routing Logic
+                      const getPreciseLocation = (item: TripPoint) => {
+                        if (item.category === 'Flight') {
+                          // Prioritize arrival airport metadata if it exists
+                          return item.metadata?.arrivalAirport || item.address;
+                        }
+                        // For hotels/activities, use the full address
+                        return item.metadata?.fullAddress || item.address;
                       };
 
-                      const extractDestinationFromFlightTitle = (title: string) => {
-                        // Matches "X to Y" or "Flight to Y"
-                        const toMatch = title.match(/to\s+([^,]+)/i);
-                        return toMatch ? toMatch[1].trim() : null;
-                      };
-
-                      let origin = cleanAddress(from.address) || "My+Location";
-                      
-                      // Special case: Segment following a flight
-                      if (from.category === 'Flight') {
-                        const flightDest = extractDestinationFromFlightTitle(from.title);
-                        if (flightDest) origin = flightDest;
-                      }
-
-                      const destination = cleanAddress(to.address);
+                      const origin = getPreciseLocation(from);
+                      const destination = getPreciseLocation(to);
                       const mode = isInterCity ? 'driving' : 'transit';
                       
                       const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;

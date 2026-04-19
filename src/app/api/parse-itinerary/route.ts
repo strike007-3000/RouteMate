@@ -76,9 +76,11 @@ export async function POST(req: Request) {
             }]
             
             RULES:
-            - If it's a hotel/stay, category is 'Lodging'.
+            - If it's a hotel/stay, category is 'Lodging'. Provide the 'fullAddress' including street name.
             - If it's a restaurant/bar, category is 'Food'.
-            - If it's a flight, category is 'Flight'.
+            - If it's a flight, category is 'Flight'. 
+                - Prefix title with 'Arrival:' or 'Departure:' (e.g. 'Arrival: Oslo to Brussels').
+                - Include 'arrivalAirport' (e.g., 'Brussels Airport BRU') and 'departureAirport' in the metadata object.
             - LODGING SPLIT: If a stay covers a date range (e.g. June 1st to 5th), generate TWO objects: 1. 'Check-in at [Hotel]' on the start date (default 15:00) and 2. 'Check-out from [Hotel]' on the end date (default 11:00).
             - Extract the most accurate coordinates available for the address.
             - Output ONLY the raw JSON array, no explanation.`
