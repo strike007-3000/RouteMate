@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, ItineraryItem } from '@/lib/db';
 import { useTripStore } from '@/stores/useTripStore';
-import { format } from 'date-fns';
+import { format, formatDistanceToNow, parseISO } from 'date-fns';
 
 interface BentoBoxProps {
   title: string;

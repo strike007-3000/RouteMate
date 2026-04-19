@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.6.3] - 2026-04-19
+
+### 🛡️ Build & Stability
+- **Fixed Missing Import**: Resolved `parseISO` build error in `BentoGrid.tsx` that was blocking production deployment.
+
 ## [2.6.2] - 2026-04-19
 
 ### 🧬 Sequencing & extraction Hardening
