@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.0](https://github.com/strike007-3000/RouteMate/compare/v2.1.0...v2.2.0) (2026-04-19)
+
+
+### Features
+
+* global sorting engine, ai lodging split, and ui shortcuts v2.2.0 ([85295de](https://github.com/strike007-3000/RouteMate/commit/85295de9bc5f7d32fc6b8d6e1bc2286b80afadca))
+
+
+### Bug Fixes
+
+* add missing format import in BentoGrid ([a0d9fbe](https://github.com/strike007-3000/RouteMate/commit/a0d9fbeaa90288bf779f9d3e1731f44c73289f34))
+
 ## [2.2.0] - 2026-04-19
 
 ### 📅 Itinerary Intelligence
