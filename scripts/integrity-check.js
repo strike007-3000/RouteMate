@@ -20,7 +20,7 @@ const Log = {
 };
 
 async function runTests() {
-  Log.header('RouteMate v2.6.3 Interactive Integrity Suite');
+  Log.header('RouteMate v2.6.4 Interactive Integrity Suite');
 
   const nvidiaKey = await ask('Enter NVIDIA NIM API Key: ');
   const unsplashKey = await ask('Enter Unsplash Access Key: ');

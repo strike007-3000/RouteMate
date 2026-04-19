@@ -2,67 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.3.1](https://github.com/strike007-3000/RouteMate/compare/v2.3.0...v2.3.1) (2026-04-19)
+## [2.6.4] - 2026-04-19
 
+### 🧠 Logic & Reordering (Fixing "Not Moving")
+- **Wired Drag Handles**: Implemented `useDragControls` and attached it specifically to the **Vertical Grip (dots) icon**. Precision manual reordering is now fully enabled.
+- **Unified Sorting**: Updated the core sorting engine to prioritize manual `sortOrder` as the primary tie-breaker for items with identical times.
+- **Transactional Persistence**: Manual order changes are now persisted to Dexie v4.
 
-### Bug Fixes
+### 💎 Visual Overhaul & Glassmorphism
+- **Itinerary Header**: Implemented "Glassmorphism Overlay" for the title card using `backdrop-blur-2xl` on top of scenic hero images.
+- **Hero Card Fidelity**: Optimized `TripCard.tsx` with dynamic `object-cover` and `animate-pulse` loading states.
 
-* resolve missing parseISO import for production build ([aa92537](https://github.com/strike007-3000/RouteMate/commit/aa9253722b7a38d04a5f7378dd034b18edc1fa6a))
-* total production hardening - resolve build blockers, lint errors, and ci deprecations ([c48bd57](https://github.com/strike007-3000/RouteMate/commit/c48bd57089f3b0e918b888de4caaf6ee359bf962))
-* v2.6.1 repairs AI failover and visual hero gradients ([d59e2db](https://github.com/strike007-3000/RouteMate/commit/d59e2dba159e97f6b085831ff372ce05e33311f2))
-
-## [2.6.3] - 2026-04-19
-
-### 🛡️ Build & Stability
+### 🛡️ Build & Stability (The Hardening Pass)
+- **Resolved ESLint Blockers**: Fixed 11 critical errors (React purity, cascading renders, any types, unescaped entities).
+- **TypeScript Fidelity**: Migrated unsafe `any` records to strict `unknown` types with proper casting.
+- **CI/CD Alignment**: Migrated `release-please.yml` to the official namespace to resolve deprecation warnings.
 - **Fixed Missing Import**: Resolved `parseISO` build error in `BentoGrid.tsx` that was blocking production deployment.
 
-## [2.6.2] - 2026-04-19
+### 🧬 Sequencing & Extraction Hardening
+- **Mistral v4 Transition**: Successfully migrated to the **Mistral Small 4 (119B)** engine (`2603` snapshot).
+- **Chronological Enforcement**: Refined system prompts to strictly lock **Hotel Check-ins at 15:00** and arrivals at 08:00.
+- **Diagnostic Tooling**: Introduced `npm run test:integrity` to verify API connectivity and logic sequencing before deployment.
 
-### 🧬 Sequencing & extraction Hardening
-- **Mistral v4 Transition**: Successfully migrated to the **Mistral Small 4 (119B)** engine (`2603` snapshot) to resolve 410 'Gone' errors and improve extraction speed.
-- **Chronological Enforcement**: Refined system prompts to strictly lock **Hotel Check-ins at 15:00** and arrivals at 08:00, preventing itinerary overlaps.
-- **Flat Array Enforcement**: Implemented strict JSON schema rules to prevent nested objects in AI responses.
+---
 
-### 🛡️ Diagnostic Tooling (Pre-Flight)
-- **Integrity Utility**: Introduced `npm run test:integrity`, a robust diagnostic suite to verify API connectivity (Unsplash, ORS, NVIDIA) and logic sequencing before deployment.
-- **Spatial Accuracy**: Verified **OpenRouteService (ORS)** geocoding and coordinate resolution.
-
-
-## [2.6.1] - 2026-04-19
-
-### 🛡️ AI Reliability & Failover
-- **Mistral Large Fallback**: Implemented an automatic failover to **Mistral Large 3** if the primary Small model fails or returns malformed JSON.
-- **Model ID Correction**: Standardized on full `mistralai/` identifiers for optimized NIM routing.
-
-### 💎 Visual Hardening & Telemetry
-- **Hero Gradient System**: Added premium sapphire-to-charcoal gradients behind all trip cards and timeline headers. No more "Black Cards" when Unsplash is unavailable.
-- **Global Dashboard Telemetry**: Repaired the "Countdown" widget to scan for upcoming points across ALL trips when no specific trip is active.
-- **Service Resilience**: Added a scenic fallback asset to the `UnsplashService`.
-
-## [2.6.0] - 2026-04-19
-
-### 🔀 Hybrid Intelligence (Manual Reordering)
-- **Fluid Reorder API**: Integrated `framer-motion` Reorder API for "elastic" drag-and-drop timeline management.
-- **Transactional Persistence**: Manual order changes are now persisted to Dexie v4 as a `sortOrder` override.
-- **Visual Affordance**: Added dedicated **Grip Handles** to all itinerary cards for intuitive interaction.
-
-### 🧠 Performance & Logic Hardening
-- **Mistral Small Pivot**: Switched AI engine to `mistralai/mistral-small-3.1-24b-instruct-2503` for near-instant responses.
-- **Smart Time Buffers**: Explicitly hardcoded logical offsets for time-less entries (Arrival 08:00 / Departure 20:00).
-- **Dexie v4 Schema**: Upgraded database to support the manual sorting layer.
-
-## [2.5.0] - 2026-04-19
-
-### 📍 Intelligent Routing Refinement
-- **Airport Precision**: Improved flight metadata extraction to capture specific terminals and gate locations.
-- **Transit UX**: Enhanced `TransitCard` to handle ambiguous addresses with smarter Google Maps API parameters.
-
-## [2.4.0] - 2026-04-19
-
-### 🖼️ Unsplash Visual Suite
-- **Hero Trip Cards**: Trip tiles now feature full-bleed destination imagery with layered gradient overlays.
-- **Atmospheric Itinerary**: Added a blurred hero-background system with glassmorphism overlays for trip titles.
-- **Dexie Image Cache**: Implemented an `UnsplashService` that caches destination imagery locally to minimize API hits.
+## [2.3.0](https://github.com/strike007-3000/RouteMate/compare/v2.2.0...v2.3.0) (2026-04-19)
 
 ## [2.3.0](https://github.com/strike007-3000/RouteMate/compare/v2.2.0...v2.3.0) (2026-04-19)
 
