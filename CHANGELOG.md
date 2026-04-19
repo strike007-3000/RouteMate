@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.4.0](https://github.com/strike007-3000/RouteMate/compare/v2.3.1...v2.4.0) (2026-04-19)
+
+
+### Features
+
+* release v2.7.0 with implicit hubs and dashboard image resilience ([c2a446b](https://github.com/strike007-3000/RouteMate/commit/c2a446b3c4744a0aadfb98602881ef7eba8f5455))
+* release v2.7.1 stability patch - fixed reorder, routing, and extraction [skip ci] ([e40bfe2](https://github.com/strike007-3000/RouteMate/commit/e40bfe23bbfbf1df922b3f475c06ae05bee8dfb3))
+
+
+### Bug Fixes
+
+* v2.6.4 aesthetics & logic - repair manual reordering, glassmorphism, and trip card image fidelity ([66a2a2a](https://github.com/strike007-3000/RouteMate/commit/66a2a2a99ca3b72c4b40bf7c46d021c069246159))
+
 ## [2.7.0] - 2026-04-19
 
 ### 🧠 The "Implicit Hub" Engine (Logistics Phase 2)
