@@ -6,6 +6,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 name: release-please
 
@@ -15,5 +16,6 @@ jobs:
     steps:
       - uses: google-github-actions/release-please-action@v4
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           # this appends a generated changelog to the release
           release-type: node
