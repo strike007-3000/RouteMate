@@ -1,4 +1,4 @@
-# RouteMate v2.0 - The Smart Travel Companion 🌍✈️
+# RouteMate v2.1 - The Smart Travel Companion 🌍✈️
 
 RouteMate is a mobile-first, offline-capable travel intelligence application. Version 2.0 introduces a massive architectural shift from simple itineraries to a **Date-Grouped Intelligence Engine** that manages your entire travel flow.
 
@@ -23,7 +23,10 @@ Itinerary points are now classified into 6 smart categories: `Flight`, `Lodging`
 - **AI-Powered Extraction**: NVIDIA NIM high-fidelity coordinate extraction for precise routing.
 
 ### 🎨 Minimalist Premium Branding
-Uniform, high-end "ROUTEMATE" signature across all screens with contextual back-navigation for a seamless, immersive experience.
+Uniform, high-end "ROUTEMATE" signature across all screens with contextual back-navigation. v2.1 introduces a **Compact Widget Row** to optimize itinerary real estate.
+
+### 📅 Interactive Creation (v2.1)
+Replaced instant placeholders with a premium **New Trip Modal** to capture precise destinations and dates before planning begins.
 
 ## 🛠️ Tech Stack
 

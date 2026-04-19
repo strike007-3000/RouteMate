@@ -8,12 +8,14 @@ import { TripCard } from '@/components/trips/TripCard';
 import { useRouter } from 'next/navigation';
 
 import { BottomNav } from '@/components/layout/BottomNav';
+import { NewTripModal } from '@/components/trips/NewTripModal';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 
 export default function Dashboard() {
   const { createTrip } = useTripStore();
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const trips = useLiveQuery(() => db.trips.toArray(), []) || [];
 
@@ -21,14 +23,15 @@ export default function Dashboard() {
   const pastTrips = trips.filter(t => t.status === 'past');
   const draftTrips = trips.filter(t => t.status === 'draft');
 
-  const handleCreateNew = async () => {
+  const handleCreateNew = async (data: { destination: string, startDate: string, endDate: string }) => {
     const id = await createTrip({
-      name: 'New Adventure',
-      destination: 'Select Destination',
-      startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 86400000 * 7).toISOString(),
+      name: `Trip to ${data.destination}`,
+      destination: data.destination,
+      startDate: data.startDate,
+      endDate: data.endDate,
       status: 'upcoming'
     });
+    setIsModalOpen(false);
     router.push(`/trip/${id}`);
   };
 
@@ -53,7 +56,7 @@ export default function Dashboard() {
         </motion.div>
 
         <button 
-          onClick={handleCreateNew}
+          onClick={() => setIsModalOpen(true)}
           className="mt-10 group relative w-full h-14 bg-primary rounded-2xl flex items-center justify-center gap-3 overflow-hidden active:scale-95 transition-transform shadow-lg shadow-primary/20"
         >
           <div className="absolute inset-0 bg-white/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300" />
@@ -105,7 +108,7 @@ export default function Dashboard() {
             <h3 className="text-lg font-black text-white mb-2">Ready for a new adventure?</h3>
             <p className="text-xs text-zinc-500 font-bold mb-8">Start by creating your first itinerary. We'll handle the logistics.</p>
             <button 
-              onClick={handleCreateNew}
+              onClick={() => setIsModalOpen(true)}
               className="px-8 py-4 rounded-2xl border border-primary/20 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 transition-colors"
             >
               Plan first trip
@@ -113,6 +116,12 @@ export default function Dashboard() {
           </motion.div>
         )}
       </section>
+
+      <NewTripModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onCreate={handleCreateNew} 
+      />
 
       <BottomNav />
     </main>

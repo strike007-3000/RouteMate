@@ -1,6 +1,6 @@
 # RouteMate Engineering Wiki 🛠️
 
-Deep-dive documentation for RouteMate v2.0 Architecture.
+Deep-dive documentation for RouteMate v2.1 Architecture.
 
 ---
 
@@ -33,7 +33,10 @@ const distance = R * c;
 
 ### Thresholds:
 - **Intra-city (< 50km)**: Uses `travelmode=transit`. Best for subway/bus handoffs.
-- **Inter-city (>= 50km)**: Uses `travelmode=driving`. Best for cross-city train/car connections where subway routing fails.
+- **Inter-city (>= 50km)**: Uses `travelmode=driving`. Best for cross-city train/car connections.
+
+### 2.1 Smart Origin Detection (Flight Segments)
+To handle multi-leg journeys correctly, the engine identifies `Flight` segments and parses arrival destinations (e.g., "Oslo to Brussels") to use as the starting point for subsequent transit directions, bypassing the departure airport address.
 
 ---
 
@@ -43,6 +46,7 @@ We follow a **"Quiet Luxury"** design philosophy:
 - **Identity**: Centered/Left-aligned `ROUTEMATE` tag in `text-[10px] tracking-[0.5em]`.
 - **Color Glows**: Category specific cards use `shadow-category/20` and `border-category/30` to provide visual grouping without excessive color noise.
 - **16px Grid System**: Every component is strictly aligned to a 4-unit grid system (`p-4`, `gap-4`).
+- **Compact Widget Bar (v2.1)**: Dashboard widgets use a single-row flex layout with `overflow-x-auto` to minimize vertical footprint while maintaining accessibility.
 
 ---
 
