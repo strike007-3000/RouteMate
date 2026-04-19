@@ -30,19 +30,20 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
       className="group relative w-full h-[280px] rounded-[2.5rem] overflow-hidden border border-white/10 hover:border-primary/50 transition-all duration-700 cursor-pointer shadow-2xl shadow-black"
     >
       {/* Hero Background */}
-      <div className="absolute inset-0">
-        {trip.coverImage && trip.coverImage !== "" ? (
+      <div className="absolute inset-0 bg-zinc-900">
+        {trip.coverImage ? (
           <img 
             src={trip.coverImage} 
             alt={trip.name} 
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 select-none"
+            loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#020617]" />
+          <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-zinc-800 to-black animate-pulse" />
         )}
         {/* Multi-layer Overlay for readability */}
-        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-700" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-700" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
       </div>
 
       {/* Top Bar: Status */}

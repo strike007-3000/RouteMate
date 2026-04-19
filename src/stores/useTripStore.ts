@@ -201,7 +201,9 @@ export const useTripStore = create<TripState>((set, get) => ({
       const rankDiff = getCategoryRank(a) - getCategoryRank(b);
       if (rankDiff !== 0) return rankDiff;
 
-      return (a.sortOrder || 0) - (b.sortOrder || 0);
+      const orderA = a.sortOrder !== undefined ? a.sortOrder : 999;
+      const orderB = b.sortOrder !== undefined ? b.sortOrder : 999;
+      return orderA - orderB;
     });
   },
 }));

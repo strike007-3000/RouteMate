@@ -16,7 +16,7 @@ const categoryConfig = {
   Rental: { icon: Car, color: 'text-teal-400', glow: 'shadow-teal-500/20', border: 'border-teal-500/30', bg: 'bg-teal-500/10' },
 };
 
-export const TimelineItem = ({ point }: { point: ItineraryItem }) => {
+export const TimelineItem = ({ point, dragControls }: { point: ItineraryItem, dragControls?: any }) => {
   const config = categoryConfig[point.category as keyof typeof categoryConfig] || categoryConfig.Activity;
   const Icon = config.icon;
   
@@ -74,7 +74,10 @@ export const TimelineItem = ({ point }: { point: ItineraryItem }) => {
             </p>
           </div>
           
-          <div className="pt-1 text-zinc-700 hover:text-zinc-500 transition-colors cursor-grab active:cursor-grabbing">
+          <div 
+            className="pt-1 text-zinc-700 hover:text-zinc-500 transition-colors cursor-grab active:cursor-grabbing touch-none"
+            onPointerDown={(e) => dragControls.start(e)}
+          >
             <GripVertical className="w-5 h-5" />
           </div>
         </div>
