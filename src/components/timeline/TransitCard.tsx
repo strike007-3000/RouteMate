@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Bus, Train, Footprints, ArrowRight, Loader2, Sparkles, Navigation } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TripPoint } from '@/stores/useTripStore';
@@ -14,6 +14,21 @@ interface TransitCardProps {
 export const TransitCard = ({ from, to }: TransitCardProps) => {
   const [suggestion, setSuggestion] = useState<TransitSuggestion | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Haversine Distance Logic
+  const distance = useMemo(() => {
+    if (!from.coordinates || !to.coordinates) return null;
+    const R = 6371; // km
+    const dLat = (to.coordinates.lat - from.coordinates.lat) * Math.PI / 180;
+    const dLon = (to.coordinates.lng - from.coordinates.lng) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(from.coordinates.lat * Math.PI / 180) * Math.cos(to.coordinates.lat * Math.PI / 180) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }, [from.coordinates, to.coordinates]);
+
+  const isInterCity = distance !== null && distance >= 50;
 
   useEffect(() => {
     const fetchTransit = async () => {
@@ -79,8 +94,12 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                     <Sparkles className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-primary uppercase tracking-tighter">Cheap Route Suggested</span>
-                    <p className="text-[10px] text-muted-foreground font-medium">Logistics detected</p>
+                    <span className="text-xs font-bold text-primary uppercase tracking-tighter">
+                      {isInterCity ? 'Inter-city Connection' : 'Cheap Route Suggested'}
+                    </span>
+                    <p className="text-[10px] text-muted-foreground font-medium">
+                      {isInterCity ? `${Math.round(distance || 0)}km distance` : 'Logistics detected'}
+                    </p>
                   </div>
                 </div>
                 <div className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
@@ -109,23 +128,27 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
               <div className="flex flex-col gap-2 mt-4">
                 {suggestion.externalUrl && (
                   <button 
-                    onClick={() => {
-                      // Logic to use current location if possible
-                      if (confirm('Use your current GPS location as the origin?')) {
-                        navigator.geolocation.getCurrentPosition((pos) => {
-                          const origin = `${pos.coords.latitude},${pos.coords.longitude}`;
-                          const dest = encodeURIComponent(to.address);
-                          const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=transit`;
-                          window.open(url, '_blank');
-                        });
-                      } else {
-                        window.open(suggestion.externalUrl, '_blank');
-                      }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      
+                      // Address Cleaning Logic
+                      const cleanAddress = (addr: string) => {
+                        if (!addr) return '';
+                        // Remove " to ...", " from ...", and terminal descriptors if they follow a "to"
+                        return addr.split(/\s(to|from)\s/i)[0].trim();
+                      };
+
+                      const origin = cleanAddress(from.address) || "My+Location";
+                      const destination = cleanAddress(to.address);
+                      const mode = isInterCity ? 'driving' : 'transit';
+                      
+                      const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;
+                      window.open(url, '_blank', 'noopener,noreferrer');
                     }}
                     className="w-full py-4 rounded-2xl bg-[#4285F4] text-white text-[10px] font-black hover:bg-[#357ABD] transition-all flex items-center justify-center gap-3 uppercase tracking-widest shadow-lg shadow-[#4285F4]/20 group/btn"
                   >
                     <Navigation className="w-4 h-4 fill-white animate-pulse" />
-                    Open Google Maps Transit
+                    {isInterCity ? 'Open Driving Directions' : 'Open Google Maps Transit'}
                     <div className="w-3 h-3 rounded-full bg-white/20 flex items-center justify-center">
                       <ArrowRight className="w-2 h-2 group-hover/btn:translate-x-0.5 transition-transform" />
                     </div>

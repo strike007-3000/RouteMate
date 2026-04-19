@@ -1,89 +1,67 @@
-# RouteMate - The Pocket-Friendly Open-Source Travel Planner 🌍✈️
+# RouteMate v2.0 - The Smart Travel Companion 🌍✈️
 
-RouteMate is a mobile-first, offline-capable travel itinerary application designed for the modern traveler. It focuses on **Automatic Logistics**: saving you from the "travel logistics gap" between your destinations.
+RouteMate is a mobile-first, offline-capable travel intelligence application. Version 2.0 introduces a massive architectural shift from simple itineraries to a **Date-Grouped Intelligence Engine** that manages your entire travel flow.
 
-![RouteMate Dashboard](file:///C:/Users/shrey/.gemini/antigravity/brain/0e01fd06-6822-4a3c-9a35-127841b6b242/routemate_timeline_mobile_1776541974050.png)
+![RouteMate v2.0 Dashboard](file:///C:/Users/shrey/.gemini/antigravity/brain/37aba8b9-8c19-4ec5-afe1-67743f820829/routemate_v2_dashboard.png)
 
-## ✨ Features
+## ✨ New in v2.0
 
-### 1. Multi-Trip Management (Wanderlog Style)
-Plan multiple adventures simultaneously. Your dashboard categorizes trips into **Upcoming**, **Past**, and **Drafts**, each with its own dynamic timeline and logistics engine.
+### 📅 Date-Grouped Timeline (The Accordion)
+Replaced the static Radar tab with a high-performance, date-grouped timeline.
+- **Smart Expansion**: Automatically expands "Today's" plans on load.
+- **Sticky Geography**: Headers stick to the top during scroll, so you always know which day you're viewing.
+- **Category Summary**: Day headers show icon badges (✈️ 🏨 🚆) for an instant itinerary overview.
 
-### 2. Magic Extraction (Powered by NVIDIA NIM)
-Paste messy confirmation emails or flight details. Our AI engine (Mistral/Step-3.5) extracts structured data specifically for your active trip.
+### 🧠 Transit Intelligence (The 50km Rule)
+Our new logistics engine calculates physical distance between stops using the **Haversine Formula**:
+- **Local (< 50km)**: One-tap Smart Handoff to **Google Maps Transit**.
+- **Inter-city (>= 50km)**: Automatically suggests **Driving Directions** and updates the UI to "Inter-city Connection."
 
-### 3. Smart Handoff Logistics
-- **Walking (< 2km)**: Detailed steps directly in your timeline.
-- **Transit (> 2km)**: One-tap **Smart Handoff** to Google Maps Transit, pre-configured with your specific origin and destination.
+### 💎 Category Intelligence & Glow
+Itinerary points are now classified into 6 smart categories: `Flight`, `Lodging`, `Food`, `Activity`, `Train`, and `Rental`.
+- **Unique Visual Identity**: Each category has a signature neon glow (Blue/Green/Amber/Purple).
+- **AI-Powered Extraction**: NVIDIA NIM high-fidelity coordinate extraction for precise routing.
 
-### 4. Visual Excellence (Unsplash Integration)
-Every trip card automatically fetches a stunning cover photo from Unsplash based on the destination name, creating a premium, travel-editor aesthetic.
-
-### 5. Destination Discovery & Radar
-- **Explore**: Curated destination recommendations for the modern nomad.
-- **Radar**: Satellite-level scanning for nearby transit hubs using the browser Geolocation API, with global fallbacks for restricted environments.
+### 🎨 Minimalist Premium Branding
+Uniform, high-end "ROUTEMATE" signature across all screens with contextual back-navigation for a seamless, immersive experience.
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 14 (App Router)
-- **Styling**: Tailwind CSS + Framer Motion
-- **Database**: Dexie.js (IndexedDB) + `dexie-react-hooks`
-- **AI**: NVIDIA NIM (Mistral Large 3 / Step 3.5 Flash)
-- **Maps**: OpenRouteService (OSM)
-- **State**: Zustand + LiveQuery Subscriptions
+- **Framework**: Next.js 16 (App Router)
+- **Styling**: Tailwind CSS 4 + Framer Motion (Accordion Physics)
+- **Database**: Dexie.js (IndexedDB) v3 (Grouped Schema)
+- **AI**: NVIDIA NIM (Llama 3.1 70B Instruct)
+- **Logistics**: Google Maps Directory API + Haversine Distance Logic
+
+## 🏗️ Architecture v2.0
+
+```mermaid
+graph TD
+    A[User UI - Next.js 16] --> B[Zustand Trip Intelligence Store]
+    A --> J[LiveQuery Subscriptions]
+    J --> C[Dexie.js v3 - Grouped Schema]
+    B --> C
+    C --> D[(Trips Table)]
+    C --> E[(Itinerary v3 Table - Categories & Coordinates)]
+    A --> F[NVIDIA NIM - Coordinate Extraction]
+    A --> G[Logistics Engine - 50km Rule]
+    G --> H[Google Maps - Transit Mode]
+    G --> I[Google Maps - Driving Mode]
+```
 
 ## 🚀 Getting Started
 
-1. **Clone the repository**:
+1. **Clone & Install**:
    ```bash
    git clone https://github.com/strike007-3000/RouteMate.git
-   ```
-2. **Install dependencies**:
-   ```bash
    npm install
    ```
-3. **Environment Setup**:
-   Copy `.env.example` to `.env` and add your `NVIDIA_API_KEY`. Alternatively, just run the app and enter your key in the **Settings** modal.
-4. **Run the app**:
+2. **Environment**:
+   Add `NVIDIA_API_KEY` to your `.env` or via the in-app settings.
+3. **Run**:
    ```bash
    npm run dev
    ```
 
-## 🏗️ Architecture
-
-```mermaid
-graph TD
-    A[User UI - Next.js 14] --> B[Zustand Multi-Trip Store]
-    A --> J[LiveQuery Subscriptions]
-    J --> C[Dexie.js / IndexedDB v2]
-    B --> C
-    C --> D[(Trips Table)]
-    C --> E[(Itinerary Table)]
-    A --> F[NVIDIA NIM AI]
-    A --> G[Logistics Engine]
-    G --> H[OpenRouteService - Walking]
-    G --> I[Google Maps - Smart Handoff]
-```
-
-## 🤝 Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
-## 🛡️ Security
-
-If you discover a security vulnerability, please review our [SECURITY.md](SECURITY.md) for reporting steps.
-
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🚀 Project Lifecycle & Releases
-
-RouteMate uses an automated delivery pipeline:
-- **Versioning**: Managed by `release-please` based on [Conventional Commits](https://www.conventionalcommits.org/).
-- **Automatic Changelogs**: Every merged feature automatically generates a professional changelog entry.
-- **Milestones**: Check the [Releases](https://github.com/strike007-3000/RouteMate/releases) tab for the latest stable builds and artifacts.
-
 ---
-Built with ❤️ for travelers by the RouteMate Community.
-
+Built with ❤️ for travelers who value intelligence and design.
