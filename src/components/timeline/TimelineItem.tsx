@@ -28,9 +28,17 @@ export const TimelineItem = ({ point }: { point: ItineraryItem }) => {
       </div>
       
       <motion.div 
+        layout
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ 
+          type: "spring",
+          stiffness: 300,
+          damping: 30
+        }}
         whileHover={{ scale: 1.01, y: -2 }}
         className={cn(
-          "p-5 rounded-3xl bg-zinc-900/50 border backdrop-blur-xl transition-all duration-500",
+          "p-5 rounded-3xl bg-zinc-900/50 border backdrop-blur-xl transition-all duration-300",
           config.border,
           config.glow,
           "shadow-lg"

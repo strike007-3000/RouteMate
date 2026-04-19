@@ -104,15 +104,17 @@ export default function TimelinePage() {
                     >
                       <div className="px-2 pb-6 space-y-0">
                         {day.items.length > 0 ? (
-                          day.items.map((item, idx) => {
-                            const nextItem = day.items[idx + 1];
-                            return (
-                              <React.Fragment key={item.id}>
-                                <TimelineItem point={item} />
-                                {nextItem && <TransitCard from={item} to={nextItem} />}
-                              </React.Fragment>
-                            );
-                          })
+                          <motion.div layout className="space-y-0">
+                            {day.items.map((item, idx) => {
+                              const nextItem = day.items[idx + 1];
+                              return (
+                                <React.Fragment key={item.id}>
+                                  <TimelineItem point={item} />
+                                  {nextItem && <TransitCard from={item} to={nextItem} />}
+                                </React.Fragment>
+                              );
+                            })}
+                          </motion.div>
                         ) : (
                           <div className="py-10 text-center flex flex-col items-center gap-3">
                             <Calendar className="w-8 h-8 text-zinc-700" />

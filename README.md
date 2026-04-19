@@ -1,10 +1,10 @@
-# RouteMate v2.1 - The Smart Travel Companion 🌍✈️
+# RouteMate v2.2 - The Smart Travel Companion 🌍✈️
 
-RouteMate is a mobile-first, offline-capable travel intelligence application. Version 2.0 introduces a massive architectural shift from simple itineraries to a **Date-Grouped Intelligence Engine** that manages your entire travel flow.
+RouteMate is a mobile-first, offline-capable travel intelligence application. Version 2.0 introduced a massive architectural shift from simple itineraries to a **Date-Grouped Intelligence Engine** that manages your entire travel flow.
 
-![RouteMate v2.0 Dashboard](file:///C:/Users/shrey/.gemini/antigravity/brain/37aba8b9-8c19-4ec5-afe1-67743f820829/routemate_v2_dashboard.png)
+![RouteMate v2.2 Dashboard](file:///C:/Users/shrey/.gemini/antigravity/brain/37aba8b9-8c19-4ec5-afe1-67743f820829/routemate_v2_dashboard.png)
 
-## ✨ New in v2.0
+## ✨ New in v2.0-v2.2
 
 ### 📅 Date-Grouped Timeline (The Accordion)
 Replaced the static Radar tab with a high-performance, date-grouped timeline.
@@ -23,10 +23,13 @@ Itinerary points are now classified into 6 smart categories: `Flight`, `Lodging`
 - **AI-Powered Extraction**: NVIDIA NIM high-fidelity coordinate extraction for precise routing.
 
 ### 🎨 Minimalist Premium Branding
-Uniform, high-end "ROUTEMATE" signature across all screens with contextual back-navigation. v2.1 introduces a **Compact Widget Row** to optimize itinerary real estate.
+Uniform, high-end "ROUTEMATE" signature across all screens with contextual back-navigation. v2.1 introduced a **Compact Widget Row** to optimize itinerary real estate.
 
 ### 📅 Interactive Creation (v2.1)
 Replaced instant placeholders with a premium **New Trip Modal** to capture precise destinations and dates before planning begins.
+
+### 🔀 Smart Sorting & Lifecycle (v2.2)
+Introduced a global **Chronological Sorting Engine** and **Lodging Split** logic. Stays are now automatically parsed into separate Check-in and Check-out events to ensure perfect timeline alignment.
 
 ## 🛠️ Tech Stack
 

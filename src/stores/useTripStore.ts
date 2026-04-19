@@ -38,6 +38,7 @@ interface TripState {
   // Itinerary Actions
   addPoint: (point: Omit<ItineraryItem, 'id'>) => Promise<void>;
   removePoint: (id: number) => Promise<void>;
+  sortItinerary: (points: ItineraryItem[]) => ItineraryItem[];
 }
 
 export const useTripStore = create<TripState>((set, get) => ({
@@ -85,7 +86,7 @@ export const useTripStore = create<TripState>((set, get) => ({
       const points = await db.itineraryItems.where('tripId').equals(id).toArray();
       set({ 
         activeTrip: trip, 
-        points: points.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()) 
+        points: get().sortItinerary(points)
       });
     }
   },
@@ -136,7 +137,7 @@ export const useTripStore = create<TripState>((set, get) => ({
     const item = { ...point, tripId: get().activeTrip!.id! } as ItineraryItem;
     await db.itineraryItems.add(item);
     const updated = await db.itineraryItems.where('tripId').equals(get().activeTrip!.id!).toArray();
-    set({ points: updated.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()) });
+    set({ points: get().sortItinerary(updated) });
   },
 
   removePoint: async (id: number) => {
@@ -144,5 +145,30 @@ export const useTripStore = create<TripState>((set, get) => ({
     await db.itineraryItems.where('id').equals(id).delete();
     const updated = get().points.filter((p) => p.id !== id);
     set({ points: updated });
+  },
+
+  sortItinerary: (points) => {
+    const categoryPriority = {
+      Flight: 1,
+      Train: 2,
+      Lodging: 3,
+      Food: 4,
+      Activity: 5,
+      Rental: 6
+    };
+
+    return [...points].sort((a, b) => {
+      const timeA = new Date(a.startTime).getTime();
+      const timeB = new Date(b.startTime).getTime();
+      
+      if (timeA !== timeB) {
+        return timeA - timeB;
+      }
+      
+      const priorityA = categoryPriority[a.category as keyof typeof categoryPriority] || 99;
+      const priorityB = categoryPriority[b.category as keyof typeof categoryPriority] || 99;
+      
+      return priorityA - priorityB;
+    });
   },
 }));

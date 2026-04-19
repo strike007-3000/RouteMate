@@ -1,19 +1,18 @@
 # RouteMate Engineering Wiki 🛠️
 
-Deep-dive documentation for RouteMate v2.1 Architecture.
+Deep-dive documentation for RouteMate v2.2 Architecture.
 
 ---
 
 ## 1. Timeline Data Intelligence (v3 Schema)
 
-Version 2.0 migrates the database to a grouped logic. Itinerary items now carry classification metadata.
+Version 2.0 migrated the database to a grouped logic. Itinerary items now carry classification metadata.
 
 - **Category Mapping**: AI extracts entries into `Flight`, `Lodging`, `Food`, `Train`, `Activity`, or `Rental`.
 - **Coordinate Fidelity**: Every item stores a `coordinates` object (`{lat, lng}`) allowing the logistics engine to function without additional API lookups during the "Timeline Flow" view.
 
-### Grouping Logic
-To avoid timezone regressions (where items "disappear" across the UTC boundary), we use **String-Based Date Comparison**:
-`format(parseISO(startTime), 'yyyy-MM-dd') === format(currentDay, 'yyyy-MM-dd')`.
+### Grouping Logic (v2.2)
+To avoid timezone regressions, we use String-Based Date Comparison. v2.2 introduced a **Global Sorting Engine** that further refines internal grouping by prioritizing categories (`Flight` > `Train` > `Lodging`) when times are identical. This ensures that a flight arrival always precedes a hotel check-in in the UI.
 
 ---
 
@@ -44,9 +43,9 @@ To handle multi-leg journeys correctly, the engine identifies `Flight` segments 
 
 We follow a **"Quiet Luxury"** design philosophy:
 - **Identity**: Centered/Left-aligned `ROUTEMATE` tag in `text-[10px] tracking-[0.5em]`.
-- **Color Glows**: Category specific cards use `shadow-category/20` and `border-category/30` to provide visual grouping without excessive color noise.
-- **16px Grid System**: Every component is strictly aligned to a 4-unit grid system (`p-4`, `gap-4`).
-- **Compact Widget Bar (v2.1)**: Dashboard widgets use a single-row flex layout with `overflow-x-auto` to minimize vertical footprint while maintaining accessibility.
+- **Color Glows**: Category specific cards use `shadow-category/20` and `border-category/30`.
+- **Compact Widget Bar (v2.1)**: Dashboard widgets use a single-row flex layout with `overflow-x-auto` to minimize vertical footprint.
+- **Layout Transitions (v2.2)**: Integrated `framer-motion` layout animations for smooth chronological reordering.
 
 ---
 
@@ -55,4 +54,4 @@ We follow a **"Quiet Luxury"** design philosophy:
 The extraction prompt in `/api/parse-itinerary` is hardened for JSON fidelity. 
 - **Instruction**: Return ONLY a JSON array.
 - **Classification Rules**: Explicit mapping for hotel -> Lodging, restaurant -> Food, etc.
-- **Mock Fallback**: If no NVIDIA key is provided, the mock system provides `Extracted Event` samples to ensure the UI can be validated offline.
+- **Lodging Split (v2.2)**: Specifically instructs the AI to generate TWO distinct entries (Check-in/Check-out) for date-range hotel stays.

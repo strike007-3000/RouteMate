@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2026-04-19
+
+### 📅 Itinerary Intelligence
+- **Global Sorting Engine**: Implemented a multi-level sort (Date > Time > Category Priority) to ensure logical flow.
+- **AI Lodging Split**: Multi-day stays are now automatically split into 'Check-in' and 'Check-out' events for better timeline bracketing.
+- **Smart Entry Shortcuts**: Added quick-template buttons (✈️, 🏨, 🚆, 🍽️) for rapid manual entry.
+
+### 🎭 Animation & UX
+- **Layout Transitions**: Added framer-motion layout support so cards slide smoothly when the itinerary changes.
+
 ## [2.1.0](https://github.com/strike007-3000/RouteMate/compare/v2.0.0...v2.1.0) (2026-04-19)
 
 
