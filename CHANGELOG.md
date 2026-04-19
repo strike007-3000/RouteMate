@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2026-04-19
+
+### ✨ Interactive UX
+- **Interactive New Trip Form**: Replaced instant placeholder creation with a premium Modal for destination and date capture.
+- **Widget Bar Compression**: Redesigned the Dashboard Bento Grid into a compact, single-row widget bar to maximize vertical space.
+
+### 🧠 Logistics Refinement
+- **Smart Destination Arrival**: Fixed a critical routing bug where segments following a flight would incorrectly use the departure airport as the origin. The system now parses flight destinations (e.g., "Oslo to Brussels") to provide accurate "Airport to Hotel" directions.
+- **Robust Address Cleaning**: Enhanced address parsing to remove terminal descriptors and airline noise from Google Maps Deep-links.
+
+### 🛠️ Technical Debt
+- **Schema Alignment**: Synchronized `package-lock.json` metadata with the core intelligence schema.
+
+---
+
 ## [2.0.0] - 2026-04-19
 
 ### 🚀 Major Architectural Shift

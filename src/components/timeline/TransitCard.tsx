@@ -131,14 +131,26 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                     onClick={(e) => {
                       e.stopPropagation();
                       
-                      // Address Cleaning Logic
+                      // Address Cleaning & Flight Destination Logic
                       const cleanAddress = (addr: string) => {
                         if (!addr) return '';
-                        // Remove " to ...", " from ...", and terminal descriptors if they follow a "to"
                         return addr.split(/\s(to|from)\s/i)[0].trim();
                       };
 
-                      const origin = cleanAddress(from.address) || "My+Location";
+                      const extractDestinationFromFlightTitle = (title: string) => {
+                        // Matches "X to Y" or "Flight to Y"
+                        const toMatch = title.match(/to\s+([^,]+)/i);
+                        return toMatch ? toMatch[1].trim() : null;
+                      };
+
+                      let origin = cleanAddress(from.address) || "My+Location";
+                      
+                      // Special case: Segment following a flight
+                      if (from.category === 'Flight') {
+                        const flightDest = extractDestinationFromFlightTitle(from.title);
+                        if (flightDest) origin = flightDest;
+                      }
+
                       const destination = cleanAddress(to.address);
                       const mode = isInterCity ? 'driving' : 'transit';
                       
