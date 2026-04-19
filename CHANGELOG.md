@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.1](https://github.com/strike007-3000/RouteMate/compare/v2.3.0...v2.3.1) (2026-04-19)
+
+
+### Bug Fixes
+
+* v2.6.1 repairs AI failover and visual hero gradients ([d59e2db](https://github.com/strike007-3000/RouteMate/commit/d59e2dba159e97f6b085831ff372ce05e33311f2))
+
 ## [2.6.1] - 2026-04-19
 
 ### 🛡️ AI Reliability & Failover
