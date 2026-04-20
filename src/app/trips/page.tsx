@@ -77,11 +77,10 @@ export default function Dashboard() {
 
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="mt-10 group relative w-full h-14 bg-primary rounded-2xl flex items-center justify-center gap-3 overflow-hidden active:scale-95 transition-transform shadow-lg shadow-primary/20"
+          className="mt-10 group relative w-full h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg shadow-black/20"
         >
-          <div className="absolute inset-0 bg-white/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300" />
-          <Plus className="w-5 h-5 text-black relative z-10" />
-          <span className="text-xs font-black text-black uppercase tracking-widest relative z-10">Create New Trip</span>
+          <Plus className="w-5 h-5 text-primary" />
+          <span className="text-[11px] font-black text-primary uppercase tracking-[0.2em]">Create New Trip</span>
         </button>
       </header>
 

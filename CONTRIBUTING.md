@@ -23,7 +23,7 @@ Thank you for your interest in contributing to RouteMate! We are excited to buil
 4. **Test your changes**: 
     - Verify on mobile viewport (500x855).
     - If modifying data flow, verify real-time reactivity (LiveQuery) without manual refreshes.
-    - If modifying Radar, test Geolocation API permissions and fallbacks.
+    - If modifying sorting logic, verify chronological flow using the "Human-First" 6-rank engine.
 5. **Submit your PR**: The automated system will create a Release PR if your changes are merged.
 
 

@@ -4,14 +4,18 @@ import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useTripStore } from '@/stores/useTripStore';
 import { Header } from '@/components/layout/Header';
+import { TripHero } from '@/components/trip/TripHero';
 import { BentoGrid } from '@/components/dashboard/BentoGrid';
 import { Timeline } from '@/components/timeline/Timeline';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { SmartPaste } from '@/components/timeline/SmartPaste';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
+import { format, parseISO } from 'date-fns';
+import { Calendar } from 'lucide-react';
 
 export default function TripPage() {
   const { id } = useParams();
@@ -37,11 +41,13 @@ export default function TripPage() {
     <main className="min-h-screen bg-black pb-32 w-full max-w-md mx-auto border-x border-border/50 shadow-2xl shadow-black/50 relative overflow-x-hidden flex flex-col">
       <Header />
       
-      <section className="mt-4">
+      <TripHero trip={activeTrip} mode="dashboard" />
+
+      <section className="relative z-10 -mt-10">
         <BentoGrid onOpenSmartAdd={() => setIsSmartAddOpen(true)} />
       </section>
       
-      <section className="mt-8">
+      <section className="mt-0">
         <Timeline onOpenSmartAdd={() => setIsSmartAddOpen(true)} />
       </section>
 

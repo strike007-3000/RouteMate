@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.7.2] - 2026-04-20
+
+### 🎨 Design System Synchronization (Signature Blue)
+- **Unified Brand Identity**: Standardized the entire application on **RouteMate Blue (#3b82f6)**. Every button, indicator, and active state now shares a singular, vibrant identity.
+- **The 24px Rule**: Audited and standardized all component geometry to a global `rounded-[24px]` radius and `px-6` spacing for a premium, cohesive feel.
+- **No-Jump Navigation Header**: Implemented absolute horizontal alignment (`pl-16`) and fixed height (`h-20`) for the global `Header`. This ensures titles remain perfectly fixed during back-navigation, eliminating layout "jumps."
+- **Dashboard Refinement**: Updated the `Countdown` widget to show the Trip Start Date when no upcoming stops are present.
+
+### 🧠 Human-First Sorting Engine (Final Hardening)
+- **1-6 Rank Hierarchy**: Refactored the internal ranking model to a streamlined 6-rank sequence:
+  1. Check-out (Lodging)
+  2. Departure (Flight/Train)
+  3. Arrival
+  4. Check-in (Lodging)
+  5. Activities & Dining
+  6. Return Flight (Anchor)
+- **Smart Return-Flight Detection**: Introduced logic to automatically identifies "Home-bound" flights by comparing arrival cities to the trip's origin. Return flights are now forced to the absolute bottom of the timeline.
+- **Home Base Suppression**: Origin cities now intelligently suppress redundant check-out/transit events on Day 1.
+
+### 🤖 Smart Add Workflow & Feedback
+- **RouteMate Success Toast**: Implemented a signature, high-fidelity custom notification component for extraction success feedback.
+- **Enhanced Retry Logic**: The Smart Add modal now stays open on failure, preserving user text and displaying inline alerts (`AlertCircle`) for low-friction retrying.
+- **UI Feedback**: Added an animated pulse effect to the extraction button during AI processing.
+
 ## [2.7.0] - 2026-04-19
 
 ### 🧠 The "Implicit Hub" Engine (Logistics Phase 2)

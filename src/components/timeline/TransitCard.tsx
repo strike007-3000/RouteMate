@@ -181,12 +181,12 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                       const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;
                       window.open(url, '_blank', 'noopener,noreferrer');
                     }}
-                    className="w-full py-4 rounded-2xl bg-[#4285F4] text-white text-[10px] font-black hover:bg-[#357ABD] transition-all flex items-center justify-center gap-3 uppercase tracking-widest shadow-lg shadow-[#4285F4]/20 group/btn"
+                    className="w-full py-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-bold hover:bg-blue-500/20 transition-all flex items-center justify-center gap-3 uppercase tracking-[0.2em] group/btn"
                   >
-                    <Navigation className="w-4 h-4 fill-white animate-pulse" />
-                    {isRoutingToFlight ? 'Navigate to Airport' : isRoutingFromFlight ? 'Open Google Maps Transit' : isInterCity ? 'Open Driving Directions' : 'Open Google Maps Transit'}
-                    <div className="w-3 h-3 rounded-full bg-white/20 flex items-center justify-center">
-                      <ArrowRight className="w-2 h-2 group-hover/btn:translate-x-0.5 transition-transform" />
+                    <Navigation className="w-4 h-4 fill-blue-500 animate-pulse" />
+                    {isRoutingToFlight ? 'Navigate to Airport' : isRoutingFromFlight ? 'Open Google Maps' : isInterCity ? 'Open Driving Directions' : 'Open Google Maps'}
+                    <div className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center">
+                      <ArrowRight className="w-2.5 h-2.5 group-hover/btn:translate-x-0.5 transition-transform" />
                     </div>
                   </button>
                 )}

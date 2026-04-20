@@ -9,18 +9,18 @@
   --popover-foreground: #fafafa;
   --primary: #3b82f6;
   --primary-foreground: #ffffff;
-  --secondary: #27272a;
+  --secondary: #18181b;
   --secondary-foreground: #fafafa;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
+  --muted: #18181b;
+  --muted-foreground: #71717a;
   --accent: #27272a;
   --accent-foreground: #fafafa;
   --destructive: #ef4444;
   --destructive-foreground: #fafafa;
   --border: #27272a;
   --input: #27272a;
-  --ring: #d4d4d8;
-  --radius: 0.75rem;
+  --ring: #3b82f6;
+  --radius: 1.5rem;
 }
 
 @theme {
@@ -52,10 +52,10 @@
 
 @layer utilities {
   .glass {
-    @apply bg-background/60 backdrop-blur-md border border-white/10;
+    @apply bg-zinc-950/60 backdrop-blur-xl border border-white/10;
   }
   .glass-card {
-    @apply bg-zinc-900/40 backdrop-blur-sm border border-white/5;
+    @apply bg-zinc-900/50 backdrop-blur-md border border-white/5;
   }
 }
 

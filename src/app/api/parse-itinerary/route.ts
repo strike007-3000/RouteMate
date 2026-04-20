@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { text } = await req.json();
+    const { text, rootYear = "2026" } = await req.json();
 
     if (!text) {
       return NextResponse.json({ error: 'No text provided' }, { status: 400 });
@@ -43,20 +43,23 @@ export async function POST(req: Request) {
               
               CONTENT_RULES:
               - Return ONLY a flat JSON array.
+              - ANCHOR YEAR: If the user provides a date without a year (e.g., "April 21st", "22nd April", "21 Apr"), ASSUME the year is ${rootYear}.
+              - DATE FORMATTING: Handle ordinal suffixes (st, nd, rd, th) by stripping them before parsing.
+              - ORIGIN DETECTION: Identify the user's starting city (Home Base). Do NOT create a "Check-out" event for the starting city (travelers start from home).
               - FLIGHTS: "Flight from A to B" MUST generate TWO objects: 
-                1. "Departure from A" (address MUST be city/airport A).
-                2. "Arrival at B" (address MUST be city/airport B).
-              - METADATA: ALWAYS include "departureAirport", "arrivalAirport", and coordinates.
-              - ADDRESSES: The "address" field for any item must be its physical location (e.g. for Arrival at Tokyo, address is Tokyo).
+                1. "Departure from A" (category: Flight, address: A).
+                2. "Arrival at B" (category: Flight, address: B).
+              - METADATA: ALWAYS include "departureCity", "arrivalCity", "departureAirport", "arrivalAirport", and coordinates.
+              - ADDRESSES: The "address" field for any item must be its physical location.
               
               DEFAULT TIMES: Check-out (11:00), Arrival (14:00), Check-in (15:00), Departure (16:00), Activity (12:00).
               
               SCHEMA:
               [{ 
-                 "category": "Flight" | "Lodging" | "Train" | "Food" | "Activity", 
+                 "category": "Flight" | "Lodging" | "Train" | "Food" | "Activity" | "Rental", 
                  "title": string, "address": string, 
                  "startTime": "YYYY-MM-DDTHH:mm:ssZ", "endTime": "YYYY-MM-DDTHH:mm:ssZ",
-                 "isTimeExplicit": boolean, "metadata": object
+                 "isTimeExplicit": boolean, "metadata": { "departureCity"?: string, "arrivalCity"?: string, "departureAirport"?: string, "arrivalAirport"?: string, ... }
               }]`
             },
             { role: 'user', content: text }

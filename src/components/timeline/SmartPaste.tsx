@@ -2,12 +2,13 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, X, Loader2, CheckCircle2, AlertCircle, Plane, Hotel, Train, Utensils } from 'lucide-react';
+import { Sparkles, X, Loader2, CheckCircle2, AlertCircle, Plane, Hotel, Train, Utensils, MapPin, Car } from 'lucide-react';
 import { useTripStore } from '@/stores/useTripStore';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 import { cn } from '@/lib/utils';
 import { db, Trip } from '@/lib/db';
 import { UnsplashService } from '@/services/images/UnsplashService';
+import { Toast } from '../layout/Toast';
 
 export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
   const [text, setText] = useState('');
@@ -22,26 +23,37 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
     { icon: Hotel, label: 'Lodging', text: 'Stay at [Hotel Name] from [Check-in] to [Check-out]' },
     { icon: Train, label: 'Train', text: 'Train from [Station A] to [Station B] on [Date]' },
     { icon: Utensils, label: 'Food', text: 'Dinner at [Restaurant] on [Date] at 20:00' },
+    { icon: MapPin, label: 'Activity', text: 'Visit [Attraction] on [Date] at 10:00' },
+    { icon: Car, label: 'Rental', text: 'Pick up rental car at [Location] on [Date]' },
   ];
 
   const handleTemplateClick = (templateText: string) => {
     setText((prev) => prev + (prev.trim() ? '\n' : '') + templateText);
   };
 
+  const [showToast, setShowToast] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const handleExtract = async () => {
     if (!text.trim()) return;
     
     setStatus('parsing');
+    setErrorMessage(null);
+
     try {
+      const rootYear = activeTrip?.startDate ? activeTrip.startDate.split('-')[0] : "2026";
+      
       const response = await fetch('/api/parse-itinerary', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'x-user-nvidia-key': nvidiaApiKey
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ 
+          text,
+          rootYear
+        }),
       });
-
 
       const data = await response.json();
       
@@ -50,54 +62,50 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
           await addPoint(point);
         }
 
-        // Update trip details if they are default/empty
-        const currentTrip = useTripStore.getState().activeTrip;
-        if (currentTrip && currentTrip.id) {
-          const isDefaultName = !currentTrip.name || currentTrip.name === 'New Adventure';
-          const isDefaultDest = !currentTrip.destination || currentTrip.destination === 'Select Destination';
+        // Adaptive Trip Dates Logic: Auto-extension
+        if (activeTrip && activeTrip.id) {
+          let maxDate = activeTrip.endDate;
+          let changed = false;
           
-          const updates: Partial<Trip> = {};
-          if (isDefaultName) updates.name = data.points[0].title;
-          if (isDefaultDest) updates.destination = data.points[0].address;
-          
-          // Dates: If trip dates are very recent (default start is new Date()), overwrite
-          const tripStart = new Date(currentTrip.startDate).getTime();
-          const now = Date.now();
-          const isDefaultDates = Math.abs(tripStart - now) < 60000; // Created within last minute
-          
-          if (isDefaultDates) {
-            updates.startDate = data.points[0].startTime;
-            updates.endDate = data.points[data.points.length - 1].endTime || data.points[data.points.length - 1].startTime;
-          }
-          
-          if (Object.keys(updates).length > 0) {
-            await db.trips.update(currentTrip.id, updates);
-            
-            // If destination was updated and no image exists, trigger Unsplash
-            if (updates.destination && !currentTrip.coverImage) {
-              UnsplashService.getTripImage(currentTrip.id, updates.destination, unsplashAccessKey);
+          for (const point of data.points) {
+            const pointEnd = point.endTime.split('T')[0];
+            if (pointEnd > maxDate) {
+              maxDate = pointEnd;
+              changed = true;
             }
+          }
+
+          if (changed) {
+            await db.trips.update(activeTrip.id, { endDate: maxDate });
+            // The live query in TripPage will pick this up automatically
           }
         }
 
         setStatus('success');
+        setShowToast(true);
+        
+        // Immediate cleanup and close
         setTimeout(() => {
           onClose();
-          setStatus('idle');
           setText('');
-        }, 1500);
+          setStatus('idle');
+        }, 1000);
       } else {
-        const errorMsg = data.details || data.error || 'Empty response';
-        console.error('Extraction Failed:', errorMsg, data.raw || '');
+        const errorMsg = data.details || data.error || 'Check the text and try again';
+        setErrorMessage(errorMsg);
         setStatus('error');
+        // Reset to active state after a brief moment so user can retry
+        setTimeout(() => setStatus('idle'), 2000);
       }
     } catch (err) {
-      console.error(err);
+      setErrorMessage('Network error. Please try again.');
       setStatus('error');
+      setTimeout(() => setStatus('idle'), 2000);
     }
   };
 
   return (
+    <>
     <AnimatePresence>
       {isOpen && (
         <>
@@ -105,47 +113,63 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100]"
+            className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100]"
             onClick={onClose}
           />
           <motion.div 
-            initial={{ opacity: 0, y: 100, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 100, scale: 0.95 }}
-            className="fixed inset-x-4 top-[10%] bottom-[10%] md:max-w-md md:mx-auto glass-card rounded-[2.5rem] z-[101] overflow-hidden flex flex-col p-8"
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            className="fixed inset-x-0 bottom-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 w-full max-w-md h-[72vh] sm:h-auto bg-zinc-950 border-t sm:border border-white/10 rounded-t-[2.5rem] sm:rounded-[40px] z-[101] overflow-hidden flex flex-col p-8 pb-10"
           >
             <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-primary/20 flex items-center justify-center">
-                  <Sparkles className="text-primary w-5 h-5" />
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-[24px] bg-primary/10 border border-primary/20 flex items-center justify-center">
+                  <Sparkles className="text-primary w-6 h-6" />
                 </div>
-                <h2 className="text-xl font-black">Smart Extraction</h2>
+                <div>
+                    <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1 block leading-none">SMART EXTRACTION</span>
+                    <h2 className="text-xl font-black text-white tracking-tighter leading-none">Intelligence Engine</h2>
+                </div>
               </div>
-              <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
-                <X className="w-6 h-6" />
+              <button 
+                onClick={onClose} 
+                className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-500 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-              Paste your confirmation email, flight details, or hotel booking below. Our AI will handle the logistics.
-            </p>
-
-            <div className="flex gap-2 mb-6 overflow-x-auto pb-2 no-scrollbar">
+            <div className="flex gap-2 mb-8 overflow-x-auto pb-2 no-scrollbar px-1">
               {templates.map((t) => (
                 <button
                   key={t.label}
                   onClick={() => handleTemplateClick(t.text)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors whitespace-nowrap"
+                  className="group flex items-center gap-2.5 px-5 py-3 rounded-[24px] bg-white/5 border border-white/10 hover:bg-white/10 transition-all active:scale-95 whitespace-nowrap"
                 >
-                  <t.icon className="w-3.5 h-3.5 text-primary" />
-                  <span className="text-[10px] font-black uppercase tracking-wider">{t.label}</span>
+                  <t.icon className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+                  <span className="text-[10px] font-black text-zinc-400 group-hover:text-white uppercase tracking-wider">{t.label}</span>
                 </button>
               ))}
             </div>
 
+            {/* Subtle Error Alert */}
+            <AnimatePresence>
+                {errorMessage && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-[24px] flex items-center gap-3"
+                    >
+                        <AlertCircle className="w-4 h-4 text-destructive" />
+                        <span className="text-xs font-bold text-destructive/80">{errorMessage}</span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <textarea
-              className="flex-1 w-full bg-black/40 border border-white/10 rounded-3xl p-6 text-sm resize-none focus:outline-none focus:border-primary/50 transition-colors placeholder:text-zinc-700"
-              placeholder="E.g. Your flight FR123 is confirmed for May 20th... check-in at CitizenM starts at 15:00..."
+              className="flex-1 w-full bg-zinc-900/50 border border-white/5 rounded-[32px] p-8 text-sm font-bold resize-none focus:outline-none focus:border-primary/30 transition-all placeholder:text-zinc-700 leading-relaxed"
+              placeholder="Paste your confirmation email or flight details here..."
               value={text}
               onChange={(e) => setText(e.target.value)}
               disabled={status === 'parsing'}
@@ -156,36 +180,45 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
                 disabled={!text.trim() || status === 'parsing'}
                 onClick={handleExtract}
                 className={cn(
-                  "w-full py-5 rounded-3xl flex items-center justify-center gap-3 font-black text-sm transition-all",
-                  status === 'idle' && "bg-primary text-white hover:bg-primary/90",
-                  status === 'parsing' && "bg-secondary text-muted-foreground cursor-wait",
-                  status === 'success' && "bg-emerald-500 text-white",
-                  status === 'error' && "bg-destructive text-white"
+                  "w-full h-16 rounded-full flex items-center justify-center gap-3 font-black text-[11px] uppercase tracking-[0.2em] transition-all relative overflow-hidden",
+                  status === 'idle' && "bg-primary/10 border border-primary/20 text-primary shadow-lg shadow-black/20",
+                  status === 'parsing' && "bg-zinc-800 text-zinc-500 cursor-wait",
+                  status === 'success' && "bg-emerald-500/10 border border-emerald-500/20 text-emerald-500",
+                  status === 'error' && "bg-destructive/10 border border-destructive/20 text-destructive"
                 )}
               >
                 {status === 'idle' && (
                   <>
-                    <Sparkles className="w-5 h-5" />
+                    <Sparkles className="w-4 h-4" />
                     Extract Itinerary
                   </>
                 )}
                 {status === 'parsing' && (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    AI is processing...
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    AI Processing...
                   </>
                 )}
                 {status === 'success' && (
                   <>
-                    <CheckCircle2 className="w-5 h-5" />
-                    Success!
+                    <CheckCircle2 className="w-4 h-4" />
+                    Itinerary updated!
                   </>
                 )}
                 {status === 'error' && (
                   <>
-                    <AlertCircle className="w-5 h-5" />
-                    Extraction Failed
+                    <AlertCircle className="w-4 h-4" />
+                    Retry Extraction
                   </>
+                )}
+                
+                {/* Pulse effect during parsing */}
+                {status === 'parsing' && (
+                    <motion.div 
+                        animate={{ opacity: [0, 0.2, 0] }}
+                        transition={{ repeat: Infinity, duration: 1.5 }}
+                        className="absolute inset-0 bg-primary"
+                    />
                 )}
               </button>
             </div>
@@ -193,5 +226,11 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
         </>
       )}
     </AnimatePresence>
+    <Toast 
+        message="Itinerary updated!" 
+        isOpen={showToast} 
+        onClose={() => setShowToast(false)} 
+    />
+    </>
   );
 };

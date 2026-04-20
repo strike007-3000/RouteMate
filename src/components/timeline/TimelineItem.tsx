@@ -8,12 +8,12 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 const categoryConfig = {
-  Flight: { icon: Plane, color: 'text-blue-400', glow: 'shadow-blue-500/20', border: 'border-blue-500/30', bg: 'bg-blue-500/10' },
-  Lodging: { icon: Hotel, color: 'text-emerald-400', glow: 'shadow-emerald-500/20', border: 'border-emerald-500/30', bg: 'bg-emerald-500/10' },
-  Food: { icon: Utensils, color: 'text-amber-400', glow: 'shadow-amber-500/20', border: 'border-amber-500/30', bg: 'bg-amber-500/10' },
-  Activity: { icon: MapPin, color: 'text-purple-400', glow: 'shadow-purple-500/20', border: 'border-purple-500/30', bg: 'bg-purple-500/10' },
-  Train: { icon: Train, color: 'text-zinc-400', glow: 'shadow-zinc-500/20', border: 'border-zinc-500/30', bg: 'bg-zinc-500/10' },
-  Rental: { icon: Car, color: 'text-teal-400', glow: 'shadow-teal-500/20', border: 'border-teal-500/30', bg: 'bg-teal-500/10' },
+  Flight: { icon: Plane, color: 'text-blue-400', glow: 'shadow-blue-500/50', border: 'border-blue-500/50', bg: 'bg-blue-500/20' },
+  Lodging: { icon: Hotel, color: 'text-emerald-400', glow: 'shadow-emerald-500/50', border: 'border-emerald-500/50', bg: 'bg-emerald-500/20' },
+  Food: { icon: Utensils, color: 'text-amber-400', glow: 'shadow-amber-500/50', border: 'border-amber-500/50', bg: 'bg-amber-500/20' },
+  Activity: { icon: MapPin, color: 'text-purple-400', glow: 'shadow-purple-500/50', border: 'border-purple-500/50', bg: 'bg-purple-500/20' },
+  Train: { icon: Train, color: 'text-orange-400', glow: 'shadow-orange-500/50', border: 'border-orange-500/50', bg: 'bg-orange-500/20' },
+  Rental: { icon: Car, color: 'text-cyan-400', glow: 'shadow-cyan-500/50', border: 'border-cyan-500/50', bg: 'bg-cyan-500/20' },
 };
 
 export const TimelineItem = ({ point, dragControls }: { point: ItineraryItem, dragControls?: any }) => {
@@ -44,20 +44,18 @@ export const TimelineItem = ({ point, dragControls }: { point: ItineraryItem, dr
         }}
         whileHover={{ scale: 1.01, y: -2 }}
         className={cn(
-          "p-5 rounded-3xl bg-zinc-900/50 border backdrop-blur-xl transition-all duration-300",
-          config.border,
-          config.glow,
-          "shadow-lg"
+          "p-6 rounded-[24px] bg-zinc-900/50 border border-white/5 backdrop-blur-xl transition-all duration-300 shadow-2xl shadow-black/50",
+          config.glow
         )}
       >
-        <div className="flex items-start justify-between mb-4">
-          <div className={cn("flex items-center gap-2 px-3 py-1 rounded-full border", config.bg, config.border)}>
+        <div className="flex items-start justify-between mb-6">
+          <div className={cn("flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-white/10", config.bg)}>
             <Icon className={cn("w-3.5 h-3.5", config.color)} />
-            <span className={cn("text-[9px] font-black uppercase tracking-[0.2em]", config.color)}>{point.category}</span>
+            <span className={cn("text-[10px] font-bold uppercase tracking-[0.2em]", config.color)}>{point.category}</span>
           </div>
           <div className="flex items-center gap-2 text-zinc-500">
-            <Clock className="w-3 h-3" />
-            <span className="text-[10px] font-black tracking-widest uppercase">
+            <Clock className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-bold tracking-[0.2em] uppercase">
               {point.isTimeExplicit === false ? 'Time TBD' : format(new Date(point.startTime), 'HH:mm')}
             </span>
           </div>

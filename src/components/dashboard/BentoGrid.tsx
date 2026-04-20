@@ -27,7 +27,7 @@ const BentoBox = ({ title, value, icon, className, delay = 0, subValue, onClick 
     whileHover={{ y: -2 }}
     onClick={onClick}
     className={cn(
-      "glass-card p-3 rounded-2xl flex flex-col justify-center overflow-hidden relative group border border-white/5 min-w-[120px]",
+      "glass-card p-4 rounded-[24px] flex flex-col justify-center overflow-hidden relative group border border-white/5 min-w-[130px] h-24",
       onClick && "cursor-pointer active:scale-95",
       className
     )}
@@ -35,12 +35,12 @@ const BentoBox = ({ title, value, icon, className, delay = 0, subValue, onClick 
     <div className="absolute top-2 right-2 opacity-5 group-hover:opacity-10 transition-all duration-500">
       {icon}
     </div>
-    <span className="text-[8px] font-black text-primary/50 uppercase tracking-[0.2em] mb-1">{title}</span>
-    <span className={cn("text-sm font-black tracking-tighter text-white line-clamp-1", value === "Plan a Step" && "text-primary")}>{value}</span>
-    <div className="flex items-center gap-1 mt-1">
-      <div className="w-0.5 h-0.5 rounded-full bg-primary" />
-      <span className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest leading-none">
-        {subValue || "Intelligence Active"}
+    <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1.5 leading-none">{title}</span>
+    <span className={cn("text-base font-black tracking-tighter text-white line-clamp-1 leading-none", value === "Plan a Step" && "text-primary")}>{value}</span>
+    <div className="flex items-center gap-1.5 mt-2">
+      <div className="w-1 h-1 rounded-full bg-primary" />
+      <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-none">
+        {subValue || "READY"}
       </span>
     </div>
   </motion.div>
@@ -85,7 +85,7 @@ export const BentoGrid = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) =>
   }
 
   return (
-    <div className="flex gap-3 p-6 pt-2 overflow-x-auto no-scrollbar pb-2">
+    <div className="flex gap-3 px-4 pt-2 overflow-x-auto no-scrollbar pb-2">
       <BentoBox 
         title="Next Step" 
         value={nextActionValue} 
@@ -104,7 +104,7 @@ export const BentoGrid = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) =>
       />
       <BentoBox 
         title="Countdown" 
-        value={nextPoint ? format(new Date(nextPoint.startTime), 'HH:mm') : "??:??"} 
+        value={nextPoint ? format(new Date(nextPoint.startTime), 'HH:mm') : (activeTrip ? format(new Date(activeTrip.startDate), 'MMM dd') : "Ready")} 
         icon={<Navigation className="w-8 h-8" />}
         className="flex-1 min-w-[110px]"
         delay={0.3}

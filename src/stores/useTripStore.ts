@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { db, Trip, ItineraryItem } from '@/lib/db';
+import { format } from 'date-fns';
 
 export type PointType = 'hotel' | 'flight' | 'attraction' | 'transit';
 
@@ -216,13 +217,68 @@ export const useTripStore = create<TripState>((set, get) => ({
     set({ points: updates });
   },
 
+  /**
+   * Core Sorting Engine: Implements 'Human-First' logistical flow.
+   * 1. Groups by Date
+   * 2. Respects Manual sortOrder
+   * 3. Uses Explicit/Predicted Time
+   * 4. Tie-breaks with Logistical Ranking (Checkout -> Departure -> Arrival -> Checkin)
+   * 
+   * Special Logic:
+   * - Detects 'Home Base' from the first flight to identify return flights.
+   * - Forces Day 1 departures to the top.
+   * - Forces Last Day return flights to the bottom.
+   */
   sortItinerary: (points) => {
+    if (points.length === 0) return [];
+    
+    // 0. Pre-calculate Trip Context for Smart Sorting
+    // Identify the origin of the trip to detect when the traveler is 'heading home'
+    const sortedByStart = [...points].sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+    const firstFlight = sortedByStart.find(p => p.category === 'Flight' && p.title.toLowerCase().includes('departure'));
+    const homeBase = (firstFlight?.metadata as any)?.departureCity?.toLowerCase();
+    
+    // Day boundaries for contextual overrides
+    const lastDate = format(new Date(Math.max(...points.map(p => new Date(p.startTime).getTime()))), 'yyyy-MM-dd');
+    const firstDate = format(new Date(Math.min(...points.map(p => new Date(p.startTime).getTime()))), 'yyyy-MM-dd');
+
+    /**
+     * Determines the logistical rank (1-7) for same-day items.
+     * Lower numbers = Earlier in the day.
+     */
+    const getRank = (item: ItineraryItem) => {
+      const title = item.title.toLowerCase();
+      const cat = item.category;
+      const date = format(new Date(item.startTime), 'yyyy-MM-dd');
+      const isDay1 = date === firstDate;
+      const isLastDay = date === lastDate;
+
+      // Smart Return Flight Detection: If we land in the home city, this is the trip's anchor.
+      const arrivalCity = (item.metadata as any)?.arrivalCity?.toLowerCase();
+      const isReturnFlight = cat === 'Flight' && arrivalCity === homeBase;
+
+      // Priority 1: Home Base Departure (Force to top on Day 1)
+      if (isDay1 && cat === 'Flight' && title.includes('departure')) return -100;
+      
+      // Priority 6: Return Flight (Link home arrival to absolute bottom)
+      if (isReturnFlight) return 1000;
+
+      // 1-5 Logistical Sequence
+      if (cat === 'Lodging' && title.includes('check-out')) return 1;
+      if (cat === 'Flight' && title.includes('departure')) return 2;
+      if (cat === 'Flight' && title.includes('arrival')) return 3;
+      if (cat === 'Lodging' && title.includes('check-in')) return 4;
+      
+      return 5; // Activities, Food, etc.
+    };
+
     const getSortTime = (item: ItineraryItem) => {
       const date = new Date(item.startTime);
       if (item.isTimeExplicit === false) {
         const title = item.title.toLowerCase();
         let hour = CATEGORY_DEFAULTS.ACTIVITY;
 
+        // Use slightly shifted hours to help stabilize sort if multiple Predicted items exist
         if (item.category === 'Lodging') {
           hour = title.includes('check-out') ? CATEGORY_DEFAULTS.CHECK_OUT : CATEGORY_DEFAULTS.CHECK_IN;
         } else if (item.category === 'Flight') {
@@ -234,27 +290,9 @@ export const useTripStore = create<TripState>((set, get) => ({
       return date.getTime();
     };
 
-    const getCategoryRank = (item: ItineraryItem) => {
-      const title = item.title.toLowerCase();
-      const category = item.category;
-
-      if (category === 'Lodging') {
-        if (title.includes('check-out')) return 1;
-        if (title.includes('check-in')) return 5;
-        return 5;
-      }
-      if (category === 'Flight') {
-        if (title.includes('arrival')) return 4;
-        if (title.includes('departure')) return 3;
-        return 2;
-      }
-      if (category === 'Train') return 3;
-      return 6; // Activity, Food, etc.
-    };
-
     return [...points].sort((a, b) => {
-      const dateA = new Date(a.startTime).toDateString();
-      const dateB = new Date(b.startTime).toDateString();
+      const dateA = format(new Date(a.startTime), 'yyyy-MM-dd');
+      const dateB = format(new Date(b.startTime), 'yyyy-MM-dd');
       
       // 1. Primary Sort: Day
       if (dateA !== dateB) {
@@ -271,8 +309,8 @@ export const useTripStore = create<TripState>((set, get) => ({
       const timeB = getSortTime(b);
       if (timeA !== timeB) return timeA - timeB;
 
-      // 4. Final Tie-breaker: Category Rank
-      return getCategoryRank(a) - getCategoryRank(b);
+      // 4. Final Tie-breaker: Logistical Rank
+      return getRank(a) - getRank(b);
     });
   },
 }));

@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Plane, Hotel, Train, Utensils, Sparkles, Car, ChevronDown } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 const categoryIcons = {
@@ -30,7 +30,7 @@ export const TimelineHeader = ({
   isExpanded, 
   onToggle 
 }: TimelineHeaderProps) => {
-  const formattedDate = format(new Date(date), 'EEEE, MMM do');
+  const formattedDate = format(parseISO(date), 'EEEE, MMM do');
   
   return (
     <div 

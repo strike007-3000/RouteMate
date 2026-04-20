@@ -11,9 +11,11 @@ import { TimelineHeader } from '@/components/timeline/TimelineHeader';
 import { TimelineItem } from '@/components/timeline/TimelineItem';
 import { TransitCard } from '@/components/timeline/TransitCard';
 import { SmartPaste } from '@/components/timeline/SmartPaste';
-import { format, parseISO, differenceInDays, startOfDay, addDays } from 'date-fns';
+import { format, parseISO, differenceInDays, startOfDay, addDays, isSameDay } from 'date-fns';
 import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion';
 import { Sparkles, Calendar } from 'lucide-react';
+import { TripHero } from '@/components/trip/TripHero';
+import { useState } from 'react';
 
 // Sub-component to handle drag controls per item
 const TimelineReorderItem = ({ item, nextItem }: { item: ItineraryItem, nextItem?: ItineraryItem }) => {
@@ -42,6 +44,7 @@ export default function TimelinePage() {
   const router = useRouter();
   
   const { expandedDays, toggleDay, setExpandedDays, sortItinerary } = useTripStore();
+  const [isSmartAddOpen, setIsSmartAddOpen] = useState(false);
   
   const trip = useLiveQuery(() => db.trips.get(tripId), [tripId]);
   const points = useLiveQuery(
@@ -53,19 +56,28 @@ export default function TimelinePage() {
   const groupedTimeline = useMemo(() => {
     if (!trip) return [];
     
+    // Ensure start and end are pinned to local 00:00 for stable iteration
     const start = startOfDay(parseISO(trip.startDate));
     const end = startOfDay(parseISO(trip.endDate));
-    const totalDays = differenceInDays(end, start) + 1;
+    const totalDays = Math.max(1, differenceInDays(end, start) + 1);
     
     const sortedAllPoints = sortItinerary(points);
     
     return Array.from({ length: totalDays }).map((_, i) => {
       const currentDate = addDays(start, i);
-      const currentDateStr = format(currentDate, 'yyyy-MM-dd');
       
       const items = sortedAllPoints.filter(p => {
-        const itemDateStr = format(parseISO(p.startTime), 'yyyy-MM-dd');
-        return itemDateStr === currentDateStr;
+        const itemDate = parseISO(p.startTime);
+        
+        // Logistical Buffering: If an item lands within 6 hours BEFORE the trip starts, 
+        // we anchor it to Day 1 (e.g. late night airport arrivals). Otherwise, strict day matching.
+        if (i === 0) {
+          const tripStart = startOfDay(parseISO(trip.startDate));
+          const diffInHours = (itemDate.getTime() - tripStart.getTime()) / 3600000;
+          return isSameDay(itemDate, currentDate) || (diffInHours < 0 && diffInHours > -12);
+        }
+        
+        return isSameDay(itemDate, currentDate);
       });
       
       return {
@@ -94,43 +106,17 @@ export default function TimelinePage() {
   if (!trip) return null;
 
   return (
-    <main className="min-h-screen bg-black pb-32 w-full max-w-md mx-auto border-x border-border/50 shadow-2xl relative overflow-x-hidden flex flex-col">
-      {/* Hero Background Layer */}
-      <div className="absolute top-0 left-0 w-full h-80 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black z-[1]" />
-        {trip.coverImage && trip.coverImage !== "" ? (
-          <img 
-            src={trip.coverImage} 
-            alt="" 
-            className="w-full h-full object-cover blur-sm opacity-60 scale-105"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-primary/20 via-zinc-900 to-black" />
-        )}
-      </div>
-
+    <main className="min-h-screen bg-black pb-32 w-full max-w-md mx-auto border-x border-border/50 shadow-2xl relative overflow-x-hidden flex flex-col font-sans">
       <Header />
       
-      <div className="p-4 pt-14 relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-10 p-8 rounded-[3rem] bg-black/40 backdrop-blur-2xl border border-white/10 shadow-2xl ring-1 ring-white/5"
-        >
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-primary animate-pulse" />
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em]">{trip.destination}</span>
-          </div>
-          <h1 className="text-4xl font-black text-white tracking-tighter leading-tight">
-            {trip.name}
-          </h1>
-          <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-widest mt-4 flex items-center gap-2">
-            <Calendar className="w-3.5 h-3.5 text-zinc-600" />
-            {format(parseISO(trip.startDate), 'MMM dd')} — {format(parseISO(trip.endDate), 'MMM dd, yyyy')}
-          </p>
-        </motion.div>
-        
-        <div className="space-y-4">
+      <TripHero 
+        trip={trip} 
+        mode="timeline" 
+        onAction={() => setIsSmartAddOpen(true)} 
+      />
+      
+      <div className="relative z-10 -mt-10">
+        <div className="space-y-4 px-4 mb-8">
           {groupedTimeline.map((day) => {
             const dateStr = day.date.split('T')[0];
             const isExpanded = expandedDays.includes(dateStr);
@@ -202,6 +188,7 @@ export default function TimelinePage() {
         )}
       </div>
 
+      <SmartPaste isOpen={isSmartAddOpen} onClose={() => setIsSmartAddOpen(false)} />
       <BottomNav />
     </main>
   );
