@@ -71,7 +71,7 @@ graph TD
    npm install
    ```
 2. **Environment**:
-   Add `NVIDIA_API_KEY`, `NEXT_PUBLIC_UNSPLASH_ACCESS_KEY`, and `ORS_API_KEY` to your `.env`.
+   Add `NVIDIA_API_KEY`, `UNSPLASH_ACCESS_KEY`, and `ORS_API_KEY` to your `.env`.
 3. **Pre-flight Integrity Check**:
    Before deploying or testing, verify your configuration and AI logic:
    ```bash
