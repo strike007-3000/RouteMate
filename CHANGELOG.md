@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.8.0](https://github.com/strike007-3000/RouteMate/compare/v2.7.1...v2.8.0) (2026-04-20)
+
+
+### Features
+
+* immersive hero architecture & adaptive logistics engine v2.7.5 ([78b031e](https://github.com/strike007-3000/RouteMate/commit/78b031e4cb196ed184586231fff2903b4166917a))
+
+
+### Bug Fixes
+
+* import missing cn utility in EditTripModal ([5951e3e](https://github.com/strike007-3000/RouteMate/commit/5951e3ea36051c53a10e4f61544c7dcc561df150))
+
 ## [2.7.2] - 2026-04-20
 
 ### 🎨 Design System Synchronization (Signature Blue)
