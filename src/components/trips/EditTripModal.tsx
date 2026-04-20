@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Calendar, Save, Sparkles } from 'lucide-react';
 import { db, Trip } from '@/lib/db';
 import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface EditTripModalProps {
   isOpen: boolean;
