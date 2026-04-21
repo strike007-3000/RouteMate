@@ -1,0 +1,210 @@
+'use client';
+
+import React from 'react';
+import { motion } from 'framer-motion';
+import { 
+  User, 
+  MapPin, 
+  ChevronRight, 
+  Settings, 
+  Globe, 
+  Bell, 
+  Shield, 
+  LogOut,
+  CreditCard,
+  History
+} from 'lucide-react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '@/lib/db';
+import { BottomNav } from '@/components/layout/BottomNav';
+import { Header } from '@/components/layout/Header';
+import { cn } from '@/lib/utils';
+
+export default function AccountPage() {
+  const tripCount = useLiveQuery(() => db.trips.count(), []) ?? 0;
+  const favoriteCount = useLiveQuery(() => db.favorites.count(), []) ?? 0;
+
+  const settingsItems = [
+    { icon: User, label: 'Personal Info', color: 'text-blue-400' },
+    { icon: Globe, label: 'Currency & Units', color: 'text-emerald-400', detail: 'EUR/KM' },
+    { icon: Bell, label: 'Notification Settings', color: 'text-amber-400' },
+    { icon: Shield, label: 'Privacy & Security', color: 'text-purple-400' },
+    { icon: LogOut, label: 'Logout', color: 'text-red-500/80', isLast: true },
+  ];
+
+  const [devKeys, setDevKeys] = React.useState({
+    openrouter: '',
+    unsplash: '',
+    ors: ''
+  });
+
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      setDevKeys({
+        openrouter: localStorage.getItem('dev_openrouter_key') || '',
+        unsplash: localStorage.getItem('dev_unsplash_key') || '',
+        ors: localStorage.getItem('dev_ors_key') || ''
+      });
+    }
+  }, []);
+
+  const handleDevKeyChange = (key: keyof typeof devKeys, value: string) => {
+    setDevKeys(prev => ({ ...prev, [key]: value }));
+    localStorage.setItem(`dev_${key}_key`, value);
+  };
+
+  return (
+    <main className="min-h-screen bg-black pb-32 flex flex-col relative overflow-x-hidden">
+      <header className="px-[var(--gutter,24px)] pb-10 pt-[var(--header-pt,16px)] relative">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="relative z-10"
+        >
+          <span className="text-[10px] font-bold text-primary uppercase tracking-[0.4em] mb-1 block">ROUTEMATE</span>
+          <h1 className="text-[clamp(1.5rem,5vw,2.25rem)] font-black text-white tracking-tighter leading-none mb-3">Account Hub</h1>
+        </motion.div>
+      </header>
+      
+      <div className="px-[var(--gutter,24px)] pt-8 space-y-10">
+        {/* Identity Section */}
+        <div className="relative flex flex-col items-center text-center">
+          {/* Relocated Settings Cog - Top Right of Identity Area */}
+          <div className="absolute top-0 right-0">
+            <button className="w-10 h-10 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-500 hover:text-primary transition-colors active:scale-90">
+              <Settings className="w-5 h-5" />
+            </button>
+          </div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-[clamp(6rem,20vw,8rem)] h-[clamp(6rem,20vw,8rem)] rounded-full bg-gradient-to-tr from-primary/20 to-primary/5 p-1 mb-6"
+          >
+            <div className="w-full h-full rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center relative overflow-hidden">
+              <User className="w-1/2 h-1/2 text-zinc-700" />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20" />
+            </div>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <h2 className="text-[clamp(1.5rem,5vw,2.5rem)] font-black text-white tracking-tighter mb-2 leading-none">Alex Nomad</h2>
+            <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mt-3 block">ELITE TRAVELER</span>
+          </motion.div>
+        </div>
+
+        {/* Travel Stats Bento - Adaptive Grid */}
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-4">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-zinc-900/50 border border-white/5 rounded-[24px] p-6 flex flex-col items-center justify-center text-center group hover:bg-zinc-800/50 transition-colors h-32"
+          >
+            <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Total Trips</span>
+            <span className="text-3xl font-black text-white tracking-tighter group-hover:scale-110 transition-transform">{tripCount}</span>
+          </motion.div>
+          
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-zinc-900/50 border border-white/5 rounded-[24px] p-6 flex flex-col items-center justify-center text-center group hover:bg-zinc-800/50 transition-colors h-32"
+          >
+            <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Saved Places</span>
+            <span className="text-3xl font-black text-white tracking-tighter group-hover:scale-110 transition-transform">{favoriteCount}</span>
+          </motion.div>
+        </div>
+
+        {/* Developer Settings - EXCLUSIVELY FOR LOCAL DEV */}
+        {process.env.NODE_ENV === 'development' && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="space-y-6"
+          >
+            <div className="flex items-center gap-3 px-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              <h2 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">DEVELOPER SETTINGS</h2>
+            </div>
+            
+            <div className="p-6 rounded-[24px] bg-zinc-900/30 border border-white/5 space-y-5">
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">OpenRouter Key (AI Extraction)</label>
+                <input 
+                  type="password"
+                  value={devKeys.openrouter}
+                  onChange={(e) => handleDevKeyChange('openrouter', e.target.value)}
+                  placeholder="sk-or-v1-..."
+                  className="w-full h-12 bg-black/40 border border-white/5 rounded-xl px-4 text-xs font-bold text-white focus:outline-none focus:border-primary/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">Unsplash Access Key (Images)</label>
+                <input 
+                   type="password"
+                   value={devKeys.unsplash}
+                   onChange={(e) => handleDevKeyChange('unsplash', e.target.value)}
+                   placeholder="Enter Access Key"
+                   className="w-full h-12 bg-black/40 border border-white/5 rounded-xl px-4 text-xs font-bold text-white focus:outline-none focus:border-primary/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">ORS API Key (Transit)</label>
+                <input 
+                   type="password"
+                   value={devKeys.ors}
+                   onChange={(e) => handleDevKeyChange('ors', e.target.value)}
+                   placeholder="Enter ORS Key"
+                   className="w-full h-12 bg-black/40 border border-white/5 rounded-xl px-4 text-xs font-bold text-white focus:outline-none focus:border-primary/30"
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Integrated Settings List - Intrinsic Sizing */}
+        <div className="space-y-3 pb-10">
+          <div className="flex items-center gap-3 px-2 mb-4">
+            <h2 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em]">PREFERENCES</h2>
+          </div>
+          {settingsItems.map((item, index) => (
+            <motion.button
+              key={item.label}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 + index * 0.05 }}
+              className={cn(
+                "w-full min-h-[64px] py-4 px-6 rounded-[24px] bg-zinc-900/30 border border-white/5 flex items-center gap-4 active:scale-[0.98] transition-all hover:bg-zinc-900/50",
+                item.isLast && "mt-4"
+              )}
+            >
+              <div className={cn("w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 flex-shrink-0")}>
+                <item.icon className={cn("w-5 h-5 text-primary")} />
+              </div>
+              <span className={cn(
+                "text-sm font-bold text-left flex-1",
+                item.isLast ? "text-red-500/80" : "text-white/80"
+              )}>
+                {item.label}
+              </span>
+              {item.detail && (
+                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mr-2">{item.detail}</span>
+              )}
+              {!item.isLast && <ChevronRight className="w-5 h-5 text-zinc-600 flex-shrink-0 self-center" />}
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      <BottomNav />
+    </main>
+  );
+}

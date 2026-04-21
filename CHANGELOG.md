@@ -2,17 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.8.0](https://github.com/strike007-3000/RouteMate/compare/v2.7.1...v2.8.0) (2026-04-20)
+## [2.8.1] - 2026-04-21
 
+### 🌓 Dual-View Distinction (Summary vs. Logistics)
+- **State-Driven UI**: Implemented a global view switcher allowing users to toggle between a high-level visual itinerary and a technical logistical timeline.
+- **Summary Mode**: Focuses on emotional planning with image-forward "Day Cards," unified 32px radii, and suppressed connectors.
+- **Logistics Mode**: Restores the 1px continuous thread, transit markers, and technical metadata.
+
+### 📍 Intelligent 'Between-Stop' Directions
+- **Contextual Routing**: The Map Pin now calculates directions **from the previous stop** to the current one, providing a seamless journey thread.
+- **Hub Precision**: Integrated `getPreciseLocation` logic to ensure navigation routes specifically to **Airport Terminals** (IATA codes) rather than generic city pins.
+- **Cross-Day Continuity**: Navigation logic now persists across day boundaries, routing your first activity of the day from the previous night's hotel.
+
+### 🧠 AI Extraction Hardening (Llama 3.3 70B)
+- **Primary Model Migration**: Switched to **Llama 3.3 70B** as the primary reasoning engine via OpenRouter.
+- **JSON Object Mode**: Enabled `response_format: json_object` to eliminate markdown artifacts and 422 parsing errors.
+- **Fuzzy Data Recovery**: Implemented a regex-based recovery layer to handle non-compliant LLM responses.
+
+### 🌅 Luxury Magazine Imagery
+- **Curated Filtering**: Updated the Unsplash engine with `featured=true` and `content_filter=high` to ensure a premium travel aesthetic.
+
+## [2.8.0] - 2026-04-20
 
 ### Features
-
-* immersive hero architecture & adaptive logistics engine v2.7.5 ([78b031e](https://github.com/strike007-3000/RouteMate/commit/78b031e4cb196ed184586231fff2903b4166917a))
-
+- immersive hero architecture & adaptive logistics engine v2.7.5 ([78b031e](https://github.com/strike007-3000/RouteMate/commit/78b031e4cb196ed184586231fff2903b4166917a))
 
 ### Bug Fixes
-
-* import missing cn utility in EditTripModal ([5951e3e](https://github.com/strike007-3000/RouteMate/commit/5951e3ea36051c53a10e4f61544c7dcc561df150))
+- import missing cn utility in EditTripModal ([5951e3e](https://github.com/strike007-3000/RouteMate/commit/5951e3ea36051c53a10e4f61544c7dcc561df150))
 
 ## [2.7.2] - 2026-04-20
 
@@ -79,43 +95,6 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [2.3.0](https://github.com/strike007-3000/RouteMate/compare/v2.2.0...v2.3.0) (2026-04-19)
-
-## [2.3.0](https://github.com/strike007-3000/RouteMate/compare/v2.2.0...v2.3.0) (2026-04-19)
-
-### Features
-
-* precision logic refactor v2.3.0 - pinpoint routing and category-rank sorting ([5b77fbd](https://github.com/strike007-3000/RouteMate/commit/5b77fbd18a9f0b237bd336aaee8bfe6d64d123e9))
-
-## [2.3.0] - 2026-04-19
-
-### 🎯 Precision Architecture
-- **True Origin Routing**: Transit links now use the exact arrival airport or full street address of the previous item as the origin.
-- **Category-Tiered sorting**: Implemented a 6-tier rank system to resolve chronological conflicts (Arrivals > Check-in > Activity > Departures).
-- **Airport Code Badges**: Prominently display IATA codes (BRU, JFK) on flight cards for visual verification.
-
-## [2.2.0] - 2026-04-19
-
-### 📅 Itinerary Intelligence
-- **Global Sorting Engine**: Implemented a multi-level sort (Date > Time > Category Priority) to ensure logical flow.
-- **AI Lodging Split**: Multi-day stays are now automatically split into 'Check-in' and 'Check-out' events for better timeline bracketing.
-- **Smart Entry Shortcuts**: Added quick-template buttons (✈️, 🏨, 🚆, 🍽️) for rapid manual entry.
-
-### 🎭 Animation & UX
-- **Layout Transitions**: Added framer-motion layout support so cards slide smoothly when the itinerary changes.
-
-## [2.1.0] - 2026-04-19
-
-### ✨ Interactive UX
-- **Interactive New Trip Form**: Replaced instant placeholder creation with a premium Modal for destination and date capture.
-- **Widget Bar Compression**: Redesigned the Dashboard Bento Grid into a compact, single-row widget bar to maximize vertical space.
-
-### 🧠 Logistics Refinement
-- **Smart Destination Arrival**: Fixed a critical routing bug where segments following a flight would incorrectly use the departure airport as the origin.
-- **Robust Address Cleaning**: Enhanced address parsing to remove terminal descriptors and airline noise.
-
----
-
 ## [2.0.0] - 2026-04-19
 
 ### 🚀 Major Architectural Shift
@@ -132,14 +111,6 @@ All notable changes to this project will be documented in this file.
 - **Minimalist Premium identity**: Standardized "ROUTEMATE" branding globally.
 - **Category Glow System**: Color-coded cards for visual recognition.
 - **UI Grid Alignment**: Standardized on a 16px grid system.
-
-### 🛠️ Data Layer
-- **Dexie v3 Schema**: Migrated `itineraryItems` to support `category` and `coordinates` metadata.
-- **Failsafe Grouping**: Switched to string-based date comparison.
-
-### 🔗 Navigation
-- **Swapped Tabs**: Reordered bottom navigation for better ergonomics.
-- **Contextual Back-Navigation**: Added intelligent back buttons.
 
 ---
 

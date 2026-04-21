@@ -34,8 +34,8 @@ const destinations = [
 
 export default function ExplorePage() {
   return (
-    <main className="min-h-screen bg-background pb-32 max-w-md mx-auto border-x border-border/50 shadow-2xl relative overflow-x-hidden">
-      <header className="p-8 pb-10 pt-16 relative">
+    <main className="min-h-screen bg-background pb-32 relative overflow-x-hidden">
+      <header className="px-[var(--gutter,24px)] pb-10 pt-[var(--header-pt,16px)] relative">
         <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
           <Globe className="w-60 h-60 rotate-45" />
         </div>
@@ -45,52 +45,53 @@ export default function ExplorePage() {
           animate={{ opacity: 1, x: 0 }}
           className="relative z-10"
         >
-          <span className="text-[10px] font-black text-primary uppercase tracking-[0.5em] mb-4 block">ROUTEMATE</span>
-          <h1 className="text-4xl font-black text-white tracking-tighter leading-none mb-3">Explore</h1>
+          <span className="text-[10px] font-bold text-primary uppercase tracking-[0.4em] mb-1 block">ROUTEMATE</span>
+          <h1 className="text-[clamp(1.5rem,5vw,2.25rem)] font-black text-white tracking-tighter leading-none mb-3">Explore</h1>
           <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
             Curated escapes for the modern nomad.
           </p>
         </motion.div>
       </header>
 
-      <section className="px-6 space-y-8">
+      <section className="px-[var(--gutter,16px)] space-y-8">
         {destinations.map((dest, i) => (
           <motion.div
             key={dest.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="group relative h-80 rounded-[2.5rem] overflow-hidden border border-white/5"
+            className="group relative h-96 rounded-[40px] overflow-hidden border border-white/5"
           >
             <img 
               src={dest.image} 
               alt={dest.name} 
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[3000ms]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
             
-            <div className="absolute bottom-0 left-0 right-0 p-6">
+            <div className="absolute bottom-0 left-0 right-0 p-8">
               <div className="flex gap-1.5 mb-3">
                 {dest.tags.map(tag => (
-                  <span key={tag} className="text-[8px] font-black text-white/70 uppercase tracking-widest bg-white/10 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/10">
+                  <span key={tag} className="text-[8px] font-black text-white/70 uppercase tracking-widest bg-black/40 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
                     {tag}
                   </span>
                 ))}
               </div>
-              <h3 className="text-2xl font-black text-white tracking-tighter mb-1">{dest.name}</h3>
-              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mb-4">
+              <h3 className="text-3xl font-black text-white tracking-tighter mb-1">{dest.name}</h3>
+              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mb-6">
                 <MapPin className="w-3 h-3 text-primary" />
                 {dest.country}
               </p>
               
-              <button className="w-full py-4 rounded-2xl bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-primary transition-colors">
-                View Details
-                <Navigation className="w-3 h-3" />
+              <button className="btn-primary w-full">
+                <Globe className="w-4 h-4" />
+                <span>View Details</span>
               </button>
             </div>
             
+            {/* Sparkle Badge with Backdrop Blur */}
             <div className="absolute top-6 right-6">
-              <div className="w-10 h-10 rounded-2xl bg-black/40 backdrop-blur-xl flex items-center justify-center border border-white/10">
+              <div className="w-12 h-12 rounded-2xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-lg">
                 <Sparkles className="w-5 h-5 text-primary" />
               </div>
             </div>

@@ -1,62 +1,42 @@
-# RouteMate v2.7.5 - Immersive Travel Intelligence 🌌✨
+# RouteMate v2.7.7 - Immersive Travel Intelligence 🌌✨
 
-RouteMate is a mobile-first, offline-capable travel intelligence application driven by a **Date-Grouped Intelligence Engine** that manages your entire travel flow.
+RouteMate is a mobile-first, offline-capable travel intelligence application driven by a **Date-Grouped Intelligence Engine** and a **Dual-View Distinction System** that manages your entire travel flow.
 
 ![RouteMate Dashboard](file:///Users/shreyasgore/Code/RouteMate/docs/dashboard_v2.7.png)
 
 ## ✨ Core Features
 
-### 🌅 Immersive Hero Architecture
-A premium, full-bleed header system that connects the emotion of travel with the precision of logistics.
-- **Triple-Gradient Logic**: Deep linear gradients ensure text contrast while maintaining image clarity.
-- **Dynamic Metadata Hierarchy**: Destination name in sentence-case with uppercase tracking grid for dates, duration, and cost.
-- **Contextual View Transitions**: Seamlessly transitions from Dashboard overview to detailed Timeline view.
+### 🌓 Dual-View Distinction (Summary vs. Logistics)
+A state-driven interface that toggles between high-level emotional planning and granular logistical execution.
+- **Summary Mode (Itinerary)**: Maximizes visual impact with "Day Cards" featuring curated Unsplash imagery and a unified 32px radius. It hides technical connectors to prioritize the "scannability" of the trip.
+- **Logistics Mode (Timeline)**: Enables a continuous, dashed journey thread with precision-aligned dots. It surfaces Transit Hubs, flight metadata, and "Time TBD" placeholders in full detail.
 
-### 📅 Adaptive Intelligence Engine
-The system now proactively manages your trip window based on extracted data.
+### 📍 Intelligent Directions & Routing
+Advanced navigation logic that understands the context of your journey.
+- **Contextual 'Between-Stop' Routing**: Clicking a stop's Map Pin now automatically calculates directions **from the previous stop** in the timeline rather than just your current location.
+- **Hub Precision**: Intelligent handoff detection ensures navigation routes directly to specific **Airport Terminals** (using IATA codes) rather than generic city centers.
+
+### 🌅 Immersive Hero & Luxury Imagery
+- **Curated Unsplash Logic**: Integrated `&featured=true` and `content_filter=high` into the image engine to ensure every trip looks like a luxury travel magazine.
+- **Triple-Gradient Logic**: Deep linear gradients (`black/90` base) ensure text contrast while maintaining image clarity.
+
+### 🧠 Adaptive Intelligence Engine (Llama 3.3 Hardened)
+- **Primary Model Shift**: Migrated to **Llama 3.3 70B** as the primary reasoning engine for 99.9% valid JSON extraction.
+- **JSON Object Enforcement**: Native `json_object` mode eliminates markdown artifacts and parsing failures.
 - **Anchor Year Logic**: Automatically anchors relative dates (e.g., "April 22nd") to your trip's start year (2026).
-- **Auto-Extension (The return flight fix)**: Detects when prompts include activities beyond the current trip window and automatically extends the `endDate` in the database.
-- **Sticky Geography**: Headers stick to the top during scroll, so you always know which day you're viewing.
-- **Intelligence Badges**: Day headers show icon summaries (✈️ 🏨 🚆) for an instant visual overview.
+- **Auto-Extension**: Detects when prompts include activities beyond the current trip window and automatically extends the `endDate`.
 
-### 🧠 Logistical Ranking (Human-First)
-We've moved beyond simple sorting to a system that respects logical travel flow.
-- **1-6 Rank Sequence**: Automatic sorting follows a proven sequence:
-  1. Check-out (Lodging)
-  2. Departure (Flight/Train)
-  3. Arrival
-  4. Check-in (Lodging)
-  5. Activities & Dining
-  6. Return Flight (Anchor)
-- **Home Base Logic**: Identifies your origin city and intelligently suppresses redundant logistics for "Home."
-- **Return Flight Detection**: Automatically anchors your final home-bound flight to the bottom of the itinerary.
-
-### 🧠 Transit Intelligence (The 50km Rule)
-Calculates physical distance between stops to provide the right handoff:
-- **Local (< 50km)**: One-tap Smart Handoff to **Google Maps Transit**.
-- **Inter-city (>= 50km)**: Suggests **Driving Directions** and updates the UI accordingly.
-- **Contextual UI**: Cards heading to airports feature "NAVIGATE TO AIRPORT" labeling.
-
-### 💎 Signature Design System (v2.7.5)
-A hyper-consistent, premium visual identity designed for readability and speed.
-- **Subtle Blue Pill Design**: All primary actions (Create Trip, View Timeline, Smart Add) use a high-fidelity glass style with `bg-blue-500/10` and `rounded-full` geometry.
-- **Full-Bleed Spacing**: Reduced internal margins (`px-4`) and optimized bento-to-itinerary gaps for maximum screen utilization.
-- **The 40px Rule**: Advanced modal radii (`rounded-[40px]`) for a smoother, organic tactile feel.
-- **No-Jump Navigation**: Absolute-aligned headers ensure titles stay perfectly fixed during back-navigation.
-- **Neon Glow Categories**: Signature glow effects for Flight, Lodging, Food, Activity, Train, and Rental.
-
-### 🧠 Smart Add Workflow
-Advanced AI extraction with human-centric feedback.
-- **Extraction Engine**: Mistral-powered parsing of confirmation emails and booking details.
-- **Success Toasts**: Immediate signature notifications for successful itinerary updates.
-- **Retry Logic**: Modal-state preservation and inline alerts for failed extractions.
+### 🧠 Logistical Engine (Hardened)
+- **Sorted Journey Thread**: Hardened sorting logic ensures Departures from destinations always precede Arrivals at the home base.
+- **Return Flight Anchoring**: Automatically detects arrivals in the "Home Base" city and forces them to the absolute bottom of the timeline.
+- **Lodging Splitting**: Multi-day stays are automatically visualized as distinct Check-in and Check-out cards.
 
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js (App Router)
 - **Styling**: Tailwind CSS + Framer Motion
 - **Database**: Dexie.js (IndexedDB)
-- **AI**: NVIDIA NIM (Mistral Small / Large)
+- **AI**: OpenRouter (Llama 3.3 70B / Nemotron 3 Super)
 - **Imaging**: Unsplash API
 - **Logistics**: OpenRouteService + Google Maps Handoff
 
@@ -70,7 +50,7 @@ graph TD
     B --> C
     C --> D[(Trips Table)]
     C --> E[(Itinerary Table - Categories & CustomOrder)]
-    A --> F[NVIDIA NIM Core - Mistral Extraction]
+    A --> F[OpenRouter Core - Llama 3.3 Extraction]
     A --> G[Logistics Engine - 50km Rule]
     A --> K[Unsplash Image Engine - Caching Service]
     G --> L[OpenRouteService - Geocoding & Local Routes]
@@ -85,7 +65,7 @@ graph TD
    npm install
    ```
 2. **Environment**:
-   Add `NVIDIA_API_KEY`, `UNSPLASH_ACCESS_KEY`, and `ORS_API_KEY` to your `.env`.
+   Add `OPENROUTER_API_KEY`, `UNSPLASH_ACCESS_KEY`, and `ORS_API_KEY` to your `.env`.
 3. **Pre-flight Integrity Check**:
    Before deploying or testing, verify your configuration and AI logic:
    ```bash

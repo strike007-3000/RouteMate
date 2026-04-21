@@ -56,9 +56,9 @@ export default function Dashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-black pb-32 w-full max-w-md mx-auto border-x border-border/50 shadow-2xl shadow-black/50 overflow-x-hidden relative flex flex-col">
+    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto overflow-x-hidden relative flex flex-col">
       {/* Premium Header */}
-      <header className="px-6 pb-10 pt-16 relative">
+      <header className="px-[var(--gutter,24px)] pb-10 pt-[var(--header-pt,16px)] relative">
         <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
           <Globe className="w-60 h-60 rotate-12" />
         </div>
@@ -68,8 +68,8 @@ export default function Dashboard() {
           animate={{ opacity: 1, x: 0 }}
           className="relative z-10"
         >
-          <span className="text-[10px] font-black text-primary uppercase tracking-[0.5em] mb-4 block">ROUTEMATE</span>
-          <h1 className="text-4xl font-black text-white tracking-tighter leading-none mb-3">My Trips</h1>
+          <span className="text-[10px] font-bold text-primary uppercase tracking-[0.4em] mb-1 block">ROUTEMATE</span>
+          <h1 className="text-[clamp(1.5rem,5vw,2.25rem)] font-black text-white tracking-tighter leading-none mb-3">My Trips</h1>
           <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest leading-relaxed max-w-[200px]">
             Plan smarter, travel cheap. Pocket Intelligence active.
           </p>
@@ -77,21 +77,19 @@ export default function Dashboard() {
 
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="mt-10 group relative w-full h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg shadow-black/20"
+          className="mt-10 btn-primary w-full"
         >
-          <Plus className="w-5 h-5 text-primary" />
-          <span className="text-[11px] font-black text-primary uppercase tracking-[0.2em]">Create New Trip</span>
+          <Plus className="w-5 h-5" />
+          <span>Create New Trip</span>
         </button>
       </header>
 
-      <section className="px-6 space-y-12 pb-10">
-        {/* ... Sections ... */}
-        {/* Verification of the sections below to keep logic intact */}
+      <section className="px-[var(--gutter,24px)] space-y-12 pb-10">
         {upcomingTrips.length > 0 && (
-          <div>
+          <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6 px-2">
               <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-              <h2 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Upcoming</h2>
+              <h2 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">UPCOMING</h2>
             </div>
             <div className="space-y-6">
               {upcomingTrips.map(trip => (
@@ -105,7 +103,7 @@ export default function Dashboard() {
           <div>
             <div className="flex items-center gap-3 mb-6 px-2">
               <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-              <h2 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Drafts</h2>
+              <h2 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">DRAFTS</h2>
             </div>
             <div className="space-y-6">
               {draftTrips.map(trip => (

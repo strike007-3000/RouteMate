@@ -31,8 +31,10 @@ interface TripState {
   points: ItineraryItem[];
   isHydrated: boolean;
   expandedDays: string[]; // ['YYYY-MM-DD'] towns that are open
+  viewMode: 'summary' | 'logistics';
   
   // App Logic
+  setViewMode: (mode: 'summary' | 'logistics') => void;
   getBestTimelineTrip: () => Promise<number | null>;
   toggleDay: (date: string) => void;
   setExpandedDays: (dates: string[]) => void;
@@ -58,6 +60,9 @@ export const useTripStore = create<TripState>((set, get) => ({
   points: [],
   isHydrated: false,
   expandedDays: [],
+  viewMode: 'summary',
+
+  setViewMode: (mode) => set({ viewMode: mode }),
 
   toggleDay: (date) => set((state) => ({
     expandedDays: state.expandedDays.includes(date)
@@ -260,10 +265,17 @@ export const useTripStore = create<TripState>((set, get) => ({
       // Priority 1: Home Base Departure (Force to top on Day 1)
       if (isDay1 && cat === 'Flight' && title.includes('departure')) return -100;
       
-      // Priority 6: Return Flight (Link home arrival to absolute bottom)
-      if (isReturnFlight) return 1000;
+      // Suppression: On Day 1, if we have a checkout from Home Base, or transit from Home Base, suppress it.
+      // (Simplified by giving it a rank that might be ignored if we add a 'filter' later, but for now we rank it low)
+      if (isDay1 && (title.includes('check-out from') && title.includes(homeBase || ''))) return 1000;
 
-      // 1-5 Logistical Sequence
+      // Priority 6: Return Flight (Link home arrival sequence to absolute bottom)
+      // Any flight arriving at home base, or departing to arrive at home base, is part of the final anchor.
+      if (isReturnFlight) {
+        return title.includes('departure') ? 1999 : 2000;
+      }
+
+      // 1-5 Logistical Sequence for normal days
       if (cat === 'Lodging' && title.includes('check-out')) return 1;
       if (cat === 'Flight' && title.includes('departure')) return 2;
       if (cat === 'Flight' && title.includes('arrival')) return 3;

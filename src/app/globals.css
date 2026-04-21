@@ -1,26 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  --background: #09090b;
-  --foreground: #fafafa;
-  --card: #18181b;
-  --card-foreground: #fafafa;
-  --popover: #09090b;
-  --popover-foreground: #fafafa;
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #09090b;
   --primary: #3b82f6;
   --primary-foreground: #ffffff;
-  --secondary: #18181b;
-  --secondary-foreground: #fafafa;
-  --muted: #18181b;
-  --muted-foreground: #71717a;
-  --accent: #27272a;
-  --accent-foreground: #fafafa;
-  --destructive: #ef4444;
-  --destructive-foreground: #fafafa;
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #3b82f6;
-  --radius: 1.5rem;
+  --border: rgba(255, 255, 255, 0.08);
+  
+  /* The "Laws" of Rhythm */
+  --gutter: 24px;
+  --radius-card: 24px;
+  --radius-container: 32px;
+  --btn-h: 56px;
+  --brand-gap: 4px;
+  
+  /* Safe Area Tokens */
+  --safe-top: env(safe-area-inset-top, 24px);
+  --safe-bottom: env(safe-area-inset-bottom, 16px);
+
+  /* Spacing Scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
 }
 
 @theme {
@@ -52,10 +56,21 @@
 
 @layer utilities {
   .glass {
-    @apply bg-zinc-950/60 backdrop-blur-xl border border-white/10;
+    @apply backdrop-blur-2xl border border-white/10;
+    background: rgba(9, 9, 11, 0.6);
   }
   .glass-card {
-    @apply bg-zinc-900/50 backdrop-blur-md border border-white/5;
+    @apply backdrop-blur-xl border border-white/5;
+    background: rgba(18, 18, 22, 0.4);
+  }
+  .btn-primary {
+    height: var(--btn-h);
+    border-radius: var(--radius-card);
+    @apply border-2 border-primary text-primary bg-transparent font-bold uppercase tracking-[0.2em] text-[11px] flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg shadow-primary/10 hover:shadow-primary/20 hover:bg-primary/5 cursor-pointer;
+  }
+  .timeline-dot {
+    @apply w-2.5 h-2.5 rounded-full z-10;
+    box-shadow: 0 0 15px currentColor;
   }
 }
 

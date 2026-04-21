@@ -26,6 +26,7 @@ export interface ItineraryItem extends TripPoint {
 export class RouteMateDatabase extends Dexie {
   trips!: Table<Trip>;
   itineraryItems!: Table<ItineraryItem>;
+  favorites!: Table<Favorite>;
   points!: Table<TripPoint>; // Kept for v1 migration
   
   constructor() {
@@ -70,7 +71,21 @@ export class RouteMateDatabase extends Dexie {
         if (item.isTimeExplicit === undefined) item.isTimeExplicit = true;
       });
     });
+
+    this.version(6).stores({
+      trips: '++id, name, destination, startDate, status',
+      itineraryItems: '++id, tripId, type, startTime, category, sortOrder, isTimeExplicit',
+      favorites: '++id, name, category, image'
+    });
   }
+}
+
+export interface Favorite {
+  id?: number;
+  name: string;
+  category: string;
+  image: string;
+  location?: string;
 }
 
 export const db = new RouteMateDatabase();

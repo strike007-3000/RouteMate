@@ -4,21 +4,22 @@ export class UnsplashService {
   private static ACCESS_KEY = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY || '';
 
   static async getTripImage(tripId: number, query: string, userKey?: string): Promise<string | null> {
-    const key = userKey || this.ACCESS_KEY;
+    const devKey = typeof window !== 'undefined' ? localStorage.getItem('dev_unsplash_key') : null;
+    const key = userKey || devKey || this.ACCESS_KEY;
     
     // 1. Check if trip already has a cover image
     const trip = await db.trips.get(tripId);
     if (trip?.coverImage) return trip.coverImage;
 
-    if (!key || key === 'your_unsplash_access_key') {
+    if (!key || key === 'your_unsplash_access_key' || key === '') {
       console.warn('Unsplash API key missing. Using dynamic placeholder.');
       return this.getPlaceholder(query);
     }
 
     try {
-      // 2. Fetch from Unsplash
+      // 2. Fetch from Unsplash with High Quality Filters
       const response = await fetch(
-        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query + ' landmark nature travel')}&orientation=landscape&per_page=5`,
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query + ' luxury travel landmark landscape')}&orientation=landscape&per_page=5&content_filter=high&featured=true`,
         {
           headers: {
             Authorization: `Client-ID ${key}`,

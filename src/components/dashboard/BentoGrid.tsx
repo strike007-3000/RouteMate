@@ -85,12 +85,11 @@ export const BentoGrid = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) =>
   }
 
   return (
-    <div className="flex gap-3 px-4 pt-2 overflow-x-auto no-scrollbar pb-2">
+    <div className="grid grid-cols-3 gap-3 px-[var(--gutter,24px)] pt-2 pb-6">
       <BentoBox 
         title="Next Step" 
         value={nextActionValue} 
         icon={<Calendar className="w-8 h-8" />}
-        className="flex-1 min-w-[130px]"
         delay={0.1}
         onClick={nextActionValue === "Plan a Step" ? onOpenSmartAdd : undefined}
       />
@@ -98,7 +97,6 @@ export const BentoGrid = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) =>
         title="Logistics" 
         value={transitStatus} 
         icon={<Sparkles className="w-8 h-8" />}
-        className="flex-1 min-w-[110px]"
         delay={0.2}
         subValue={points.length > 0 ? `${points.length} stops` : "Detecting"}
       />
@@ -106,7 +104,6 @@ export const BentoGrid = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) =>
         title="Countdown" 
         value={nextPoint ? format(new Date(nextPoint.startTime), 'HH:mm') : (activeTrip ? format(new Date(activeTrip.startDate), 'MMM dd') : "Ready")} 
         icon={<Navigation className="w-8 h-8" />}
-        className="flex-1 min-w-[110px]"
         delay={0.3}
         subValue={statusSubValue}
       />

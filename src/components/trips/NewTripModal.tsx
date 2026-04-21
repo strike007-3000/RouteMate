@@ -114,10 +114,10 @@ export const NewTripModal = ({ isOpen, onClose, onCreate }: NewTripModalProps) =
                 {/* Submit Button */}
                 <button 
                   type="submit"
-                  className="group relative mt-10 w-full h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all shadow-xl shadow-black/20"
+                  className="btn-primary w-full mt-10"
                 >
-                  <span className="text-[11px] font-black text-primary uppercase tracking-[0.2em] relative z-10 transition-all group-hover:scale-105">Start Planning</span>
-                  <ArrowRight className="w-4 h-4 text-primary relative z-10 group-hover:translate-x-1 transition-transform" />
+                  <span>Start Planning</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               </form>
 

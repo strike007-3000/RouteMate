@@ -16,9 +16,10 @@ import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion
 import { Sparkles, Calendar } from 'lucide-react';
 import { TripHero } from '@/components/trip/TripHero';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 // Sub-component to handle drag controls per item
-const TimelineReorderItem = ({ item, nextItem }: { item: ItineraryItem, nextItem?: ItineraryItem }) => {
+const TimelineReorderItem = ({ item, prevItem, nextItem }: { item: ItineraryItem, prevItem?: ItineraryItem, nextItem?: ItineraryItem }) => {
   const dragControls = useDragControls();
   
   return (
@@ -32,7 +33,7 @@ const TimelineReorderItem = ({ item, nextItem }: { item: ItineraryItem, nextItem
       whileDrag={{ scale: 1.02, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)" }}
       className="relative"
     >
-      <TimelineItem point={item} dragControls={dragControls} />
+      <TimelineItem point={item} prevPoint={prevItem} dragControls={dragControls} />
       {nextItem && <TransitCard from={item} to={nextItem} />}
     </Reorder.Item>
   );
@@ -44,6 +45,8 @@ export default function TimelinePage() {
   const router = useRouter();
   
   const { expandedDays, toggleDay, setExpandedDays, sortItinerary } = useTripStore();
+  const viewMode = useTripStore((state) => state.viewMode);
+  const setViewMode = useTripStore((state) => state.setViewMode);
   const [isSmartAddOpen, setIsSmartAddOpen] = useState(false);
   
   const trip = useLiveQuery(() => db.trips.get(tripId), [tripId]);
@@ -106,7 +109,7 @@ export default function TimelinePage() {
   if (!trip) return null;
 
   return (
-    <main className="min-h-screen bg-black pb-32 w-full max-w-md mx-auto border-x border-border/50 shadow-2xl relative overflow-x-hidden flex flex-col font-sans">
+    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto relative overflow-x-hidden flex flex-col font-sans">
       <Header />
       
       <TripHero 
@@ -115,20 +118,45 @@ export default function TimelinePage() {
         onAction={() => setIsSmartAddOpen(true)} 
       />
       
-      <div className="relative z-10 -mt-10">
-        <div className="space-y-4 px-4 mb-8">
+      <div className="relative z-10 -mt-10 px-[var(--gutter,24px)]">
+        {/* Segmented Control */}
+        <div className="flex items-center p-1 bg-zinc-900/80 backdrop-blur-xl border border-white/5 rounded-2xl mb-8">
+          {(['summary', 'logistics'] as const).map((mode) => (
+            <button
+              key={mode}
+              onClick={() => setViewMode(mode)}
+              className={cn(
+                "flex-1 py-2 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-300",
+                viewMode === mode 
+                  ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                  : "text-zinc-500 hover:text-zinc-300"
+              )}
+            >
+              {mode}
+            </button>
+          ))}
+        </div>
+
+        <div className="space-y-6 mb-8">
           {groupedTimeline.map((day) => {
             const dateStr = day.date.split('T')[0];
             const isExpanded = expandedDays.includes(dateStr);
             
             return (
-              <div key={day.date} className="relative">
+              <div 
+                key={day.date} 
+                className={cn(
+                  "relative transition-all duration-500",
+                  viewMode === 'summary' && "bg-zinc-900/40 rounded-[var(--radius-container,32px)] border border-white/5 overflow-hidden"
+                )}
+              >
                 <TimelineHeader 
                   dayNumber={day.dayNumber}
                   date={day.date}
                   categories={day.items.map(item => item.category)}
                   isExpanded={isExpanded}
                   onToggle={() => toggleDay(dateStr)}
+                  trip={trip}
                 />
                 
                 <AnimatePresence>
@@ -137,9 +165,15 @@ export default function TimelinePage() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden bg-white/[0.02] rounded-b-3xl"
+                      className={cn(
+                        "overflow-hidden",
+                        viewMode === 'logistics' ? "bg-white/[0.02] rounded-b-[var(--radius-container,32px)]" : "bg-transparent"
+                      )}
                     >
-                      <div className="px-2 pb-8 pt-2">
+                      <div className={cn(
+                        "pb-8",
+                        viewMode === 'logistics' ? "pt-4" : "pt-0 px-2"
+                      )}>
                         {day.items.length > 0 ? (
                           <Reorder.Group 
                             axis="y" 
@@ -150,13 +184,27 @@ export default function TimelinePage() {
                             }}
                             className="space-y-0"
                           >
-                            {day.items.map((item, idx) => (
-                              <TimelineReorderItem 
-                                key={item.id} 
-                                item={item} 
-                                nextItem={day.items[idx + 1]} 
-                              />
-                            ))}
+                            {day.items.map((item, idx) => {
+                              // Find the TRUE previous item across day boundaries
+                              let prevItem = idx > 0 ? day.items[idx - 1] : undefined;
+                              
+                              if (!prevItem && day.dayNumber > 1) {
+                                // Look at the previous day in groupedTimeline
+                                const prevDay = groupedTimeline[day.dayNumber - 2];
+                                if (prevDay && prevDay.items.length > 0) {
+                                  prevItem = prevDay.items[prevDay.items.length - 1];
+                                }
+                              }
+
+                              return (
+                                <TimelineReorderItem 
+                                  key={item.id} 
+                                  item={item} 
+                                  prevItem={prevItem}
+                                  nextItem={day.items[idx + 1]} 
+                                />
+                              );
+                            })}
                           </Reorder.Group>
                         ) : (
                           <div className="py-10 text-center flex flex-col items-center gap-3">

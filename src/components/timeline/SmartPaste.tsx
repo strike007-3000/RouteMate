@@ -14,8 +14,7 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
   const [text, setText] = useState('');
   const [status, setStatus] = useState<'idle' | 'parsing' | 'success' | 'error'>('idle');
   const addPoint = useTripStore((state) => state.addPoint);
-  const nvidiaApiKey = useSettingsStore((state) => state.nvidiaApiKey);
-  const unsplashAccessKey = useSettingsStore((state) => state.unsplashAccessKey);
+  const openRouterApiKey = useSettingsStore((state) => state.openRouterApiKey);
   const activeTrip = useTripStore((state) => state.activeTrip);
 
   const templates = [
@@ -43,11 +42,14 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
     try {
       const rootYear = activeTrip?.startDate ? activeTrip.startDate.split('-')[0] : "2026";
       
+      const devOpenRouterKey = typeof window !== 'undefined' ? localStorage.getItem('dev_openrouter_key') : null;
+      const apiOpenRouterKey = devOpenRouterKey || openRouterApiKey;
+
       const response = await fetch('/api/parse-itinerary', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'x-user-nvidia-key': nvidiaApiKey
+          'x-user-openrouter-key': apiOpenRouterKey || ''
         },
         body: JSON.stringify({ 
           text,
@@ -117,11 +119,16 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
             onClick={onClose}
           />
           <motion.div 
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            className="fixed inset-x-0 bottom-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 w-full max-w-md h-[72vh] sm:h-auto bg-zinc-950 border-t sm:border border-white/10 rounded-t-[2.5rem] sm:rounded-[40px] z-[101] overflow-hidden flex flex-col p-8 pb-10"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed inset-0 z-[101] flex items-center justify-center p-4"
           >
+            <motion.div 
+              initial={{ y: 20 }}
+              animate={{ y: 0 }}
+              className="relative w-full max-w-[500px] h-full max-h-[85vh] sm:h-auto bg-zinc-950 border border-white/10 rounded-[40px] shadow-2xl overflow-hidden flex flex-col p-8 pb-10"
+            >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-[24px] bg-primary/10 border border-primary/20 flex items-center justify-center">
@@ -180,49 +187,50 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
                 disabled={!text.trim() || status === 'parsing'}
                 onClick={handleExtract}
                 className={cn(
-                  "w-full h-16 rounded-full flex items-center justify-center gap-3 font-black text-[11px] uppercase tracking-[0.2em] transition-all relative overflow-hidden",
-                  status === 'idle' && "bg-primary/10 border border-primary/20 text-primary shadow-lg shadow-black/20",
-                  status === 'parsing' && "bg-zinc-800 text-zinc-500 cursor-wait",
-                  status === 'success' && "bg-emerald-500/10 border border-emerald-500/20 text-emerald-500",
-                  status === 'error' && "bg-destructive/10 border border-destructive/20 text-destructive"
+                  "btn-primary w-full h-16 relative overflow-hidden",
+                  status === 'idle' && "border-primary text-primary",
+                  status === 'parsing' && "border-zinc-800 text-zinc-500 cursor-wait bg-zinc-900/50",
+                  status === 'success' && "border-emerald-500 text-emerald-500 shadow-emerald-500/20 bg-emerald-500/5",
+                  status === 'error' && "border-destructive text-destructive shadow-destructive/20 bg-destructive/5"
                 )}
               >
                 {status === 'idle' && (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    Extract Itinerary
+                    <span>Extract Itinerary</span>
                   </>
                 )}
                 {status === 'parsing' && (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    AI Processing...
+                    <span>AI Processing...</span>
                   </>
                 )}
                 {status === 'success' && (
                   <>
                     <CheckCircle2 className="w-4 h-4" />
-                    Itinerary updated!
+                    <span>Itinerary updated!</span>
                   </>
                 )}
                 {status === 'error' && (
                   <>
                     <AlertCircle className="w-4 h-4" />
-                    Retry Extraction
+                    <span>Retry Extraction</span>
                   </>
                 )}
                 
                 {/* Pulse effect during parsing */}
                 {status === 'parsing' && (
                     <motion.div 
-                        animate={{ opacity: [0, 0.2, 0] }}
+                        animate={{ opacity: [0, 0.1, 0] }}
                         transition={{ repeat: Infinity, duration: 1.5 }}
-                        className="absolute inset-0 bg-primary"
+                        className="absolute inset-0 bg-primary/20"
                     />
                 )}
               </button>
             </div>
           </motion.div>
+        </motion.div>
         </>
       )}
     </AnimatePresence>

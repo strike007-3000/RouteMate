@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, MapPin, Trash2, Copy, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, MapPin, Trash2, Copy, ArrowRight, MoreHorizontal, X } from 'lucide-react';
 import { Trip } from '@/lib/db';
 import { useTripStore } from '@/stores/useTripStore';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
   const { deleteTrip, duplicateTrip } = useTripStore();
   const [imageUrl, setImageUrl] = useState(trip.coverImage || '');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   // Status tokens for vibrant UI
   const statusColors = {
@@ -30,8 +31,13 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
   }, [trip.coverImage]);
 
   const handleImageError = () => {
-    // If Unsplash fails to load, fallback to a reliable scenic asset
     setImageUrl('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1000');
+  };
+
+  const toggleMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowMenu(!showMenu);
   };
 
   return (
@@ -41,7 +47,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
       viewport={{ once: true }}
       onClick={() => onSelect(trip.id!)}
       className={cn(
-        "group relative w-full h-[280px] rounded-[24px] overflow-hidden border border-white/10 hover:border-primary/50 transition-all duration-700 cursor-pointer shadow-2xl shadow-black",
+        "group relative w-full h-[280px] rounded-[var(--radius-card,24px)] overflow-hidden border border-white/10 hover:border-primary/50 transition-all duration-700 cursor-pointer shadow-2xl shadow-black",
         isDeleting && "opacity-50"
       )}
     >
@@ -58,17 +64,70 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 via-zinc-900 to-black animate-pulse" />
         )}
-        {/* Multi-layer Overlay for readability */}
         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-700" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
       </div>
 
-      {/* Top Bar: Status */}
-      <div className="absolute top-6 right-6">
+      {/* Top Bar: Status & Menu button */}
+      <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-20">
         <div className={`px-4 py-1.5 rounded-full border text-[10px] font-bold uppercase tracking-[0.2em] backdrop-blur-md shadow-lg ${statusColors[trip.status]}`}>
           {trip.status}
         </div>
+        
+        <button 
+          onClick={toggleMenu}
+          className="w-10 h-10 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-black/60 transition-all active:scale-95"
+        >
+          {showMenu ? <X className="w-5 h-5" /> : <MoreHorizontal className="w-5 h-5" />}
+        </button>
       </div>
+
+      {/* Popover Menu actions */}
+      <AnimatePresence>
+        {showMenu && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.9 }}
+            className="absolute top-16 right-6 w-48 bg-zinc-950/90 backdrop-blur-2xl border border-white/10 rounded-[28px] p-2 z-30 shadow-2xl"
+          >
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                duplicateTrip(trip.id!);
+                setShowMenu(false);
+              }}
+              className="w-full px-5 py-3 rounded-2xl hover:bg-white/5 flex items-center gap-3 transition-colors"
+            >
+              <Copy className="w-4 h-4 text-zinc-400" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/80">Duplicate</span>
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!isDeleting) {
+                  setIsDeleting(true);
+                  setTimeout(() => setIsDeleting(false), 3000);
+                } else {
+                  deleteTrip(trip.id!);
+                  setShowMenu(false);
+                }
+              }}
+              className={cn(
+                "w-full px-5 py-3 rounded-2xl flex items-center gap-3 transition-all",
+                isDeleting ? "bg-red-500 text-white" : "hover:bg-red-500/10 text-red-500"
+              )}
+            >
+              <Trash2 className="w-4 h-4" />
+              <span className="text-[10px] font-black uppercase tracking-widest">
+                {isDeleting ? 'Confirm?' : 'Delete'}
+              </span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Bottom Content Area */}
       <div className="absolute inset-0 p-8 flex flex-col justify-end">
@@ -84,52 +143,16 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
             {trip.name}
           </h3>
           
-          <div className="flex items-center gap-3 text-[10px] text-zinc-300 font-bold uppercase tracking-[0.2em] drop-shadow-md">
-            <Calendar className="w-4 h-4 text-primary" />
-            <span>{new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}</span>
-          </div>
-        </div>
-
-        {/* Actions bar */}
-        <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-          <div className="flex items-center gap-3">
-            <button 
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (!isDeleting) {
-                  setIsDeleting(true);
-                  setTimeout(() => setIsDeleting(false), 3000);
-                } else {
-                  deleteTrip(trip.id!);
-                }
-              }}
-              className={cn(
-                "h-12 rounded-[16px] transition-all flex items-center justify-center gap-2 border",
-                isDeleting 
-                  ? "bg-red-600 text-white border-red-500 px-6 shadow-lg shadow-red-500/20" 
-                  : "bg-red-500/10 text-red-500 border-red-500/20 w-12 hover:bg-red-500 hover:text-white"
-              )}
-            >
-              <Trash2 className={cn("w-5 h-5", isDeleting && "animate-pulse")} />
-              {isDeleting && <span className="text-[10px] font-bold uppercase tracking-widest">Confirm removal?</span>}
-            </button>
-            <button 
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                duplicateTrip(trip.id!);
-              }}
-              className="w-12 h-12 rounded-[16px] bg-white/5 text-white/50 hover:bg-white/20 hover:text-white transition-all flex items-center justify-center border border-white/10 hover:shadow-lg"
-            >
-              <Copy className="w-5 h-5" />
-            </button>
-          </div>
-          
-          <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-xl shadow-primary/20">
-            <ArrowRight className="w-6 h-6" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 text-[10px] text-zinc-300 font-bold uppercase tracking-[0.2em] drop-shadow-md">
+              <Calendar className="w-4 h-4 text-primary" />
+              <span>{new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}</span>
+            </div>
+            
+            {/* Minimal Arrow on hover */}
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
+              <ArrowRight className="w-5 h-5" />
+            </div>
           </div>
         </div>
       </div>

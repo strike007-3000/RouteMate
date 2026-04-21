@@ -38,12 +38,12 @@ export default function TripPage() {
   );
 
   return (
-    <main className="min-h-screen bg-black pb-32 w-full max-w-md mx-auto border-x border-border/50 shadow-2xl shadow-black/50 relative overflow-x-hidden flex flex-col">
+    <main className="min-h-screen bg-black pb-32 flex flex-col relative overflow-x-hidden max-w-[500px] mx-auto">
       <Header />
       
       <TripHero trip={activeTrip} mode="dashboard" />
 
-      <section className="relative z-10 -mt-10">
+      <section className="relative z-10 mt-4">
         <BentoGrid onOpenSmartAdd={() => setIsSmartAddOpen(true)} />
       </section>
       

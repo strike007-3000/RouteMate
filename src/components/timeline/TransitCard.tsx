@@ -5,6 +5,7 @@ import { Bus, Train, Footprints, ArrowRight, Loader2, Sparkles, Navigation } fro
 import { motion, AnimatePresence } from 'framer-motion';
 import { TripPoint } from '@/stores/useTripStore';
 import { TransitSuggestion } from '@/services/transit/types';
+import { useTripStore } from '@/stores/useTripStore';
 
 interface TransitCardProps {
   from: TripPoint;
@@ -75,19 +76,22 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
 
   if (isOceanCrossing) return null;
 
+  const viewMode = useTripStore((state) => state.viewMode);
+
+  if (viewMode === 'summary') return null;
+
   const Icon = suggestion?.mode === 'train' || suggestion?.mode === 'subway' ? Train : suggestion?.mode === 'walk' ? Footprints : Bus;
 
   return (
-    <div className="relative pl-10 pb-8 last:pb-0">
-      <div className="absolute left-0 top-0 w-10 h-full flex flex-col items-center">
-        <div className="w-0.5 flex-1 bg-primary/20 border-l-2 border-dashed border-primary" />
-      </div>
+    <div className="relative pl-[var(--gutter,24px)] pb-8 last:pb-0">
+      {/* Continuous Journey Thread */}
+      <div className="absolute left-[calc(var(--gutter,24px)/2)] top-0 bottom-0 w-[1px] bg-primary/20 border-l border-dashed z-0" />
       
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        className="bg-primary/5 border border-primary/20 border-dashed p-4 rounded-3xl relative overflow-hidden group min-h-[140px]"
+        className="bg-zinc-900/30 border border-white/5 p-4 rounded-[var(--radius-card,24px)] relative overflow-hidden group min-h-[120px] z-10"
       >
         <AnimatePresence mode="wait">
           {loading ? (
@@ -181,20 +185,19 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                       const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;
                       window.open(url, '_blank', 'noopener,noreferrer');
                     }}
-                    className="w-full py-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-bold hover:bg-blue-500/20 transition-all flex items-center justify-center gap-3 uppercase tracking-[0.2em] group/btn"
+                    className="btn-primary w-full h-14"
                   >
-                    <Navigation className="w-4 h-4 fill-blue-500 animate-pulse" />
-                    {isRoutingToFlight ? 'Navigate to Airport' : isRoutingFromFlight ? 'Open Google Maps' : isInterCity ? 'Open Driving Directions' : 'Open Google Maps'}
-                    <div className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center">
-                      <ArrowRight className="w-2.5 h-2.5 group-hover/btn:translate-x-0.5 transition-transform" />
-                    </div>
+                    <Navigation className="w-4 h-4" />
+                    <span>
+                      {isRoutingToFlight ? 'Navigate to Airport' : isRoutingFromFlight ? 'Open Google Maps' : isInterCity ? 'Open Driving Directions' : 'Open Google Maps'}
+                    </span>
                   </button>
                 )}
                 
                 {!suggestion.externalUrl && (
-                  <button className="w-full py-3 rounded-2xl bg-zinc-900 border border-white/5 text-white text-[10px] font-black hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 uppercase tracking-widest group/btn">
-                    Save to Itinerary
-                    <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                  <button className="btn-primary w-full h-14">
+                    <span>Save to Itinerary</span>
+                    <ArrowRight className="w-4 h-4 scale-75" />
                   </button>
                 )}
               </div>

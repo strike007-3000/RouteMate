@@ -40,7 +40,7 @@ export const Timeline = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) => 
   );
 
   return (
-    <div className="px-4 pt-12">
+    <div className="px-[var(--gutter,24px)] pt-12">
       <div className="flex items-end justify-between mb-10 pr-2">
         <div className="flex flex-col">
           <span className="text-[10px] font-bold text-primary uppercase tracking-[0.3em] mb-1.5 leading-none ml-1">LOGISTICS</span>

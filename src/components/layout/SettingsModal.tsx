@@ -7,9 +7,9 @@ import { useSettingsStore } from '@/stores/useSettingsStore';
 
 export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
   const { 
-    nvidiaApiKey, 
-    setNvidiaApiKey, 
-    clearNvidiaApiKey,
+    openRouterApiKey, 
+    setOpenRouterApiKey, 
+    clearAllKeys,
     hereApiKey,
     setHereApiKey,
     orsApiKey,
@@ -18,18 +18,18 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
     setUnsplashAccessKey
   } = useSettingsStore();
 
-  const [tempNvidiaKey, setTempNvidiaKey] = useState(nvidiaApiKey);
+  const [tempOpenRouterKey, setTempOpenRouterKey] = useState(openRouterApiKey);
   const [tempHereKey, setTempHereKey] = useState(hereApiKey || '');
   const [tempOrsKey, setTempOrsKey] = useState(orsApiKey || '');
   const [tempUnsplashKey, setTempUnsplashKey] = useState(unsplashAccessKey || '');
-  const [showNvidiaKey, setShowNvidiaKey] = useState(false);
+  const [showOpenRouterKey, setShowOpenRouterKey] = useState(false);
   const [showHereKey, setShowHereKey] = useState(false);
   const [showOrsKey, setShowOrsKey] = useState(false);
   const [showUnsplashKey, setShowUnsplashKey] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
   const handleSave = () => {
-    setNvidiaApiKey(tempNvidiaKey);
+    setOpenRouterApiKey(tempOpenRouterKey);
     setHereApiKey(tempHereKey);
     setOrsApiKey(tempOrsKey);
     setUnsplashAccessKey(tempUnsplashKey);
@@ -39,8 +39,6 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
       onClose();
     }, 1000);
   };
-// ... rest of the component
-
 
   return (
     <AnimatePresence>
@@ -74,24 +72,31 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
             <div className="space-y-8">
               <div>
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 block">
-                  NVIDIA NIM API Key (AI Extraction)
+                  OpenRouter API Key (AI Extraction)
                 </label>
                 <div className="relative">
                   <input
-                    type={showNvidiaKey ? "text" : "password"}
-                    value={tempNvidiaKey}
-                    onChange={(e) => setTempNvidiaKey(e.target.value)}
-                    placeholder="nvapi-..."
-
+                    type={showOpenRouterKey ? "text" : "password"}
+                    value={tempOpenRouterKey}
+                    onChange={(e) => setTempOpenRouterKey(e.target.value)}
+                    placeholder="sk-or-v1-..."
                     className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
                   />
                   <button 
-                    onClick={() => setShowNvidiaKey(!showNvidiaKey)}
+                    onClick={() => setShowOpenRouterKey(!showOpenRouterKey)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showNvidiaKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showOpenRouterKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                <a 
+                  href="https://openrouter.ai/keys" 
+                  target="_blank" 
+                  className="mt-3 flex items-center gap-1.5 text-[10px] font-bold text-primary hover:underline"
+                >
+                  Get your OpenRouter key
+                  <ExternalLink className="w-3 h-3" />
+                </a>
               </div>
 
               <div>
@@ -144,12 +149,11 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
                 </a>
               </div>
 
-
               <div className="pt-4 flex gap-3">
                 <button
                   onClick={() => {
-                    clearNvidiaApiKey();
-                    setTempNvidiaKey('');
+                    clearAllKeys();
+                    setTempOpenRouterKey('');
                     setTempHereKey('');
                     setTempOrsKey('');
                     setTempUnsplashKey('');
@@ -183,4 +187,3 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
     </AnimatePresence>
   );
 };
-

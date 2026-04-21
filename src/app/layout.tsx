@@ -31,11 +31,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="min-h-full flex flex-col bg-black"
+        className="min-h-full bg-black antialiased flex flex-col"
         suppressHydrationWarning
       >
         <GeolocationProvider>
-          {children}
+          <div className="flex-1 w-full max-w-[500px] mx-auto bg-black relative flex flex-col min-h-screen">
+            {children}
+          </div>
         </GeolocationProvider>
       </body>
     </html>

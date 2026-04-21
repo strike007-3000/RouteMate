@@ -16,16 +16,24 @@ export class TransitService {
     // 4. Mock (Fallback)
     
     // Reading from Zustand persist storage in LocalStorage
+    // 1. Check process.env
     let orsKey = process.env.ORS_API_KEY;
     
+    // 2. Check LocalStorage Overrides
     if (typeof window !== 'undefined') {
-      const storage = localStorage.getItem('routemate-settings');
-      if (storage) {
-        try {
-          const parsed = JSON.parse(storage);
-          orsKey = parsed.state?.orsApiKey || orsKey;
-        } catch (e) {
-          console.error('Failed to parse settings for TransitService', e);
+      const devKey = localStorage.getItem('dev_ors_key');
+      if (devKey) {
+        orsKey = devKey;
+      } else {
+        // Legacy fallback to routemate-settings
+        const storage = localStorage.getItem('routemate-settings');
+        if (storage) {
+          try {
+            const parsed = JSON.parse(storage);
+            orsKey = parsed.state?.orsApiKey || orsKey;
+          } catch (e) {
+            console.error('Failed to parse settings for TransitService', e);
+          }
         }
       }
     }

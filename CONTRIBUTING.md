@@ -14,24 +14,22 @@ Thank you for your interest in contributing to RouteMate! We are excited to buil
 
 ### Pull Requests
 1. **Fork the repo** and create your branch from `main`.
-2. **Setup environment**: Use the `Settings` UI in the app to add your API keys for testing.
-3. **Commit Messages**: We use [Conventional Commits](https://www.conventionalcommits.org/). This automates our release cycle:
-    - `feat:` for a new feature.
-    - `fix:` for a bug fix.
-    - `perf:` for performance improvements.
-    - `docs:` for documentation changes.
+2. **Setup environment**: Use the `Settings` UI in the app to add your **OpenRouter API Key** for testing.
+3. **Commit Messages**: We use [Conventional Commits](https://www.conventionalcommits.org/).
 4. **Test your changes**: 
     - Verify on mobile viewport (500x855).
-    - If modifying data flow, verify real-time reactivity (LiveQuery) without manual refreshes.
+    - If modifying data flow, verify real-time reactivity (LiveQuery).
     - If modifying sorting logic, verify chronological flow using the "Human-First" 6-rank engine.
 5. **Submit your PR**: The automated system will create a Release PR if your changes are merged.
 
 
 ## Style Guide
 
-- **TypeScript**: Always use strict typing.
-- **Components**: Focus on reusable, glassmorphic UI components.
-- **Animations**: Use `framer-motion` for all micro-interactions.
+- **TypeScript**: Always use strict typing. Avoid `any` at all costs.
+- **The Sole Button Standard**: Always use the `.btn-primary` utility for primary actions. Do not use ad-hoc button styles.
+- **The 24px Rule**: All cards and major containers must use `rounded-[24px]`.
+- **Animations**: Use `framer-motion` for all micro-interactions. Prefer spring-based physics over linear easing.
+- **Headers**: Maintain the synchronized `pt-[var(--header-pt)]` rhythm for all navigation-level headers.
 
 ## Attribution
 
