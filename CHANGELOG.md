@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.9.0](https://github.com/strike007-3000/RouteMate/compare/v2.8.0...v2.9.0) (2026-04-21)
+
+
+### Features
+
+* release v2.7.7 - dual-view distinction, intelligent routing, and ai extraction hardening ([5289cbb](https://github.com/strike007-3000/RouteMate/commit/5289cbbe9c474af3068fd1d0099f0d33ec1afb47))
+
 ## [2.8.1] - 2026-04-21
 
 ### 🌓 Dual-View Distinction (Summary vs. Logistics)
