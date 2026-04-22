@@ -19,11 +19,12 @@ export const Header = () => {
   const isSubRoute = pathname.includes('/trip/') || pathname.includes('/explore/') || pathname.includes('/timeline/');
   const isDashboard = pathname === '/trips' || pathname === '/';
 
-  // Determine Title
-  let title = 'My Adventure';
-  if (activeTrip) title = activeTrip.name;
+  // Determine Title based on current architecture
+  let title = 'My Trips';
+  if (pathname.includes('/timeline')) title = 'Itinerary';
   else if (pathname === '/explore') title = 'Explore';
   else if (pathname === '/account') title = 'Account Hub';
+  else if (pathname === '/trips' || pathname === '/') title = 'My Trips';
 
   return (
     <header 
@@ -35,32 +36,23 @@ export const Header = () => {
     >
       <div className="h-16 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          {isSubRoute && !isDashboard && (
-            <button 
-              onClick={() => router.back()}
-              className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all active:scale-90"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-          )}
-          
           <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">ROUTEMATE</span>
-              {process.env.NODE_ENV === 'development' && (
-                <div className="px-1.5 py-0.5 rounded-sm bg-amber-500/10 border border-amber-500/20">
-                  <span className="text-[8px] font-black text-amber-500 uppercase">DEV MODE</span>
-                </div>
-              )}
+            <div className="flex items-center gap-3 mb-1">
+              <span className="text-[10px] font-bold text-primary uppercase tracking-[0.4em]">ROUTEMATE</span>
             </div>
-            <h1 className="text-xl font-black text-white tracking-tighter leading-none mt-[var(--brand-gap,4px)] truncate max-w-[200px]">
+            <h1 className="text-[clamp(1.5rem,5vw,2.25rem)] font-black text-white tracking-tighter leading-none truncate max-w-[250px]">
               {title}
             </h1>
           </div>
         </div>
 
-        {/* Asymmetric balance: Right side empty or could have account icon */}
-        <div className="w-10" />
+        {/* Relocated DEV Indicator & Asymmetric balance */}
+        <div className="flex items-center gap-3">
+          {process.env.NODE_ENV === 'development' && (
+            <span className="text-[8px] font-black text-amber-500/60 uppercase tracking-widest border border-amber-500/20 px-1.5 py-0.5 rounded-sm bg-amber-500/5">DEV</span>
+          )}
+          <div className="w-10" />
+        </div>
       </div>
     </header>
   );

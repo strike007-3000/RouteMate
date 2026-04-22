@@ -76,10 +76,6 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
 
   if (isOceanCrossing) return null;
 
-  const viewMode = useTripStore((state) => state.viewMode);
-
-  if (viewMode === 'summary') return null;
-
   const Icon = suggestion?.mode === 'train' || suggestion?.mode === 'subway' ? Train : suggestion?.mode === 'walk' ? Footprints : Bus;
 
   return (

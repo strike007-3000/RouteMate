@@ -60,9 +60,9 @@ export const TripHero = ({ trip, mode, onAction }: TripHeroProps) => {
 
   return (
     <div className="relative w-full h-[40vh] min-h-[350px] max-h-[500px] overflow-hidden flex flex-col items-center justify-end pb-12 px-[var(--gutter,24px)] group/hero">
-      {/* Immersive Full-Bleed Background */}
+      {/* Immersive Full-Bleed Background with Scrim Protection */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-black/90 z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 z-[1]" />
         {trip.coverImage ? (
           <img 
             src={trip.coverImage} 
@@ -91,32 +91,22 @@ export const TripHero = ({ trip, mode, onAction }: TripHeroProps) => {
           <div className="flex flex-col gap-3 mb-8 items-center">
             <button 
               onClick={() => setIsEditOpen(true)}
-              className="flex items-center gap-1.5 text-primary text-[10px] font-black uppercase tracking-[0.2em] hover:text-white transition-colors group/edit"
+              className="flex items-center gap-1.5 text-white/80 text-[10px] font-black uppercase tracking-[0.2em] hover:text-primary transition-colors group/edit drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
             >
-              <Calendar className="w-3.5 h-3.5" />
+              <Calendar className="w-3.5 h-3.5 text-primary" />
               <span>{metadata.dateRange}</span>
               <PencilLine className="w-2.5 h-2.5 opacity-0 group-hover/edit:opacity-100 transition-opacity ml-0.5" />
             </button>
             
-            <div className="flex items-center gap-4 text-zinc-400">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">{metadata.duration}</span>
-              <div className="w-1 h-1 rounded-full bg-zinc-800" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">{metadata.cost}</span>
+            <div className="flex items-center gap-4 text-white/80">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">{metadata.duration}</span>
+              <div className="w-1 h-1 rounded-full bg-primary/40" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">{metadata.cost}</span>
             </div>
 
-            <div className="mt-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
-              <span className="text-primary text-[9px] font-black uppercase tracking-[0.3em]">{metadata.countdown}</span>
+            <div className="mt-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 backdrop-blur-md">
+              <span className="text-primary-foreground text-[9px] font-black uppercase tracking-[0.3em] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">{metadata.countdown}</span>
             </div>
-          </div>
-
-          <div className="w-full max-w-[280px]">
-            <button 
-              onClick={handlePrimaryAction}
-              className="btn-primary w-full"
-            >
-               <Sparkles className="w-4 h-4" />
-               <span>{mode === 'dashboard' ? 'View Full Timeline' : 'Smart Extraction'}</span>
-            </button>
           </div>
         </motion.div>
       </div>

@@ -31,10 +31,10 @@ interface TripState {
   points: ItineraryItem[];
   isHydrated: boolean;
   expandedDays: string[]; // ['YYYY-MM-DD'] towns that are open
-  viewMode: 'summary' | 'logistics';
+  viewMode: 'itinerary' | 'timeline';
   
   // App Logic
-  setViewMode: (mode: 'summary' | 'logistics') => void;
+  setViewMode: (mode: 'itinerary' | 'timeline') => void;
   getBestTimelineTrip: () => Promise<number | null>;
   toggleDay: (date: string) => void;
   setExpandedDays: (dates: string[]) => void;
@@ -60,7 +60,7 @@ export const useTripStore = create<TripState>((set, get) => ({
   points: [],
   isHydrated: false,
   expandedDays: [],
-  viewMode: 'summary',
+  viewMode: 'itinerary',
 
   setViewMode: (mode) => set({ viewMode: mode }),
 
@@ -311,18 +311,26 @@ export const useTripStore = create<TripState>((set, get) => ({
         return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
       }
       
-      // 2. Secondary Sort: Manual sortOrder (if defined and non-zero)
+      // 2. Rank 6 Override: Lock Return Flights to the absolute bottom of the day
+      const rankA = getRank(a);
+      const rankB = getRank(b);
+      const isReturnA = rankA >= 1999;
+      const isReturnB = rankB >= 1999;
+      if (isReturnA && !isReturnB) return 1;
+      if (!isReturnA && isReturnB) return -1;
+      
+      // 3. Secondary Sort: Manual sortOrder (if defined and non-zero)
       const orderA = a.sortOrder || 0;
       const orderB = b.sortOrder || 0;
       if (orderA !== orderB) return orderA - orderB;
 
-      // 3. Tertiary Sort: Time (Explicit or Predicted)
+      // 4. Tertiary Sort: Time (Explicit or Predicted)
       const timeA = getSortTime(a);
       const timeB = getSortTime(b);
       if (timeA !== timeB) return timeA - timeB;
 
-      // 4. Final Tie-breaker: Logistical Rank
-      return getRank(a) - getRank(b);
+      // 5. Final Tie-breaker: Logistical Rank
+      return rankA - rankB;
     });
   },
 }));

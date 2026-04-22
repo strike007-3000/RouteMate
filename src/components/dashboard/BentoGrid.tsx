@@ -27,7 +27,7 @@ const BentoBox = ({ title, value, icon, className, delay = 0, subValue, onClick 
     whileHover={{ y: -2 }}
     onClick={onClick}
     className={cn(
-      "glass-card p-4 rounded-[24px] flex flex-col justify-center overflow-hidden relative group border border-white/5 min-w-[130px] h-24",
+      "bg-black/40 backdrop-blur-xl p-4 rounded-[24px] flex flex-col justify-center overflow-hidden relative group border border-white/5 min-w-[130px] h-24",
       onClick && "cursor-pointer active:scale-95",
       className
     )}
@@ -94,11 +94,12 @@ export const BentoGrid = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) =>
         onClick={nextActionValue === "Plan a Step" ? onOpenSmartAdd : undefined}
       />
       <BentoBox 
-        title="Logistics" 
+        title="Smart Add" 
         value={transitStatus} 
-        icon={<Sparkles className="w-8 h-8" />}
+        icon={<Sparkles className="w-8 h-8 text-primary" />}
         delay={0.2}
-        subValue={points.length > 0 ? `${points.length} stops` : "Detecting"}
+        subValue={points.length > 0 ? "AI OPTIMIZED" : "DETECTING"}
+        onClick={onOpenSmartAdd}
       />
       <BentoBox 
         title="Countdown" 

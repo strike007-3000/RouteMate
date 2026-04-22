@@ -58,28 +58,62 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
       });
 
       const data = await response.json();
+      console.log('--- Extraction Result ---', data);
       
       if (response.ok && data.points && data.points.length > 0) {
+        let successCount = 0;
         for (const point of data.points) {
-          await addPoint(point);
+          try {
+            await addPoint(point);
+            successCount++;
+          } catch (e) {
+            console.error('Failed to add point:', point, e);
+          }
         }
 
-        // Adaptive Trip Dates Logic: Auto-extension
+        if (successCount === 0) {
+          throw new Error('All extracted points failed to save. Check date formats.');
+        }
+
+        // Auto-expand and adaptive dates
         if (activeTrip && activeTrip.id) {
+          let minDate = activeTrip.startDate;
           let maxDate = activeTrip.endDate;
           let changed = false;
+          const addedDates: string[] = [];
           
           for (const point of data.points) {
+            const pointStart = point.startTime.split('T')[0];
             const pointEnd = point.endTime.split('T')[0];
+            
+            if (!addedDates.includes(pointStart)) addedDates.push(pointStart);
+            
+            // Extend Start Date backwards
+            if (pointStart < minDate) {
+              minDate = pointStart;
+              changed = true;
+            }
+            
+            // Extend End Date forwards
             if (pointEnd > maxDate) {
               maxDate = pointEnd;
               changed = true;
             }
           }
 
+          // Expand the new days
+          useTripStore.getState().setExpandedDays([
+            ...useTripStore.getState().expandedDays,
+            ...addedDates
+          ]);
+
           if (changed) {
-            await db.trips.update(activeTrip.id, { endDate: maxDate });
-            // The live query in TripPage will pick this up automatically
+            await db.trips.update(activeTrip.id, { 
+              startDate: minDate,
+              endDate: maxDate 
+            });
+            // REFRESH the active trip in the store to sync the new dates
+            await useTripStore.getState().setActiveTrip(activeTrip.id);
           }
         }
 

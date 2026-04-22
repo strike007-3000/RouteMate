@@ -12,24 +12,39 @@ import {
   Shield, 
   LogOut,
   CreditCard,
-  History
+  History,
+  Sparkles
 } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { Header } from '@/components/layout/Header';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useRouter } from 'next/navigation';
 
 export default function AccountPage() {
+  const { user, logout, isLoggedIn } = useAuthStore();
+  const router = useRouter();
   const tripCount = useLiveQuery(() => db.trips.count(), []) ?? 0;
   const favoriteCount = useLiveQuery(() => db.favorites.count(), []) ?? 0;
 
   const settingsItems = [
     { icon: User, label: 'Personal Info', color: 'text-blue-400' },
+    { icon: Settings, label: 'App Settings', color: 'text-zinc-400' },
     { icon: Globe, label: 'Currency & Units', color: 'text-emerald-400', detail: 'EUR/KM' },
     { icon: Bell, label: 'Notification Settings', color: 'text-amber-400' },
     { icon: Shield, label: 'Privacy & Security', color: 'text-purple-400' },
-    { icon: LogOut, label: 'Logout', color: 'text-red-500/80', isLast: true },
+    { 
+      icon: LogOut, 
+      label: 'Logout', 
+      color: 'text-red-500/80', 
+      isLast: true,
+      onClick: () => {
+        logout();
+        router.push('/login');
+      }
+    },
   ];
 
   const [devKeys, setDevKeys] = React.useState({
@@ -69,12 +84,6 @@ export default function AccountPage() {
       <div className="px-[var(--gutter,24px)] pt-8 space-y-10">
         {/* Identity Section */}
         <div className="relative flex flex-col items-center text-center">
-          {/* Relocated Settings Cog - Top Right of Identity Area */}
-          <div className="absolute top-0 right-0">
-            <button className="w-10 h-10 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-500 hover:text-primary transition-colors active:scale-90">
-              <Settings className="w-5 h-5" />
-            </button>
-          </div>
 
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
@@ -82,7 +91,11 @@ export default function AccountPage() {
             className="w-[clamp(6rem,20vw,8rem)] h-[clamp(6rem,20vw,8rem)] rounded-full bg-gradient-to-tr from-primary/20 to-primary/5 p-1 mb-6"
           >
             <div className="w-full h-full rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center relative overflow-hidden">
-              <User className="w-1/2 h-1/2 text-zinc-700" />
+              {user?.image ? (
+                <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-1/2 h-1/2 text-zinc-700" />
+              )}
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20" />
             </div>
           </motion.div>
@@ -92,8 +105,12 @@ export default function AccountPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <h2 className="text-[clamp(1.5rem,5vw,2.5rem)] font-black text-white tracking-tighter mb-2 leading-none">Alex Nomad</h2>
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mt-3 block">ELITE TRAVELER</span>
+            <h2 className="text-[clamp(1.5rem,5vw,2.5rem)] font-black text-white tracking-tighter mb-2 leading-none">
+              {user?.name || 'Guest User'}
+            </h2>
+            <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mt-3 block">
+              {user?.status || 'Elite Traveler'}
+            </span>
           </motion.div>
         </div>
 
@@ -166,6 +183,35 @@ export default function AccountPage() {
                    className="w-full h-12 bg-black/40 border border-white/5 rounded-xl px-4 text-xs font-bold text-white focus:outline-none focus:border-primary/30"
                 />
               </div>
+
+              <div className="pt-4 mt-4 border-t border-white/5">
+                <button
+                  onClick={() => handleDevKeyChange('openrouter', devKeys.openrouter === 'MOCK_MODE' ? '' : 'MOCK_MODE')}
+                  className={cn(
+                    "w-full py-4 px-6 rounded-2xl border transition-all flex items-center justify-between group",
+                    devKeys.openrouter === 'MOCK_MODE' 
+                      ? "bg-primary/10 border-primary/30 text-primary" 
+                      : "bg-black/40 border-white/5 text-zinc-500 hover:border-white/10"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <Sparkles className={cn("w-4 h-4", devKeys.openrouter === 'MOCK_MODE' ? "text-primary" : "text-zinc-600")} />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Mock AI Mode</span>
+                  </div>
+                  <div className={cn(
+                    "w-10 h-5 rounded-full relative transition-colors duration-300",
+                    devKeys.openrouter === 'MOCK_MODE' ? "bg-primary" : "bg-zinc-800"
+                  )}>
+                    <div className={cn(
+                      "absolute top-1 w-3 h-3 rounded-full bg-white transition-all duration-300",
+                      devKeys.openrouter === 'MOCK_MODE' ? "right-1" : "left-1"
+                    )} />
+                  </div>
+                </button>
+                <p className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest mt-3 text-center">
+                  Enable this to test extraction without an API key
+                </p>
+              </div>
             </div>
           </motion.div>
         )}
@@ -178,6 +224,7 @@ export default function AccountPage() {
           {settingsItems.map((item, index) => (
             <motion.button
               key={item.label}
+              onClick={item.onClick}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + index * 0.05 }}

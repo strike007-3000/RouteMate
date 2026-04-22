@@ -26,7 +26,7 @@ const DraggableItem = ({ point, nextPoint }: { point: ItineraryItem, nextPoint?:
   );
 };
 
-export const Timeline = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) => {
+export const Timeline = ({ onOpenSmartAdd, hideHeader = false }: { onOpenSmartAdd: () => void, hideHeader?: boolean }) => {
   const { activeTrip, updatePointOrder } = useTripStore();
   
   const points = useLiveQuery<ItineraryItem[]>(
@@ -41,22 +41,24 @@ export const Timeline = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) => 
 
   return (
     <div className="px-[var(--gutter,24px)] pt-12">
-      <div className="flex items-end justify-between mb-10 pr-2">
-        <div className="flex flex-col">
-          <span className="text-[10px] font-bold text-primary uppercase tracking-[0.3em] mb-1.5 leading-none ml-1">LOGISTICS</span>
-          <h2 className="text-2xl font-black tracking-tighter text-white leading-none">Your Itinerary</h2>
+      {!hideHeader && (
+        <div className="flex items-end justify-between mb-10 pr-2">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-primary uppercase tracking-[0.3em] mb-1.5 leading-none ml-1">QUICK VIEW</span>
+            <h2 className="text-2xl font-black tracking-tighter text-white leading-none">Upcoming Stops</h2>
+          </div>
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onOpenSmartAdd}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all group"
+          >
+            <Sparkles className="w-4 h-4 group-hover:animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Smart Add</span>
+          </motion.button>
         </div>
-        
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={onOpenSmartAdd}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all group"
-        >
-          <Sparkles className="w-4 h-4 group-hover:animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Smart Add</span>
-        </motion.button>
-      </div>
+      )}
       
       <div className="space-y-4">
         {points.length > 0 && (

@@ -11,6 +11,8 @@ import { TimelineHeader } from '@/components/timeline/TimelineHeader';
 import { TimelineItem } from '@/components/timeline/TimelineItem';
 import { TransitCard } from '@/components/timeline/TransitCard';
 import { SmartPaste } from '@/components/timeline/SmartPaste';
+import { Timeline } from '@/components/timeline/Timeline';
+import { BentoGrid } from '@/components/dashboard/BentoGrid';
 import { format, parseISO, differenceInDays, startOfDay, addDays, isSameDay } from 'date-fns';
 import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion';
 import { Sparkles, Calendar } from 'lucide-react';
@@ -44,11 +46,17 @@ export default function TimelinePage() {
   const tripId = Number(id);
   const router = useRouter();
   
-  const { expandedDays, toggleDay, setExpandedDays, sortItinerary } = useTripStore();
-  const viewMode = useTripStore((state) => state.viewMode);
-  const setViewMode = useTripStore((state) => state.setViewMode);
+  const { activeTrip, setActiveTrip, expandedDays, toggleDay, setExpandedDays, sortItinerary, viewMode, setViewMode } = useTripStore();
   const [isSmartAddOpen, setIsSmartAddOpen] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
   
+  // Hydrate Store with active trip on mount
+  useEffect(() => {
+    if (tripId) {
+      setActiveTrip(tripId);
+    }
+  }, [tripId, setActiveTrip]);
+
   const trip = useLiveQuery(() => db.trips.get(tripId), [tripId]);
   const points = useLiveQuery(
     () => db.itineraryItems.where('tripId').equals(tripId).toArray(),
@@ -70,17 +78,18 @@ export default function TimelinePage() {
       const currentDate = addDays(start, i);
       
       const items = sortedAllPoints.filter(p => {
-        const itemDate = parseISO(p.startTime);
+        const itemDateStr = p.startTime.split('T')[0];
+        const currentDateStr = format(currentDate, 'yyyy-MM-dd');
         
-        // Logistical Buffering: If an item lands within 6 hours BEFORE the trip starts, 
-        // we anchor it to Day 1 (e.g. late night airport arrivals). Otherwise, strict day matching.
+        // Logistical Buffering: Day 1 anchor for late night arrivals
         if (i === 0) {
+          const itemDate = parseISO(p.startTime);
           const tripStart = startOfDay(parseISO(trip.startDate));
           const diffInHours = (itemDate.getTime() - tripStart.getTime()) / 3600000;
-          return isSameDay(itemDate, currentDate) || (diffInHours < 0 && diffInHours > -12);
+          return itemDateStr === currentDateStr || (diffInHours < 0 && diffInHours > -12);
         }
         
-        return isSameDay(itemDate, currentDate);
+        return itemDateStr === currentDateStr;
       });
       
       return {
@@ -93,18 +102,19 @@ export default function TimelinePage() {
 
   // Handle Initial Expansion
   useEffect(() => {
-    if (trip && expandedDays.length === 0) {
+    if (trip && !hasInitialized && groupedTimeline.length > 0) {
       const today = startOfDay(new Date());
       const tripStart = startOfDay(parseISO(trip.startDate));
       const tripEnd = startOfDay(parseISO(trip.endDate));
       
       if (today >= tripStart && today <= tripEnd) {
         setExpandedDays([today.toISOString().split('T')[0]]);
-      } else if (groupedTimeline.length > 0) {
+      } else {
         setExpandedDays([groupedTimeline[0].date.split('T')[0]]);
       }
+      setHasInitialized(true);
     }
-  }, [trip, groupedTimeline, expandedDays.length, setExpandedDays]);
+  }, [trip, groupedTimeline, hasInitialized, setExpandedDays]);
 
   if (!trip) return null;
 
@@ -117,27 +127,35 @@ export default function TimelinePage() {
         mode="timeline" 
         onAction={() => setIsSmartAddOpen(true)} 
       />
+
+      <section className="relative z-10 -mt-8 mb-4">
+        <BentoGrid onOpenSmartAdd={() => setIsSmartAddOpen(true)} />
+      </section>
       
-      <div className="relative z-10 -mt-10 px-[var(--gutter,24px)]">
-        {/* Segmented Control */}
-        <div className="flex items-center p-1 bg-zinc-900/80 backdrop-blur-xl border border-white/5 rounded-2xl mb-8">
-          {(['summary', 'logistics'] as const).map((mode) => (
+      <div className="relative z-10 px-[var(--gutter,24px)] mt-4">
+        {/* Segmented Control: Summary (Grouped) vs Logistics (Flow) */}
+        <div className="flex items-center p-1 bg-zinc-900/40 backdrop-blur-md border border-white/5 rounded-2xl mb-12">
+          {[
+            { id: 'itinerary', label: 'SUMMARY' },
+            { id: 'timeline', label: 'LOGISTICS' }
+          ].map((mode) => (
             <button
-              key={mode}
-              onClick={() => setViewMode(mode)}
+              key={mode.id}
+              onClick={() => setViewMode(mode.id as any)}
               className={cn(
                 "flex-1 py-2 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-300",
-                viewMode === mode 
+                viewMode === mode.id 
                   ? "bg-primary text-white shadow-lg shadow-primary/20" 
                   : "text-zinc-500 hover:text-zinc-300"
               )}
             >
-              {mode}
+              {mode.label}
             </button>
           ))}
         </div>
 
-        <div className="space-y-6 mb-8">
+        {viewMode === 'itinerary' ? (
+          <div className="space-y-6 mb-8">
           {groupedTimeline.map((day) => {
             const dateStr = day.date.split('T')[0];
             const isExpanded = expandedDays.includes(dateStr);
@@ -145,10 +163,7 @@ export default function TimelinePage() {
             return (
               <div 
                 key={day.date} 
-                className={cn(
-                  "relative transition-all duration-500",
-                  viewMode === 'summary' && "bg-zinc-900/40 rounded-[var(--radius-container,32px)] border border-white/5 overflow-hidden"
-                )}
+                className="relative transition-all duration-500"
               >
                 <TimelineHeader 
                   dayNumber={day.dayNumber}
@@ -165,15 +180,9 @@ export default function TimelinePage() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className={cn(
-                        "overflow-hidden",
-                        viewMode === 'logistics' ? "bg-white/[0.02] rounded-b-[var(--radius-container,32px)]" : "bg-transparent"
-                      )}
+                      className="overflow-hidden bg-white/[0.02] rounded-b-[var(--radius-container,32px)]"
                     >
-                      <div className={cn(
-                        "pb-8",
-                        viewMode === 'logistics' ? "pt-4" : "pt-0 px-2"
-                      )}>
+                      <div className="pb-8 pt-4">
                         {day.items.length > 0 ? (
                           <Reorder.Group 
                             axis="y" 
@@ -220,19 +229,35 @@ export default function TimelinePage() {
             );
           })}
         </div>
+        ) : (
+          <div className="-mx-[var(--gutter,24px)]">
+            <Timeline onOpenSmartAdd={() => setIsSmartAddOpen(true)} hideHeader />
+          </div>
+        )}
 
-        {points.length === 0 && (
-          <div className="mt-20 text-center flex flex-col items-center gap-6">
-             <div className="w-20 h-20 rounded-full bg-primary/5 flex items-center justify-center border border-primary/20">
+        {points.length === 0 && viewMode === 'itinerary' && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-20 text-center flex flex-col items-center gap-6"
+          >
+             <div className="w-20 h-20 rounded-full bg-primary/5 flex items-center justify-center border border-primary/20 animate-pulse">
                 <Sparkles className="w-10 h-10 text-primary" />
              </div>
              <div>
-                <h3 className="text-xl font-black text-white">Empty Itinerary</h3>
-                <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mt-2">
-                  Use Smart Add to fuel your trip.
+                <h3 className="text-xl font-black text-white">Your Journey Starts Here</h3>
+                <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mt-2 px-12 leading-relaxed">
+                  Drop an itinerary or Smart Add to begin.
                 </p>
              </div>
-          </div>
+             <button 
+               onClick={() => setIsSmartAddOpen(true)}
+               className="btn-primary px-8 mt-4"
+             >
+               <Sparkles className="w-4 h-4" />
+               <span>Start Smart Extraction</span>
+             </button>
+          </motion.div>
         )}
       </div>
 

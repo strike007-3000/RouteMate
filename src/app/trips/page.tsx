@@ -52,7 +52,7 @@ export default function Dashboard() {
     }
 
     setIsModalOpen(false);
-    router.push(`/trip/${id}`);
+    router.push(`/trip/${id}/timeline`);
   };
 
   return (
@@ -70,9 +70,6 @@ export default function Dashboard() {
         >
           <span className="text-[10px] font-bold text-primary uppercase tracking-[0.4em] mb-1 block">ROUTEMATE</span>
           <h1 className="text-[clamp(1.5rem,5vw,2.25rem)] font-black text-white tracking-tighter leading-none mb-3">My Trips</h1>
-          <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest leading-relaxed max-w-[200px]">
-            Plan smarter, travel cheap. Pocket Intelligence active.
-          </p>
         </motion.div>
 
         <button 
@@ -93,7 +90,7 @@ export default function Dashboard() {
             </div>
             <div className="space-y-6">
               {upcomingTrips.map(trip => (
-                <TripCard key={trip.id} trip={trip} onSelect={(id) => router.push(`/trip/${id}`)} />
+                <TripCard key={trip.id} trip={trip} onSelect={(id) => router.push(`/trip/${id}/timeline`)} />
               ))}
             </div>
           </div>
@@ -107,7 +104,7 @@ export default function Dashboard() {
             </div>
             <div className="space-y-6">
               {draftTrips.map(trip => (
-                <TripCard key={trip.id} trip={trip} onSelect={(id) => router.push(`/trip/${id}`)} />
+                <TripCard key={trip.id} trip={trip} onSelect={(id) => router.push(`/trip/${id}/timeline`)} />
               ))}
             </div>
           </div>

@@ -29,7 +29,7 @@ export const BottomNav = () => {
       active: pathname === '/trips' || pathname === '/'
     },
     { 
-      label: 'TIMELINE', 
+      label: 'ITINERARY', 
       icon: Clock, 
       action: handleTimelineClick,
       active: pathname.includes('/timeline')

@@ -20,13 +20,13 @@ const categoryConfig: Record<string, any> = {
 };
 
 export const TimelineItem = ({ point, prevPoint, dragControls }: { point: ItineraryItem, prevPoint?: ItineraryItem, dragControls?: any }) => {
-  const viewMode = useTripStore((state) => state.viewMode);
   const categoryKey = point.category as keyof typeof categoryConfig;
   const config = categoryConfig[categoryKey] || categoryConfig.Activity;
   
-  // Title Sanitizer: Prevent "Check-in at Check-in" or "Check-out from Check-out"
-  const cleanTitle = point.title
-    .replace(/(Check-in at|Check-out from)\s+\1/gi, '$1')
+  // Smart Title Extraction (Entity-First / Verb Strip)
+  let cleanTitle = point.title
+    .replace(/^(Departure from |Arrival at |Check-in at |Check-out from |Stay at |Visit |Dinner at |Lunch at |Breakfast at |Flight from |Flight to |Travel to |Explore )/i, '')
+    .replace(/^(at |from |to |in )/i, '') // Recursive strip for nested prepositions
     .trim();
 
   // Helper for Precision Search logic (the "one from the repo")
@@ -49,19 +49,11 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
   }
   
   return (
-    <div className={cn(
-      "relative pb-8 last:pb-0",
-      viewMode === 'logistics' ? "pl-[var(--gutter,24px)]" : "px-0"
-    )}>
-      {/* Continuous Journey Thread (Logistics only) */}
-      {viewMode === 'logistics' && (
-        <>
-          <div className="absolute left-[calc(var(--gutter,24px)/2)] top-0 bottom-0 w-[1px] bg-primary/20 border-l border-dashed z-0" />
-          <div className="absolute left-0 top-0 w-[var(--gutter,24px)] h-full flex justify-center pt-3 z-10">
-            <div className={cn("timeline-dot", config.color.replace('text-', 'bg-'), config.color)} />
-          </div>
-        </>
-      )}
+    <div className="relative pb-8 last:pb-0 pl-[var(--gutter,24px)]">
+      <div className="absolute left-[calc(var(--gutter,24px)/2)] top-0 bottom-0 w-[1px] bg-primary/20 border-l border-dashed z-0" />
+      <div className="absolute left-0 top-0 w-[var(--gutter,24px)] h-full flex justify-center pt-3 z-10">
+        <div className={cn("timeline-dot", config.color.replace('text-', 'bg-'), config.color)} />
+      </div>
       
       <motion.div 
         layout
@@ -75,7 +67,7 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
         whileHover={{ scale: 1.01, y: -2 }}
         className={cn(
           "p-6 bg-zinc-900/50 border border-white/5 backdrop-blur-xl transition-all duration-300 shadow-2xl shadow-black/50 overflow-hidden relative z-10",
-          viewMode === 'logistics' ? "rounded-[var(--radius-card,24px)]" : "rounded-none border-x-0 bg-transparent shadow-none border-t border-white/5 first:border-t-0",
+          "rounded-[var(--radius-card,24px)]",
           config.glow
         )}
       >
@@ -130,14 +122,12 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
             </p>
           </div>
           
-          {viewMode === 'logistics' && (
-            <div 
-              className="pt-1 text-zinc-700 hover:text-zinc-500 transition-colors cursor-grab active:cursor-grabbing touch-none flex-shrink-0"
-              onPointerDown={(e) => dragControls?.start(e)}
-            >
-              <GripVertical className="w-5 h-5" />
-            </div>
-          )}
+          <div 
+            className="pt-1 text-zinc-700 hover:text-zinc-500 transition-colors cursor-grab active:cursor-grabbing touch-none flex-shrink-0"
+            onPointerDown={(e) => dragControls?.start(e)}
+          >
+            <GripVertical className="w-5 h-5" />
+          </div>
         </div>
       </motion.div>
     </div>

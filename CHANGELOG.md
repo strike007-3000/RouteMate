@@ -2,12 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.9.0](https://github.com/strike007-3000/RouteMate/compare/v2.8.0...v2.9.0) (2026-04-21)
+## [3.0.0] - 2026-04-22
 
+### 🏛️ Unified Architecture (Version 1.0 Ready)
+- **Header Hierarchy**: Standardized global headers to a strict `ROUTEMATE / [Page Title]` hierarchy across all tabs (My Trips, Itinerary, Explore, Account Hub).
+- **Navigation Loop Resolved**: Renamed the bottom navigation tab to **ITINERARY** and removed recursive dashboard loops for a more linear, intuitive flow.
+- **Relocated DEV Mode**: Moved the environment indicator to the far right for a cleaner, production-ready aesthetic.
 
+### 🛡️ Text Protection Layers (100% Visibility)
+- **The Scrim**: Implemented a professional `from-black/60 via-transparent to-black/90` linear gradient overlay in the Trip Hero to ensure text legibility over any background.
+- **Dynamic Shadows**: Applied `drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]` to all metadata text for a "bulletproof" readable edge.
+- **Glassmorphism Spec**: Refined Bento cards with `bg-black/40 backdrop-blur-xl` for maximum clarity over busy photography.
+
+### 🧠 Smart Extraction 2.0 (Resilience Pass)
+- **Pure-Free AI Stack**: Migrated the OpenRouter engine to a zero-cost stack (`openrouter/auto:free`) to prevent credit depletion during testing.
+- **Mock AI Mode**: Introduced a developer toggle in **Account Settings** that simulates full AI extraction without an API key.
+- **Adaptive Boundaries**: The timeline now automatically stretches its start/end dates to accommodate extracted points that fall outside the original trip window.
+- **Auto-Expansion**: Implemented logic to automatically "pop open" days that receive new items from a Smart Extraction.
+
+### 🧬 Content & Polish
+- **The Verb Strip**: Added an aggressive entity-first title sanitizer that strips helper verbs (e.g., "Departure from", "Stay at") to focus on location names.
+- **Sticky Day Headers**: Added sticky positioning to day anchors in the Summary view to keep users grounded during long-scroll sessions.
+- **Empty State UX**: Replaced dead-end icons with proactive CTAs and "Version 1.0" instructional copy.
+
+## [2.9.0] - 2026-04-21
 ### Features
-
-* release v2.7.7 - dual-view distinction, intelligent routing, and ai extraction hardening ([5289cbb](https://github.com/strike007-3000/RouteMate/commit/5289cbbe9c474af3068fd1d0099f0d33ec1afb47))
+* release v2.8.1 - dual-view distinction, intelligent routing, and ai extraction hardening ([5289cbb](https://github.com/strike007-3000/RouteMate/compare/v2.8.0...v2.9.0))
 
 ## [2.8.1] - 2026-04-21
 
