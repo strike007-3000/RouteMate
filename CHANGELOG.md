@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.0](https://github.com/strike007-3000/RouteMate/compare/v3.0.3...v3.1.0) (2026-04-25)
+
+
+### Features
+
+* complete v3.0.2 architecture hardening, progressive UI, and security patches ([56b4db7](https://github.com/strike007-3000/RouteMate/commit/56b4db7d3a2ac117e3b848525765ee2937a31c36))
+
+
+### Bug Fixes
+
+* resolve remaining TypeScript type errors in TimelineItem ([0f87bab](https://github.com/strike007-3000/RouteMate/commit/0f87bab95b27e3d575251f785dd26cdac65632ea))
+
 ## [3.0.3] - 2026-04-25
 
 ### 🧠 Configurable AI Architecture (Local & Production)
