@@ -59,7 +59,7 @@ export const TripHero = ({ trip, mode, onAction }: TripHeroProps) => {
   };
 
   return (
-    <div className="relative w-full h-[40vh] min-h-[350px] max-h-[500px] overflow-hidden flex flex-col items-center justify-end pb-12 px-[var(--gutter,24px)] group/hero">
+    <div className="relative w-full h-[40vh] min-h-[350px] max-h-[500px] overflow-hidden flex flex-col items-center justify-end pb-12 px-[var(--gutter,24px)] group/hero rounded-[2.5rem] shadow-2xl border border-white/5">
       {/* Immersive Full-Bleed Background with Scrim Protection */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 z-[1]" />

@@ -16,6 +16,7 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
   const addPoint = useTripStore((state) => state.addPoint);
   const openRouterApiKey = useSettingsStore((state) => state.openRouterApiKey);
   const groqApiKey = useSettingsStore((state) => state.groqApiKey);
+  const preferredAiProvider = useSettingsStore((state) => state.preferredAiProvider);
   const activeTrip = useTripStore((state) => state.activeTrip);
 
   const templates = [
@@ -43,15 +44,21 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
     try {
       const rootYear = activeTrip?.startDate ? activeTrip.startDate.split('-')[0] : "2026";
       
-      const apiOpenRouterKey = openRouterApiKey;
-      const apiGroqKey = groqApiKey;
+      const devOpenRouterKey = typeof window !== 'undefined' ? localStorage.getItem('dev_openrouter_key') : null;
+      const devGroqKey = typeof window !== 'undefined' ? localStorage.getItem('dev_groq_key') : null;
+      const devPreferredAi = typeof window !== 'undefined' ? localStorage.getItem('dev_preferred_ai_key') : null;
+      
+      const apiOpenRouterKey = devOpenRouterKey || openRouterApiKey;
+      const apiGroqKey = devGroqKey || groqApiKey;
+      const finalPreferredAi = devPreferredAi || preferredAiProvider || 'OpenRouter';
 
       const response = await fetch('/api/parse-itinerary', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'x-user-openrouter-key': apiOpenRouterKey || '',
-          'x-user-groq-key': apiGroqKey || ''
+          'x-user-groq-key': apiGroqKey || '',
+          'x-preferred-ai': finalPreferredAi
         },
         body: JSON.stringify({ 
           text,

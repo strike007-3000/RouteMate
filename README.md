@@ -8,8 +8,8 @@ RouteMate is a mobile-first, offline-capable travel intelligence application dri
 
 ### 🌓 Dual-View Distinction (Summary vs. Logistics)
 A state-driven interface that toggles between high-level emotional planning and granular logistical execution.
-- **Summary Mode (Itinerary)**: Maximizes visual impact with "Day Cards" featuring curated Unsplash imagery and a unified 32px radius. It hides technical connectors to prioritize the "scannability" of the trip.
-- **Logistics Mode (Timeline)**: Enables a continuous, dashed journey thread with precision-aligned dots. It surfaces Transit Hubs, flight metadata, and "Time TBD" placeholders in full detail.
+- **Summary Mode (Itinerary)**: Maximizes visual impact with "Day Cards" featuring curated Unsplash imagery and a unified 32px radius. It hides technical connectors and transit routing widgets to prioritize the "scannability" of the trip.
+- **Logistics Mode (Timeline)**: Enables a continuous, dashed journey thread with precision-aligned dots. It surfaces full `TransitCard` widgets (with Google Maps handoff, times, and distances) to help you understand exactly how to navigate between points.
 
 ### 📍 Intelligent Directions & Routing
 Advanced navigation logic that understands the context of your journey.
@@ -20,10 +20,10 @@ Advanced navigation logic that understands the context of your journey.
 - **Curated Unsplash Logic**: Integrated `&featured=true` and `content_filter=high` into the image engine to ensure every trip looks like a luxury travel magazine.
 - **Triple-Gradient Logic**: Deep linear gradients (`black/90` base) ensure text contrast while maintaining image clarity.
 
-### 🧠 Adaptive Intelligence Engine (Multi-Provider Reliability Pass)
-- **Zero-Cost Routing**: Migrated to a multi-provider stack using **OpenRouter** and **Groq** for an always-free extraction experience.
-- **Multi-Tier Failover**: Implemented a hardened resilience layer. If OpenRouter's free tier is rate-limited, the engine automatically fails over to **Groq (Llama 3.3 70B Versatile)** to ensure zero-downtime extraction.
-- **Hardened Fallback Logic**: Automatically retries across **OpenRouter Free**, **Groq**, and verified models like **Hermes 3** and **Gemma 3** with a 1.5s backoff.
+### 🧠 Adaptive Intelligence Engine (Configurable Hybrid Routing)
+- **Dynamic Provider Routing**: The extraction engine execution queue dynamically re-sorts itself based on your preferences. It checks the local client's "Preferred AI" toggle, falls back to the server's `PRIMARY_AI_PROVIDER` environment variable, and defaults to OpenRouter.
+- **Zero-Cost Reliability**: Migrated to a multi-provider stack using **OpenRouter** and **Groq** for an always-free extraction experience.
+- **Multi-Tier Failover**: Implemented a hardened resilience layer. If the preferred provider fails or is rate-limited, the engine automatically traverses the queue to the next provider/model (e.g., failing over from OpenRouter Free to Groq Llama 3.3).
 - **JSON Object Enforcement**: Native `json_object` mode eliminates markdown artifacts and parsing failures.
 
 ### 🧠 Logistical Engine (Hardened)
@@ -50,7 +50,7 @@ graph TD
     B --> C
     C --> D[(Trips Table)]
     C --> E[(Itinerary Table - Categories & CustomOrder)]
-    A --> F[OpenRouter Core - Llama 3.3 Extraction]
+    A --> F[Multi-Provider AI Core - OpenRouter & Groq]
     A --> G[Logistics Engine - 50km Rule]
     A --> K[Unsplash Image Engine - Caching Service]
     G --> L[OpenRouteService - Geocoding & Local Routes]
@@ -65,7 +65,7 @@ graph TD
    npm install
    ```
 2. **Environment**:
-   Add `OPENROUTER_API_KEY`, `UNSPLASH_ACCESS_KEY`, and `ORS_API_KEY` to your `.env`.
+   Add `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `UNSPLASH_ACCESS_KEY`, and `ORS_API_KEY` to your `.env`.
 3. **Pre-flight Integrity Check**:
    Before deploying or testing, verify your configuration and AI logic:
    ```bash

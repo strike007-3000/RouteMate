@@ -52,21 +52,24 @@ The logistics engine calculates distance thresholds using the **Haversine Formul
 ## 4. UI State & View Modes
 
 RouteMate utilizes a global `viewMode` state (`summary` | `logistics`) to manage cognitive load:
-- **Summary Mode**: High-level itinerary focus. Uses full-bleed imagery Day Cards with `rounded-[32px]` containers and suppresses the vertical journey thread.
-- **Logistics Mode**: Technical travel focus. Enables the **1px Continuous Thread** and surfaces transitHubs/logistical markers in full detail.
+- **Summary Mode**: High-level itinerary focus. Uses full-bleed imagery Day Cards with `rounded-[32px]` containers and suppresses the vertical journey thread. The `TransitCard` widget is intelligently hidden to prioritize scannability; only native circular map pins are shown.
+- **Logistics Mode**: Technical travel focus. Enables the **1px Continuous Thread** and surfaces transitHubs, logistical markers, and full `TransitCard` routing widgets (with Google Maps handoff, times, and distances).
 
 ---
 
 ## 5. Smart Add Intelligence (Multi-Provider AI)
 
 The extraction prompt in `/api/parse-itinerary` handles logistical hardening via a **Dual-Provider Stack**:
-- **Primary Provider**: **OpenRouter** (`openrouter/free`, `llama-3.3-70b-instruct:free`).
-- **Backup Provider**: **Groq** (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`).
+- **Dynamic Configurable Routing**: The execution queue dynamically re-sorts itself. It checks the local client's "Preferred AI" toggle (`x-preferred-ai`), falls back to the server's `PRIMARY_AI_PROVIDER` environment variable, and defaults to OpenRouter.
+- **Provider Architecture**:
+    - **OpenRouter** (`openrouter/free`, `llama-3.3-70b-instruct:free`).
+    - **Groq** (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`).
 - **Tiered Resilience Layer**:
-    1. **Primary Pass**: Attempts extraction via OpenRouter's free router.
-    2. **Failover Loop**: If OpenRouter returns a 429 or invalid JSON, the engine automatically cycles through Groq's model pool.
+    1. **Primary Pass**: Attempts extraction via the preferred provider's fastest model.
+    2. **Failover Loop**: If a provider returns a 429 or invalid JSON, the engine automatically traverses the dynamically sorted queue to the next available provider/model.
     3. **Backoff Logic**: Implements a short 800ms backoff between provider shifts to respect rate-limit headers.
-- **Headers**: 
+- **Headers & Config**: 
     - `x-user-openrouter-key`: For OpenRouter access.
     - `x-user-groq-key`: For Groq access.
-- **User Keys**: Stored locally in the `routemate-settings` IndexedDB store and injected per request.
+    - `x-preferred-ai`: Injected per request based on user's Dev Settings or Settings Modal.
+- **User Keys**: Stored locally in the `routemate-settings` IndexedDB store or `localStorage` for Dev Settings, and injected per request.

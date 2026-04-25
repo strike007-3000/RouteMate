@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 // Sub-component to handle drag controls per item
 const TimelineReorderItem = ({ item, prevItem, nextItem }: { item: ItineraryItem, prevItem?: ItineraryItem, nextItem?: ItineraryItem }) => {
   const dragControls = useDragControls();
+  const viewMode = useTripStore((state) => state.viewMode);
   
   return (
     <Reorder.Item 
@@ -36,7 +37,7 @@ const TimelineReorderItem = ({ item, prevItem, nextItem }: { item: ItineraryItem
       className="relative"
     >
       <TimelineItem point={item} prevPoint={prevItem} dragControls={dragControls} />
-      {nextItem && <TransitCard from={item} to={nextItem} />}
+      {viewMode === 'timeline' && nextItem && <TransitCard from={item} to={nextItem} />}
     </Reorder.Item>
   );
 };
@@ -64,6 +65,8 @@ export default function TimelinePage() {
   ) || [];
 
   // Group items by date using the store's unified sorting logic
+  const sortedAllPoints = useMemo(() => sortItinerary(points), [points, sortItinerary]);
+  
   const groupedTimeline = useMemo(() => {
     if (!trip) return [];
     
@@ -71,8 +74,6 @@ export default function TimelinePage() {
     const start = startOfDay(parseISO(trip.startDate));
     const end = startOfDay(parseISO(trip.endDate));
     const totalDays = Math.max(1, differenceInDays(end, start) + 1);
-    
-    const sortedAllPoints = sortItinerary(points);
     
     return Array.from({ length: totalDays }).map((_, i) => {
       const currentDate = addDays(start, i);
@@ -98,7 +99,7 @@ export default function TimelinePage() {
         items
       };
     });
-  }, [trip, points, sortItinerary]);
+  }, [trip, sortedAllPoints]);
 
   // Handle Initial Expansion
   useEffect(() => {
@@ -198,10 +199,16 @@ export default function TimelinePage() {
                               let prevItem = idx > 0 ? day.items[idx - 1] : undefined;
                               
                               if (!prevItem && day.dayNumber > 1) {
-                                // Look at the previous day in groupedTimeline
-                                const prevDay = groupedTimeline[day.dayNumber - 2];
-                                if (prevDay && prevDay.items.length > 0) {
-                                  prevItem = prevDay.items[prevDay.items.length - 1];
+                                // Find the Active Lodging (Hotel) from the previous night
+                                const globalIdx = sortedAllPoints.findIndex(p => p.id === item.id);
+                                if (globalIdx > 0) {
+                                  for (let i = globalIdx - 1; i >= 0; i--) {
+                                    const candidate = sortedAllPoints[i];
+                                    if (candidate.category === 'Lodging' && !candidate.title.toLowerCase().includes('check-out')) {
+                                      prevItem = candidate;
+                                      break;
+                                    }
+                                  }
                                 }
                               }
 

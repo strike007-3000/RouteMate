@@ -17,7 +17,9 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
     orsApiKey,
     setOrsApiKey,
     unsplashAccessKey,
-    setUnsplashAccessKey
+    setUnsplashAccessKey,
+    preferredAiProvider,
+    setPreferredAiProvider
   } = useSettingsStore();
 
   const [tempOpenRouterKey, setTempOpenRouterKey] = useState(openRouterApiKey);
@@ -25,6 +27,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
   const [tempHereKey, setTempHereKey] = useState(hereApiKey || '');
   const [tempOrsKey, setTempOrsKey] = useState(orsApiKey || '');
   const [tempUnsplashKey, setTempUnsplashKey] = useState(unsplashAccessKey || '');
+  const [tempPreferredAi, setTempPreferredAi] = useState(preferredAiProvider || 'OpenRouter');
   
   const [showOpenRouterKey, setShowOpenRouterKey] = useState(false);
   const [showGroqKey, setShowGroqKey] = useState(false);
@@ -39,6 +42,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
     setHereApiKey(tempHereKey);
     setOrsApiKey(tempOrsKey);
     setUnsplashAccessKey(tempUnsplashKey);
+    setPreferredAiProvider(tempPreferredAi);
     setIsSaved(true);
     setTimeout(() => {
       setIsSaved(false);
@@ -76,6 +80,30 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
             </div>
 
             <div className="space-y-8">
+              
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-bold text-white mb-1">Preferred AI Provider</h4>
+                  <p className="text-[10px] text-zinc-400 font-medium leading-tight pr-4">
+                    Select your primary model for itinerary extraction. Falls back to OpenRouter.
+                  </p>
+                </div>
+                <div className="flex bg-black/50 p-1 rounded-xl border border-white/5 shrink-0">
+                  <button 
+                    onClick={() => setTempPreferredAi('OpenRouter')}
+                    className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${tempPreferredAi === 'OpenRouter' ? 'bg-primary text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  >
+                    OpenRouter
+                  </button>
+                  <button 
+                    onClick={() => setTempPreferredAi('Groq')}
+                    className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${tempPreferredAi === 'Groq' ? 'bg-primary text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  >
+                    Groq
+                  </button>
+                </div>
+              </div>
+
               <div>
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 block">
                   OpenRouter API Key (AI Extraction)

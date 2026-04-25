@@ -51,6 +51,7 @@ interface TripState {
   addPoint: (point: Omit<ItineraryItem, 'id'>) => Promise<void>;
   removePoint: (id: number) => Promise<void>;
   updatePointOrder: (points: ItineraryItem[]) => Promise<void>;
+  updatePointTime: (id: number, startTime: string) => Promise<void>;
   sortItinerary: (points: ItineraryItem[]) => ItineraryItem[];
 }
 
@@ -222,6 +223,18 @@ export const useTripStore = create<TripState>((set, get) => ({
     set({ points: updates });
   },
 
+  updatePointTime: async (id: number, startTime: string) => {
+    if (!get().activeTrip?.id) return;
+    
+    await db.transaction('rw', db.itineraryItems, async () => {
+      await db.itineraryItems.update(id, { startTime, isTimeExplicit: true });
+    });
+    
+    const tripId = get().activeTrip!.id!;
+    const updated = await db.itineraryItems.where('tripId').equals(tripId).toArray();
+    set({ points: get().sortItinerary(updated) });
+  },
+
   /**
    * Core Sorting Engine: Implements 'Human-First' logistical flow.
    * 1. Groups by Date
@@ -260,7 +273,7 @@ export const useTripStore = create<TripState>((set, get) => ({
 
       // Smart Return Flight Detection: If we land in the home city, this is the trip's anchor.
       const arrivalCity = (item.metadata as any)?.arrivalCity?.toLowerCase();
-      const isReturnFlight = cat === 'Flight' && arrivalCity === homeBase;
+      const isReturnFlight = cat === 'Flight' && arrivalCity && homeBase && arrivalCity === homeBase;
 
       // Priority 1: Home Base Departure (Force to top on Day 1)
       if (isDay1 && cat === 'Flight' && title.includes('departure')) return -100;
@@ -276,29 +289,46 @@ export const useTripStore = create<TripState>((set, get) => ({
       }
 
       // 1-5 Logistical Sequence for normal days
-      if (cat === 'Lodging' && title.includes('check-out')) return 1;
-      if (cat === 'Flight' && title.includes('departure')) return 2;
-      if (cat === 'Flight' && title.includes('arrival')) return 3;
-      if (cat === 'Lodging' && title.includes('check-in')) return 4;
+      if (cat === 'Flight') {
+        if (title.includes('departure')) return 2;
+        if (title.includes('arrival')) return 4;
+        return 3; 
+      }
+      if (cat === 'Lodging') {
+        if (title.includes('check-out')) return 1;
+        return 10; // All other lodging defaults to Check-in (Evening anchor)
+      }
       
       return 5; // Activities, Food, etc.
     };
 
     const getSortTime = (item: ItineraryItem) => {
       const date = new Date(item.startTime);
-      if (item.isTimeExplicit === false) {
-        const title = item.title.toLowerCase();
-        let hour = CATEGORY_DEFAULTS.ACTIVITY;
-
-        // Use slightly shifted hours to help stabilize sort if multiple Predicted items exist
-        if (item.category === 'Lodging') {
-          hour = title.includes('check-out') ? CATEGORY_DEFAULTS.CHECK_OUT : CATEGORY_DEFAULTS.CHECK_IN;
-        } else if (item.category === 'Flight') {
-          hour = title.includes('arrival') ? CATEGORY_DEFAULTS.FLIGHT_ARRIVAL : CATEGORY_DEFAULTS.FLIGHT_DEPARTURE;
-        }
-
-        date.setHours(hour, 0, 0, 0);
+      if (item.isTimeExplicit !== false) {
+        return date.getTime();
       }
+      
+      const title = item.title.toLowerCase();
+      const cat = item.category;
+      const itemDate = format(date, 'yyyy-MM-dd');
+      
+      const isDay1 = itemDate === firstDate;
+      const arrivalCity = (item.metadata as any)?.arrivalCity?.toLowerCase();
+      const isReturnFlight = cat === 'Flight' && arrivalCity && homeBase && arrivalCity === homeBase;
+
+      let hour = CATEGORY_DEFAULTS.ACTIVITY;
+
+      if (isDay1 && cat === 'Flight' && title.includes('departure')) {
+        hour = 0; // Day 1 departure flights anchor to absolute morning
+      } else if (isReturnFlight) {
+        hour = 23; // Return flights anchor to absolute night
+      } else if (cat === 'Lodging') {
+        hour = title.includes('check-out') ? CATEGORY_DEFAULTS.CHECK_OUT : CATEGORY_DEFAULTS.CHECK_IN;
+      } else if (cat === 'Flight') {
+        hour = title.includes('arrival') ? CATEGORY_DEFAULTS.FLIGHT_ARRIVAL : CATEGORY_DEFAULTS.FLIGHT_DEPARTURE;
+      }
+
+      date.setHours(hour, 0, 0, 0);
       return date.getTime();
     };
 
@@ -311,14 +341,6 @@ export const useTripStore = create<TripState>((set, get) => ({
         return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
       }
       
-      // 2. Rank 6 Override: Lock Return Flights to the absolute bottom of the day
-      const rankA = getRank(a);
-      const rankB = getRank(b);
-      const isReturnA = rankA >= 1999;
-      const isReturnB = rankB >= 1999;
-      if (isReturnA && !isReturnB) return 1;
-      if (!isReturnA && isReturnB) return -1;
-      
       // 3. Secondary Sort: Manual sortOrder (if defined and non-zero)
       const orderA = a.sortOrder || 0;
       const orderB = b.sortOrder || 0;
@@ -330,6 +352,8 @@ export const useTripStore = create<TripState>((set, get) => ({
       if (timeA !== timeB) return timeA - timeB;
 
       // 5. Final Tie-breaker: Logistical Rank
+      const rankA = getRank(a);
+      const rankB = getRank(b);
       return rankA - rankB;
     });
   },

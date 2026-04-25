@@ -49,16 +49,20 @@ export default function AccountPage() {
 
   const [devKeys, setDevKeys] = React.useState({
     openrouter: '',
+    groq: '',
     unsplash: '',
-    ors: ''
+    ors: '',
+    preferred_ai: 'OpenRouter'
   });
 
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       setDevKeys({
         openrouter: localStorage.getItem('dev_openrouter_key') || '',
+        groq: localStorage.getItem('dev_groq_key') || '',
         unsplash: localStorage.getItem('dev_unsplash_key') || '',
-        ors: localStorage.getItem('dev_ors_key') || ''
+        ors: localStorage.getItem('dev_ors_key') || '',
+        preferred_ai: localStorage.getItem('dev_preferred_ai_key') || 'OpenRouter'
       });
     }
   }, []);
@@ -163,6 +167,17 @@ export default function AccountPage() {
               </div>
 
               <div className="space-y-2">
+                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">Groq Key (Backup Provider)</label>
+                <input 
+                  type="password"
+                  value={devKeys.groq}
+                  onChange={(e) => handleDevKeyChange('groq', e.target.value)}
+                  placeholder="gsk_..."
+                  className="w-full h-12 bg-black/40 border border-white/5 rounded-xl px-4 text-xs font-bold text-white focus:outline-none focus:border-primary/30"
+                />
+              </div>
+
+              <div className="space-y-2">
                 <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">Unsplash Access Key (Images)</label>
                 <input 
                    type="password"
@@ -208,9 +223,30 @@ export default function AccountPage() {
                     )} />
                   </div>
                 </button>
-                <p className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest mt-3 text-center">
+                <p className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest mt-3 mb-6 text-center">
                   Enable this to test extraction without an API key
                 </p>
+
+                <div className="bg-black/40 border border-white/5 rounded-2xl p-5 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="w-4 h-4 text-zinc-600" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Preferred AI</span>
+                  </div>
+                  <div className="flex bg-black/50 p-1 rounded-xl border border-white/5 shrink-0">
+                    <button 
+                      onClick={() => handleDevKeyChange('preferred_ai', 'OpenRouter')}
+                      className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${devKeys.preferred_ai === 'OpenRouter' ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                    >
+                      OpenRouter
+                    </button>
+                    <button 
+                      onClick={() => handleDevKeyChange('preferred_ai', 'Groq')}
+                      className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${devKeys.preferred_ai === 'Groq' ? 'bg-primary text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                    >
+                      Groq
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>

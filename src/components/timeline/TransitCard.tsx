@@ -175,7 +175,18 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                       };
 
                       const origin = getPreciseLocation(from, 'arrival');
-                      const destination = getPreciseLocation(to, 'departure');
+                      let destination = getPreciseLocation(to, 'departure');
+                      
+                      // Smart Airport Fallback: If we are routing to a flight but the AI didn't extract the departure airport,
+                      // the 'address' field usually represents the final destination (e.g., 'Brussels').
+                      // Instead of routing to Brussels, we should route to the airport in our current city!
+                      if (to.category === 'Flight') {
+                        const meta = to.metadata as any;
+                        if (!meta?.departureAirport && !meta?.departureCity) {
+                          destination = `${from.address} Airport`;
+                        }
+                      }
+
                       const mode = isInterCity ? 'driving' : 'transit';
                       
                       const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;

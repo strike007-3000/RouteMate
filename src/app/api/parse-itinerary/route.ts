@@ -73,7 +73,9 @@ export async function POST(req: Request) {
     STRICT OUTPUT RULES:
     - Output MUST be a valid JSON object with a single key "points" containing an array of objects.
     - NO markdown formatting. NO preamble.
-    - DATA RULES: ANCHOR YEAR: ${rootYear}. FLIGHTS: Generate TWO objects. SCHEMA: { "category": string, "title": string, "address": string, "startTime": "YYYY-MM-DDTHH:mm:ssZ", "endTime": "YYYY-MM-DDTHH:mm:ssZ", "isTimeExplicit": boolean, "metadata": object }`;
+    - DATA RULES: ANCHOR YEAR: ${rootYear}.
+    - CATEGORY RULES: MUST be exactly one of: ["Flight", "Lodging", "Train", "Food", "Activity", "Rental"]. Use "Activity" for sightseeing.
+    - SCHEMA: { "category": string, "title": string, "address": string, "startTime": "YYYY-MM-DDTHH:mm:ssZ", "endTime": "YYYY-MM-DDTHH:mm:ssZ", "isTimeExplicit": boolean, "metadata": object }`;
 
     const callOpenRouter = async (targetModel: string) => {
       if (!apiKey) return null;
@@ -135,13 +137,23 @@ export async function POST(req: Request) {
     };
 
     // Execution Queue
-    const queue = [
+    const baseQueue = [
       { provider: 'OpenRouter', model: 'openrouter/free', call: callOpenRouter },
       { provider: 'Groq', model: 'llama-3.3-70b-versatile', call: callGroq },
       { provider: 'OpenRouter', model: 'meta-llama/llama-3.3-70b-instruct:free', call: callOpenRouter },
       { provider: 'Groq', model: 'llama-3.1-8b-instant', call: callGroq },
       { provider: 'OpenRouter', model: 'google/gemma-3-27b-it:free', call: callOpenRouter },
     ];
+
+    const clientPreference = req.headers.get('x-preferred-ai');
+    const serverPreference = process.env.PRIMARY_AI_PROVIDER;
+    const primaryProvider = clientPreference || serverPreference || 'OpenRouter';
+
+    const queue = [...baseQueue].sort((a, b) => {
+      if (a.provider === primaryProvider && b.provider !== primaryProvider) return -1;
+      if (b.provider === primaryProvider && a.provider !== primaryProvider) return 1;
+      return 0;
+    });
 
     let lastError = '';
     let lastStatus = 500;
@@ -183,10 +195,24 @@ export async function POST(req: Request) {
       // Handle both flat array or { points: [] } wrappers
       const pointsArray = Array.isArray(parsed) ? parsed : (parsed.points || []);
       
-      const parsedPoints = pointsArray.map((p: Record<string, unknown>) => ({
-        ...p,
-        id: Math.random().toString(36).substr(2, 9)
-      }));
+      const parsedPoints = pointsArray.map((p: Record<string, unknown>) => {
+        // Enforce strict Title Case for valid categories
+        let cat = typeof p.category === 'string' ? p.category : 'Activity';
+        cat = cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
+        
+        // Map common AI hallucinations to valid UI categories
+        if (['Sightseeing', 'Tour', 'Museum', 'Attraction', 'Show'].includes(cat)) cat = 'Activity';
+        if (['Hotel', 'Airbnb', 'Stay', 'Resort', 'Hostel'].includes(cat)) cat = 'Lodging';
+        if (['Restaurant', 'Dining', 'Lunch', 'Dinner', 'Breakfast'].includes(cat)) cat = 'Food';
+        if (cat === 'Transit' || cat === 'Bus' || cat === 'Ferry') cat = 'Train';
+        if (!['Flight', 'Lodging', 'Train', 'Food', 'Activity', 'Rental'].includes(cat)) cat = 'Activity';
+
+        return {
+          ...p,
+          category: cat,
+          id: Math.random().toString(36).substr(2, 9)
+        };
+      });
       
       return NextResponse.json({ points: parsedPoints });
     } catch (parseError) {

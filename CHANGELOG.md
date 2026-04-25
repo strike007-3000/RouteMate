@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.2] - 2026-04-25
+
+### 🧠 Configurable AI Architecture (Local & Production)
+- **Dynamic Provider Routing**: Implemented a global execution queue that dynamically sorts based on user preference, checking client headers before falling back to Vercel's `PRIMARY_AI_PROVIDER` environment variable.
+- **Developer Settings Hub**: Integrated a "Preferred AI" toggle (`OpenRouter` vs `Groq`) directly into the local `/account` page for instant, zero-reload AI extraction testing.
+
+### 💎 Timeline UI/UX Refinements
+- **Two-Tap Deletion Safety**: Replaced jarring browser confirmation popups with an elegant inline "Two-Tap" deletion button (Trash icon expands to a red "Confirm?" pill) for specific itinerary items.
+- **Progressive Disclosure**: The large `TransitCard` widget is now intelligently hidden when viewing the high-level **Summary** tab, only rendering in the **Logistics** tab to reduce visual clutter while preserving functionality.
+- **Extraction Hardening**: Removed testing instructions from the system prompt that caused the AI to hallucinate unrequested flights, and enforced strict title-case sanitization to ensure perfect UI styling.
+
 ## [3.0.3] - 2026-04-25
 
 ### 🛡️ Multi-Provider AI Resilience (Groq Integration)

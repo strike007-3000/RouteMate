@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Plane, Hotel, MapPin, Clock, Utensils, Train, Car, GripVertical, ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
+import { Plane, Hotel, MapPin, Clock, Utensils, Train, Car, GripVertical, ArrowDownToLine, ArrowUpFromLine, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ItineraryItem } from '@/lib/db';
 import { format } from 'date-fns';
@@ -20,6 +20,12 @@ const categoryConfig: Record<string, any> = {
 };
 
 export const TimelineItem = ({ point, prevPoint, dragControls }: { point: ItineraryItem, prevPoint?: ItineraryItem, dragControls?: any }) => {
+  const [isEditingTime, setIsEditingTime] = React.useState(false);
+  const updatePointTime = useTripStore((state) => state.updatePointTime);
+  const removePoint = useTripStore((state) => state.removePoint);
+
+  const [isDeleting, setIsDeleting] = React.useState(false);
+
   const categoryKey = point.category as keyof typeof categoryConfig;
   const config = categoryConfig[categoryKey] || categoryConfig.Activity;
   
@@ -47,7 +53,25 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
     if (point.title.toLowerCase().includes('check-in')) Icon = ArrowDownToLine;
     else if (point.title.toLowerCase().includes('check-out')) Icon = ArrowUpFromLine;
   }
+
+  const handleTimeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTime = e.target.value; // "HH:mm"
+    if (!newTime || !point.id) {
+      setIsEditingTime(false);
+      return;
+    }
+    
+    // Preserve the original date string (YYYY-MM-DD) to prevent timezone date shifting
+    const dateStr = point.startTime.split('T')[0];
+    const newStartTime = `${dateStr}T${newTime}:00Z`;
+    
+    await updatePointTime(point.id, newStartTime);
+    setIsEditingTime(false);
+  };
   
+  // Extract "HH:mm" safely regardless of local timezone
+  const displayTime = point.startTime?.includes('T') ? point.startTime.slice(11, 16) : '00:00';
+
   return (
     <div className="relative pb-8 last:pb-0 pl-[var(--gutter,24px)]">
       <div className="absolute left-[calc(var(--gutter,24px)/2)] top-0 bottom-0 w-[1px] bg-primary/20 border-l border-dashed z-0" />
@@ -78,9 +102,23 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
           </div>
           <div className="flex items-center gap-2 text-zinc-500 whitespace-nowrap">
             <Clock className="w-3.5 h-3.5" />
-            <span className="text-[10px] font-bold tracking-[0.2em] uppercase">
-              {point.isTimeExplicit === false ? 'Time TBD' : format(new Date(point.startTime), 'HH:mm')}
-            </span>
+            {isEditingTime ? (
+              <input 
+                type="time" 
+                className="bg-zinc-800/50 border border-white/10 rounded px-2 py-0.5 text-white text-[10px] font-bold tracking-[0.2em] uppercase focus:outline-none focus:border-primary w-[75px]"
+                defaultValue={displayTime}
+                onChange={handleTimeChange}
+                onBlur={() => setIsEditingTime(false)}
+                autoFocus
+              />
+            ) : (
+              <button 
+                onClick={() => setIsEditingTime(true)}
+                className="text-[10px] font-bold tracking-[0.2em] uppercase hover:text-primary transition-colors text-left"
+              >
+                {point.isTimeExplicit === false ? 'Time TBD' : displayTime}
+              </button>
+            )}
           </div>
         </div>
         
@@ -114,6 +152,26 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
                   className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-500 hover:text-primary transition-all active:scale-90"
                 >
                   <MapPin className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isDeleting) {
+                      setIsDeleting(true);
+                      setTimeout(() => setIsDeleting(false), 3000);
+                    } else {
+                      if (point.id) removePoint(point.id);
+                    }
+                  }}
+                  className={cn(
+                    "h-8 rounded-full border flex items-center justify-center transition-all active:scale-90",
+                    isDeleting 
+                      ? "px-3 bg-red-500 border-red-400 text-white gap-2" 
+                      : "w-8 bg-white/5 border-white/10 text-zinc-500 hover:text-red-400"
+                  )}
+                >
+                  <Trash2 className="w-4 h-4" />
+                  {isDeleting && <span className="text-[10px] font-black uppercase tracking-widest">Confirm?</span>}
                 </button>
               </div>
             </div>
