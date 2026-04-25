@@ -48,12 +48,12 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
     .trim();
 
   // Helper for Precision Search logic (the "one from the repo")
-  const getPreciseLocation = (item: ItineraryItem, type: 'departure' | 'arrival') => {
+  const getPreciseLocation = (item: ItineraryItem, type: 'departure' | 'arrival'): string => {
     const meta = item.metadata;
     if (item.category === 'Flight') {
       return type === 'arrival' 
-        ? (meta?.arrivalAirport || meta?.arrivalCity || item.address)
-        : (meta?.departureAirport || meta?.departureCity || item.address);
+        ? ((meta?.arrivalAirport as string) || (meta?.arrivalCity as string) || item.address)
+        : ((meta?.departureAirport as string) || (meta?.departureCity as string) || item.address);
     }
     const cleanName = item.title.replace(/Check-in at |Check-out from |Stay at |Visit |Dinner at /g, '');
     return `${cleanName}, ${item.address}`;
