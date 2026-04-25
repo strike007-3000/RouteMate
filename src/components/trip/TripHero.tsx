@@ -112,6 +112,7 @@ export const TripHero = ({ trip, mode, onAction }: TripHeroProps) => {
       </div>
 
       <EditTripModal 
+        key={trip.id}
         isOpen={isEditOpen} 
         onClose={() => setIsEditOpen(false)} 
         trip={trip} 

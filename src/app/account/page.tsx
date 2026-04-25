@@ -47,25 +47,30 @@ export default function AccountPage() {
     },
   ];
 
-  const [devKeys, setDevKeys] = React.useState({
-    openrouter: '',
-    groq: '',
-    unsplash: '',
-    ors: '',
-    preferred_ai: 'OpenRouter'
+  const [devKeys, setDevKeys] = React.useState(() => {
+    // Return defaults if on server or not in dev
+    const defaults = {
+      openrouter: '',
+      groq: '',
+      unsplash: '',
+      ors: '',
+      preferred_ai: 'OpenRouter'
+    };
+
+    if (typeof window === 'undefined' || process.env.NODE_ENV !== 'development') {
+      return defaults;
+    }
+
+    return {
+      openrouter: localStorage.getItem('dev_openrouter_key') || '',
+      groq: localStorage.getItem('dev_groq_key') || '',
+      unsplash: localStorage.getItem('dev_unsplash_key') || '',
+      ors: localStorage.getItem('dev_ors_key') || '',
+      preferred_ai: localStorage.getItem('dev_preferred_ai_key') || 'OpenRouter'
+    };
   });
 
-  React.useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      setDevKeys({
-        openrouter: localStorage.getItem('dev_openrouter_key') || '',
-        groq: localStorage.getItem('dev_groq_key') || '',
-        unsplash: localStorage.getItem('dev_unsplash_key') || '',
-        ors: localStorage.getItem('dev_ors_key') || '',
-        preferred_ai: localStorage.getItem('dev_preferred_ai_key') || 'OpenRouter'
-      });
-    }
-  }, []);
+  // useEffect removed to avoid cascading renders; initialization handled by useState lazy initializer.
 
   const handleDevKeyChange = (key: keyof typeof devKeys, value: string) => {
     setDevKeys(prev => ({ ...prev, [key]: value }));

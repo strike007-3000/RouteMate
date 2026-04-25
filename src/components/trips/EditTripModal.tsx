@@ -19,11 +19,7 @@ export const EditTripModal = ({ isOpen, onClose, trip }: EditTripModalProps) => 
   const [endDate, setEndDate] = useState(trip.endDate);
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    setDestination(trip.destination);
-    setStartDate(trip.startDate);
-    setEndDate(trip.endDate);
-  }, [trip]);
+
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

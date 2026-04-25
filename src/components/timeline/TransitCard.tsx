@@ -13,9 +13,6 @@ interface TransitCardProps {
 }
 
 export const TransitCard = ({ from, to }: TransitCardProps) => {
-  const [suggestion, setSuggestion] = useState<TransitSuggestion | null>(null);
-  const [loading, setLoading] = useState(true);
-
   // Haversine Distance Logic
   const distance = useMemo(() => {
     if (!from.coordinates || !to.coordinates) return null;
@@ -29,8 +26,11 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
     return R * c;
   }, [from.coordinates, to.coordinates]);
 
-  const isInterCity = distance !== null && distance >= 50;
-  const isOceanCrossing = distance !== null && distance > 500;
+  const isInterCity = useMemo(() => distance !== null && distance >= 50, [distance]);
+  const isOceanCrossing = useMemo(() => distance !== null && distance > 500, [distance]);
+
+  const [suggestion, setSuggestion] = useState<TransitSuggestion | null>(null);
+  const [loading, setLoading] = useState(!isOceanCrossing);
 
   // Hub Handoff Detection
   const isRoutingToFlight = to.category === 'Flight';
@@ -38,7 +38,6 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
 
   useEffect(() => {
     if (isOceanCrossing) {
-      setLoading(false);
       return;
     }
 
@@ -47,7 +46,7 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
       try {
         // Prepare precise locations for API
         const getHubCoords = (p: TripPoint, type: 'departure' | 'arrival') => {
-          const meta = p.metadata as any;
+          const meta = p.metadata;
           if (type === 'departure') return meta?.departureCoords;
           return meta?.arrivalCoords;
         };
@@ -155,7 +154,7 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                       
                       // True Hub Routing Logic
                       const getPreciseLocation = (item: TripPoint, hubType: 'departure' | 'arrival'): string => {
-                        const meta = item.metadata as any;
+                        const meta = item.metadata;
                         if (item.category === 'Flight') {
                            // If we are looking for the ARRIVAL hub (transit AFTER flight)
                            if (hubType === 'arrival') {
@@ -181,7 +180,7 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                       // the 'address' field usually represents the final destination (e.g., 'Brussels').
                       // Instead of routing to Brussels, we should route to the airport in our current city!
                       if (to.category === 'Flight') {
-                        const meta = to.metadata as any;
+                        const meta = to.metadata;
                         if (!meta?.departureAirport && !meta?.departureCity) {
                           destination = `${from.address} Airport`;
                         }

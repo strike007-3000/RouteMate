@@ -4,6 +4,15 @@ import { format } from 'date-fns';
 
 export type PointType = 'hotel' | 'flight' | 'attraction' | 'transit';
 
+export interface TravelMetadata {
+  departureCity?: string;
+  arrivalCity?: string;
+  airportCode?: string;
+  terminal?: string;
+  hotelName?: string;
+  [key: string]: unknown;
+}
+
 export interface TripPoint {
   id?: number;
   type: PointType;
@@ -14,7 +23,7 @@ export interface TripPoint {
   endTime: string;   // ISO string
   isTimeExplicit?: boolean;
   coordinates?: { lat: number; lng: number };
-  metadata?: Record<string, unknown>;
+  metadata?: TravelMetadata;
 }
 
 const CATEGORY_DEFAULTS = {
@@ -119,6 +128,7 @@ export const useTripStore = create<TripState>((set, get) => ({
     if (!trip) return;
     
     await db.transaction('rw', [db.trips, db.itineraryItems], async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id: _, ...tripData } = trip;
       const newTripId = await db.trips.add({ 
         ...tripData, 
@@ -127,7 +137,7 @@ export const useTripStore = create<TripState>((set, get) => ({
       });
       
       const points = await db.itineraryItems.where('tripId').equals(id).toArray();
-      const newPoints = points.map(({ id: _, ...item }) => ({
+      const newPoints = points.map(({ id: unused, ...item }) => ({
         ...item,
         tripId: newTripId as number
       }));
@@ -153,8 +163,9 @@ export const useTripStore = create<TripState>((set, get) => ({
     if (!get().activeTrip?.id) return;
     const tripId = get().activeTrip!.id!;
     
-    // Remote temporary id to avoid ConstraintError (Key already exists)
-    const { id: _, ...pointData } = point as any;
+    // Remove temporary id to avoid ConstraintError (Key already exists)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _, ...pointData } = point as ItineraryItem;
 
     // Auto-Split Lodging Logic
     if (pointData.category === 'Lodging') {
@@ -254,7 +265,7 @@ export const useTripStore = create<TripState>((set, get) => ({
     // Identify the origin of the trip to detect when the traveler is 'heading home'
     const sortedByStart = [...points].sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
     const firstFlight = sortedByStart.find(p => p.category === 'Flight' && p.title.toLowerCase().includes('departure'));
-    const homeBase = (firstFlight?.metadata as any)?.departureCity?.toLowerCase();
+    const homeBase = firstFlight?.metadata?.departureCity?.toLowerCase();
     
     // Day boundaries for contextual overrides
     const lastDate = format(new Date(Math.max(...points.map(p => new Date(p.startTime).getTime()))), 'yyyy-MM-dd');
@@ -270,9 +281,11 @@ export const useTripStore = create<TripState>((set, get) => ({
       const date = format(new Date(item.startTime), 'yyyy-MM-dd');
       const isDay1 = date === firstDate;
       const isLastDay = date === lastDate;
+      // isLastDay is currently unused but kept for future logistical anchoring logic
+      if (isLastDay) { /* Future logic placeholder */ }
 
       // Smart Return Flight Detection: If we land in the home city, this is the trip's anchor.
-      const arrivalCity = (item.metadata as any)?.arrivalCity?.toLowerCase();
+      const arrivalCity = item.metadata?.arrivalCity?.toLowerCase();
       const isReturnFlight = cat === 'Flight' && arrivalCity && homeBase && arrivalCity === homeBase;
 
       // Priority 1: Home Base Departure (Force to top on Day 1)
@@ -313,7 +326,7 @@ export const useTripStore = create<TripState>((set, get) => ({
       const itemDate = format(date, 'yyyy-MM-dd');
       
       const isDay1 = itemDate === firstDate;
-      const arrivalCity = (item.metadata as any)?.arrivalCity?.toLowerCase();
+      const arrivalCity = item.metadata?.arrivalCity?.toLowerCase();
       const isReturnFlight = cat === 'Flight' && arrivalCity && homeBase && arrivalCity === homeBase;
 
       let hour = CATEGORY_DEFAULTS.ACTIVITY;

@@ -49,7 +49,7 @@ export default function TimelinePage() {
   
   const { activeTrip, setActiveTrip, expandedDays, toggleDay, setExpandedDays, sortItinerary, viewMode, setViewMode } = useTripStore();
   const [isSmartAddOpen, setIsSmartAddOpen] = useState(false);
-  const [hasInitialized, setHasInitialized] = useState(false);
+  const initializationRef = React.useRef<number | null>(null);
   
   // Hydrate Store with active trip on mount
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function TimelinePage() {
 
   // Handle Initial Expansion
   useEffect(() => {
-    if (trip && !hasInitialized && groupedTimeline.length > 0) {
+    if (trip && initializationRef.current !== tripId && groupedTimeline.length > 0) {
       const today = startOfDay(new Date());
       const tripStart = startOfDay(parseISO(trip.startDate));
       const tripEnd = startOfDay(parseISO(trip.endDate));
@@ -113,9 +113,9 @@ export default function TimelinePage() {
       } else {
         setExpandedDays([groupedTimeline[0].date.split('T')[0]]);
       }
-      setHasInitialized(true);
+      initializationRef.current = tripId;
     }
-  }, [trip, groupedTimeline, hasInitialized, setExpandedDays]);
+  }, [trip, tripId, groupedTimeline, setExpandedDays]);
 
   if (!trip) return null;
 
@@ -137,12 +137,12 @@ export default function TimelinePage() {
         {/* Segmented Control: Summary (Grouped) vs Logistics (Flow) */}
         <div className="flex items-center p-1 bg-zinc-900/40 backdrop-blur-md border border-white/5 rounded-2xl mb-12">
           {[
-            { id: 'itinerary', label: 'SUMMARY' },
-            { id: 'timeline', label: 'LOGISTICS' }
+            { id: 'itinerary' as const, label: 'SUMMARY' },
+            { id: 'timeline' as const, label: 'LOGISTICS' }
           ].map((mode) => (
             <button
               key={mode.id}
-              onClick={() => setViewMode(mode.id as any)}
+              onClick={() => setViewMode(mode.id)}
               className={cn(
                 "flex-1 py-2 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-300",
                 viewMode === mode.id 

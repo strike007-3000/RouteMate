@@ -16,6 +16,7 @@ const categoryIcons = {
 };
 
 import { useTripStore } from '@/stores/useTripStore';
+import { Trip } from '@/lib/db';
 
 interface TimelineHeaderProps {
   dayNumber: number;
@@ -23,7 +24,7 @@ interface TimelineHeaderProps {
   categories: string[];
   isExpanded: boolean;
   onToggle: () => void;
-  trip?: any;
+  trip?: Trip;
 }
 
 export const TimelineHeader = ({ 

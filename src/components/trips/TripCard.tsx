@@ -14,24 +14,23 @@ interface TripCardProps {
 
 export const TripCard = ({ trip, onSelect }: TripCardProps) => {
   const { deleteTrip, duplicateTrip } = useTripStore();
-  const [imageUrl, setImageUrl] = useState(trip.coverImage || '');
+  const [hasError, setHasError] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+
+  const imageUrl = hasError 
+    ? 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1000'
+    : (trip.coverImage || '');
 
   // Status tokens for vibrant UI
   const statusColors = {
     upcoming: 'bg-primary/20 text-primary border-primary/30',
     past: 'bg-zinc-800 text-zinc-400 border-zinc-700',
     draft: 'bg-amber-500/20 text-amber-500 border-amber-500/30'
-  };
-
-  // Update image if trip data changes (live query)
-  React.useEffect(() => {
-    if (trip.coverImage) setImageUrl(trip.coverImage);
-  }, [trip.coverImage]);
+  } as const;
 
   const handleImageError = () => {
-    setImageUrl('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1000');
+    setHasError(true);
   };
 
   const toggleMenu = (e: React.MouseEvent) => {

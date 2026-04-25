@@ -8,7 +8,17 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useTripStore } from '@/stores/useTripStore';
 
-const categoryConfig: Record<string, any> = {
+import { LucideIcon } from 'lucide-react';
+
+interface CategoryStyle {
+  icon: LucideIcon;
+  color: string;
+  glow: string;
+  border: string;
+  bg: string;
+}
+
+const categoryConfig: Record<string, CategoryStyle> = {
   Flight: { icon: Plane, color: 'text-blue-400', glow: 'shadow-blue-500/10', border: 'border-blue-500/20', bg: 'bg-blue-500/10' },
   Lodging: { icon: Hotel, color: 'text-emerald-400', glow: 'shadow-emerald-500/10', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10' },
   Hotel: { icon: Hotel, color: 'text-emerald-400', glow: 'shadow-emerald-500/10', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10' },
@@ -19,7 +29,9 @@ const categoryConfig: Record<string, any> = {
   Rental: { icon: Car, color: 'text-cyan-400', glow: 'shadow-cyan-500/10', border: 'border-cyan-500/20', bg: 'bg-cyan-500/10' },
 };
 
-export const TimelineItem = ({ point, prevPoint, dragControls }: { point: ItineraryItem, prevPoint?: ItineraryItem, dragControls?: any }) => {
+import { DragControls } from 'framer-motion';
+
+export const TimelineItem = ({ point, prevPoint, dragControls }: { point: ItineraryItem, prevPoint?: ItineraryItem, dragControls?: DragControls }) => {
   const [isEditingTime, setIsEditingTime] = React.useState(false);
   const updatePointTime = useTripStore((state) => state.updatePointTime);
   const removePoint = useTripStore((state) => state.removePoint);
@@ -30,14 +42,14 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
   const config = categoryConfig[categoryKey] || categoryConfig.Activity;
   
   // Smart Title Extraction (Entity-First / Verb Strip)
-  let cleanTitle = point.title
+  const cleanTitle = point.title
     .replace(/^(Departure from |Arrival at |Check-in at |Check-out from |Stay at |Visit |Dinner at |Lunch at |Breakfast at |Flight from |Flight to |Travel to |Explore )/i, '')
     .replace(/^(at |from |to |in )/i, '') // Recursive strip for nested prepositions
     .trim();
 
   // Helper for Precision Search logic (the "one from the repo")
   const getPreciseLocation = (item: ItineraryItem, type: 'departure' | 'arrival') => {
-    const meta = item.metadata as any;
+    const meta = item.metadata;
     if (item.category === 'Flight') {
       return type === 'arrival' 
         ? (meta?.arrivalAirport || meta?.arrivalCity || item.address)
