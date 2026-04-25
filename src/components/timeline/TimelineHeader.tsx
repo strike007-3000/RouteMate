@@ -17,6 +17,7 @@ const categoryIcons = {
 
 import { useTripStore } from '@/stores/useTripStore';
 import { Trip } from '@/lib/db';
+import { WeatherWidget } from './WeatherWidget';
 
 interface TimelineHeaderProps {
   dayNumber: number;
@@ -25,6 +26,7 @@ interface TimelineHeaderProps {
   isExpanded: boolean;
   onToggle: () => void;
   trip?: Trip;
+  location?: string;
 }
 
 export const TimelineHeader = ({ 
@@ -33,7 +35,8 @@ export const TimelineHeader = ({
   categories, 
   isExpanded, 
   onToggle,
-  trip
+  trip,
+  location
 }: TimelineHeaderProps) => {
   const formattedDate = format(parseISO(date), 'EEEE, MMM do');
 
@@ -46,9 +49,12 @@ export const TimelineHeader = ({
       )}
     >
       <div className="flex items-center justify-between">
-        <div className="flex flex-col">
-          <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Day {dayNumber}</span>
-          <h3 className="text-xl font-black text-white tracking-tighter mt-[var(--brand-gap,4px)]">{formattedDate}</h3>
+        <div className="flex items-center gap-4 flex-1">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Day {dayNumber}</span>
+            <h3 className="text-xl font-black text-white tracking-tighter mt-[var(--brand-gap,4px)]">{formattedDate}</h3>
+          </div>
+          {location && <WeatherWidget date={date} location={location} />}
         </div>
         
         <div className="flex items-center gap-3">

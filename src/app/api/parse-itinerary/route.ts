@@ -75,7 +75,8 @@ export async function POST(req: Request) {
     - NO markdown formatting. NO preamble.
     - DATA RULES: ANCHOR YEAR: ${rootYear}.
     - CATEGORY RULES: MUST be exactly one of: ["Flight", "Lodging", "Train", "Food", "Activity", "Rental"]. Use "Activity" for sightseeing.
-    - SCHEMA: { "category": string, "title": string, "address": string, "startTime": "YYYY-MM-DDTHH:mm:ssZ", "endTime": "YYYY-MM-DDTHH:mm:ssZ", "isTimeExplicit": boolean, "metadata": object }`;
+    - SCHEMA: { "category": string, "title": string, "address": string, "startTime": "YYYY-MM-DDTHH:mm:ssZ", "endTime": "YYYY-MM-DDTHH:mm:ssZ", "isTimeExplicit": boolean, "metadata": object }.
+    - FLIGHT RULES: If category is "Flight", metadata MUST include "flightNumber" (e.g. "SN3151"). Do not hallucinate numbers if not found.`;
 
     const callOpenRouter = async (targetModel: string) => {
       if (!apiKey) return null;

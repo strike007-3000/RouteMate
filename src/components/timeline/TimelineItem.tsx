@@ -7,6 +7,7 @@ import { ItineraryItem } from '@/lib/db';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useTripStore } from '@/stores/useTripStore';
+import { FlightStatusWidget } from './FlightStatusWidget';
 
 import { LucideIcon } from 'lucide-react';
 
@@ -110,7 +111,14 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
         <div className="flex items-start justify-between mb-6">
           <div className={cn("flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-white/10", config.bg)}>
             <Icon className={cn("w-3.5 h-3.5", config.color)} />
-            <span className={cn("text-[10px] font-bold uppercase tracking-[0.2em]", config.color)}>{point.category}</span>
+            <span className={cn("text-[10px] font-bold uppercase tracking-[0.2em]", config.color)}>
+              {point.category}
+              {point.category === 'Flight' && point.metadata?.flightNumber && (
+                <span className="opacity-60 ml-1.5 border-l border-white/20 pl-1.5">
+                  {point.metadata.flightNumber as string}
+                </span>
+              )}
+            </span>
           </div>
           <div className="flex items-center gap-2 text-zinc-500 whitespace-nowrap">
             <Clock className="w-3.5 h-3.5" />
@@ -190,6 +198,12 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest truncate">
               {(point.metadata?.fullAddress as string) || point.address}
             </p>
+            {point.category === 'Flight' && (point.metadata?.flightNumber as string) && (
+              <FlightStatusWidget 
+                flightNumber={point.metadata.flightNumber as string} 
+                startTime={point.startTime} 
+              />
+            )}
           </div>
           
           <div 

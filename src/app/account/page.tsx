@@ -54,6 +54,8 @@ export default function AccountPage() {
       groq: '',
       unsplash: '',
       ors: '',
+      weatherstack: '',
+      aviationstack: '',
       preferred_ai: 'OpenRouter'
     };
 
@@ -66,6 +68,8 @@ export default function AccountPage() {
       groq: localStorage.getItem('dev_groq_key') || '',
       unsplash: localStorage.getItem('dev_unsplash_key') || '',
       ors: localStorage.getItem('dev_ors_key') || '',
+      weatherstack: localStorage.getItem('dev_weatherstack_key') || '',
+      aviationstack: localStorage.getItem('dev_aviationstack_key') || '',
       preferred_ai: localStorage.getItem('dev_preferred_ai_key') || 'OpenRouter'
     };
   });
@@ -200,6 +204,28 @@ export default function AccountPage() {
                    value={devKeys.ors}
                    onChange={(e) => handleDevKeyChange('ors', e.target.value)}
                    placeholder="Enter ORS Key"
+                   className="w-full h-12 bg-black/40 border border-white/5 rounded-xl px-4 text-xs font-bold text-white focus:outline-none focus:border-primary/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">WeatherStack Key</label>
+                <input 
+                   type="password"
+                   value={devKeys.weatherstack}
+                   onChange={(e) => handleDevKeyChange('weatherstack', e.target.value)}
+                   placeholder="Enter WeatherStack Key"
+                   className="w-full h-12 bg-black/40 border border-white/5 rounded-xl px-4 text-xs font-bold text-white focus:outline-none focus:border-primary/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">AviationStack Key</label>
+                <input 
+                   type="password"
+                   value={devKeys.aviationstack}
+                   onChange={(e) => handleDevKeyChange('aviationstack', e.target.value)}
+                   placeholder="Enter AviationStack Key"
                    className="w-full h-12 bg-black/40 border border-white/5 rounded-xl px-4 text-xs font-bold text-white focus:outline-none focus:border-primary/30"
                 />
               </div>

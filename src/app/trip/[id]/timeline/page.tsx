@@ -173,6 +173,7 @@ export default function TimelinePage() {
                   isExpanded={isExpanded}
                   onToggle={() => toggleDay(dateStr)}
                   trip={trip}
+                  location={day.items[0]?.address || trip.destination}
                 />
                 
                 <AnimatePresence>
