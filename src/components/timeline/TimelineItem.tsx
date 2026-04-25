@@ -8,8 +8,9 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useTripStore } from '@/stores/useTripStore';
 import { FlightStatusWidget } from './FlightStatusWidget';
+import { EditItemModal } from './EditItemModal';
 
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, Edit2 } from 'lucide-react';
 
 interface CategoryStyle {
   icon: LucideIcon;
@@ -38,6 +39,7 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
   const removePoint = useTripStore((state) => state.removePoint);
 
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
 
   const categoryKey = point.category as keyof typeof categoryConfig;
   const config = categoryConfig[categoryKey] || categoryConfig.Activity;
@@ -159,6 +161,15 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
+                    setIsEditModalOpen(true);
+                  }}
+                  className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-500 hover:text-primary transition-all active:scale-90 mr-1.5"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
                     const destination = getPreciseLocation(point, 'departure');
                     let url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
                     
@@ -217,6 +228,12 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
           </div>
         </div>
       </motion.div>
+      <EditItemModal 
+        key={point.id}
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)} 
+        item={point} 
+      />
     </div>
   );
 };

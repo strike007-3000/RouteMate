@@ -335,12 +335,18 @@ export const useTripStore = create<TripState>((set, get) => ({
 
     const getSortTime = (item: ItineraryItem) => {
       const date = new Date(item.startTime);
-      if (item.isTimeExplicit !== false) {
-        return date.getTime();
-      }
-      
       const title = item.title.toLowerCase();
       const cat = item.category;
+
+      if (item.isTimeExplicit !== false) {
+        // Special case: Lodging check-ins at 00:00 are usually just 'date' entries from AI.
+        // We force them to follow predicted ranking (evening) to avoid overlapping morning flights.
+        const isMidnightLodging = cat === 'Lodging' && !title.includes('check-out') && date.getUTCHours() === 0 && date.getUTCMinutes() === 0;
+        if (!isMidnightLodging) {
+          return date.getTime();
+        }
+      }
+      
       const itemDate = format(date, 'yyyy-MM-dd');
       
       const isDay1 = itemDate === firstDate;
