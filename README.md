@@ -1,4 +1,4 @@
-# RouteMate v3.1.0 - Immersive Travel Intelligence 🌌✨
+# RouteMate v3.1.1 - Immersive Travel Intelligence 🌌✨
 
 RouteMate is a mobile-first, offline-capable travel intelligence application driven by a **Date-Grouped Intelligence Engine**, a **Dual-View Distinction System**, and **Live API Intelligence** (Weather & Flight Tracking).
 

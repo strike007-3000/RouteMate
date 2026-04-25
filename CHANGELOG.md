@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.1] - 2026-04-25
+
+### 📝 Manual Itinerary Editing
+- **Metadata Control**: Introduced a new "Edit" modal allowing users to manually update flight numbers, airlines, and confirmation codes after extraction.
+- **Action Bar Update**: Added a sleek pencil icon to the timeline item action bar for quick access to metadata refinement.
+
+### 🛡️ Hardening & Sorting Refinement
+- **Midnight Lodging Fix**: Optimized the sorting engine to treat `00:00` lodging entries as "Evening" check-ins, preventing them from overlapping with morning flights on Day 1.
+- **Runtime Resilience**: Hardened the entire React tree against malformed external API data (AviationStack/WeatherStack) to prevent "page couldn't load" errors.
+
 ## [3.1.0] - 2026-04-25
 
 ### ⛅ Real-Time Weather Integration (WeatherStack)
