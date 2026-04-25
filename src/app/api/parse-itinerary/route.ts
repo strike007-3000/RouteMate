@@ -12,11 +12,14 @@ export async function POST(req: Request) {
     const clientKey = req.headers.get('x-user-openrouter-key');
     const apiKey = serverKey || clientKey;
     
+    const groqServerKey = process.env.GROQ_API_KEY;
+    const groqClientKey = req.headers.get('x-user-groq-key');
+    const groqApiKey = groqServerKey || groqClientKey;
+    
     // --- MOCK MODE HANDLING ---
-    if (apiKey === 'MOCK_MODE') {
+    if (apiKey === 'MOCK_MODE' || groqApiKey === 'MOCK_MODE') {
       console.log('--- MOCK AI Extraction Active ---');
-      
-      // Try to extract a month from text, default to current month
+      // ... (mock implementation remains same)
       const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       const foundMonth = months.findIndex(m => text.toLowerCase().includes(m.toLowerCase()));
       const monthIdx = foundMonth !== -1 ? foundMonth : new Date().getMonth();
@@ -54,28 +57,28 @@ export async function POST(req: Request) {
           metadata: {}
         }
       ];
-      // Simulate delay
       await new Promise(r => setTimeout(r, 1000));
       return NextResponse.json({ points: mockPoints });
     }
 
-    if (!apiKey || apiKey === 'your_openrouter_api_key_here' || apiKey.length < 10) {
+    if (!apiKey && !groqApiKey) {
       return NextResponse.json({ 
-        error: 'Missing OpenRouter API Key', 
-        details: 'Please enter your key in the Settings Gear (top right) to enable AI extraction. Or type "MOCK_MODE" for testing.' 
+        error: 'No AI Provider Key Found', 
+        details: 'Please enter an OpenRouter or Groq key in Settings to enable AI extraction.' 
       }, { status: 401 });
     }
 
-    // Use the official OpenRouter free model router
-    const primaryModel = 'openrouter/free';
-    const fallbackModel = 'nousresearch/hermes-3-llama-3.1-405b:free'; // Frontier-level free model
-    const emergencyModel = 'google/gemma-3-27b-it:free'; // Optimized for structured outputs
-
-    console.log('--- OpenRouter Extraction Attempt (Free Stack) ---', { model: primaryModel, textLen: text.length });
+    const systemPrompt = `You are a high-fidelity travel data extractor.
+    TASK: Convert unstructured travel text into a valid JSON array of itinerary objects.
+    STRICT OUTPUT RULES:
+    - Output MUST be a valid JSON object with a single key "points" containing an array of objects.
+    - NO markdown formatting. NO preamble.
+    - DATA RULES: ANCHOR YEAR: ${rootYear}. FLIGHTS: Generate TWO objects. SCHEMA: { "category": string, "title": string, "address": string, "startTime": "YYYY-MM-DDTHH:mm:ssZ", "endTime": "YYYY-MM-DDTHH:mm:ssZ", "isTimeExplicit": boolean, "metadata": object }`;
 
     const callOpenRouter = async (targetModel: string) => {
+      if (!apiKey) return null;
       try {
-        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        return await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -86,77 +89,89 @@ export async function POST(req: Request) {
           body: JSON.stringify({
             model: targetModel,
             response_format: { type: 'json_object' },
-            messages: [
-              {
-                role: 'system',
-                content: `You are a high-fidelity travel data extractor.
-                TASK: Convert unstructured travel text into a valid JSON array of itinerary objects.
-                
-                STRICT OUTPUT RULES:
-                - Output MUST be a valid JSON object with a single key "points" containing an array of objects.
-                - NO markdown formatting. NO code blocks. NO preamble.
-                - Return ONLY the JSON object.
-                
-                DATA RULES:
-                - ANCHOR YEAR: ${rootYear}.
-                - FLIGHTS: Generate TWO objects (Departure and Arrival).
-                - SCHEMA per object: { "category": "Flight"|"Lodging"|"Train"|"Food"|"Activity", "title": string, "address": string, "startTime": "YYYY-MM-DDTHH:mm:ssZ", "endTime": "YYYY-MM-DDTHH:mm:ssZ", "isTimeExplicit": boolean, "metadata": object }`
-              },
-              { role: 'user', content: text }
-            ],
+            messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: text }],
             temperature: 0.1,
-            max_tokens: 2048,
           }),
         });
-        return res;
-      } catch (e) {
-        return null;
-      }
+      } catch (e) { return null; }
     };
 
-    const processResponse = async (res: Response | null) => {
-      if (!res || !res.ok) return null;
+    const callGroq = async (targetModel: string) => {
+      if (!groqApiKey) return null;
+      try {
+        return await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${groqApiKey}`,
+          },
+          body: JSON.stringify({
+            model: targetModel,
+            response_format: { type: 'json_object' },
+            messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: text }],
+            temperature: 0.1,
+          }),
+        });
+      } catch (e) { return null; }
+    };
+
+    const processResponse = async (res: Response | null, modelName: string) => {
+      if (!res) return { success: false, error: 'Network Error', status: 500 };
+      const status = res.status;
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        return { success: false, error: errorData?.error?.message || `HTTP ${status}`, status };
+      }
       try {
         const data = await res.json();
         const content = data.choices?.[0]?.message?.content;
-        if (!content) return null;
-        
-        // Try to find and parse JSON
         const jsonMatch = content.match(/\{[\s\S]*\}/);
         const jsonString = jsonMatch ? jsonMatch[0] : content;
-        JSON.parse(jsonString.trim()); // Validation step
-        return content;
+        JSON.parse(jsonString.trim());
+        return { success: true, content, status };
       } catch (e) {
-        return null;
+        return { success: false, error: 'Invalid JSON', status: 500 };
       }
     };
 
-    let response = await callOpenRouter(primaryModel);
-    let content = await processResponse(response);
-    
-    // Tiered Fallback Strategy
-    if (!content) {
-      console.warn(`Primary (${primaryModel}) failed or returned invalid JSON. Trying fallback...`);
-      response = await callOpenRouter(fallbackModel);
-      content = await processResponse(response);
-    }
+    // Execution Queue
+    const queue = [
+      { provider: 'OpenRouter', model: 'openrouter/free', call: callOpenRouter },
+      { provider: 'Groq', model: 'llama-3.3-70b-versatile', call: callGroq },
+      { provider: 'OpenRouter', model: 'meta-llama/llama-3.3-70b-instruct:free', call: callOpenRouter },
+      { provider: 'Groq', model: 'llama-3.1-8b-instant', call: callGroq },
+      { provider: 'OpenRouter', model: 'google/gemma-3-27b-it:free', call: callOpenRouter },
+    ];
 
-    if (!content) {
-      console.warn(`Secondary (${fallbackModel}) failed. Trying Emergency fallback...`);
-      response = await callOpenRouter(emergencyModel);
-      content = await processResponse(response);
-    }
+    let lastError = '';
+    let lastStatus = 500;
+    let content = '';
 
-    if (!content) {
-      const errorData = await response?.json().catch(() => ({}));
-      const errorMsg = errorData?.error?.message || 'AI models failed to generate valid itinerary data.';
-      
-      let finalDetails = errorMsg;
-      if (errorMsg.toLowerCase().includes('insufficient credits') || response?.status === 402) {
-        finalDetails = 'Insufficient credits on OpenRouter. Please top up at openrouter.ai or use "MOCK_MODE" in settings to continue testing.';
+    for (const item of queue) {
+      const response = await item.call(item.model);
+      if (!response) continue; // Skip if provider key missing
+
+      const result = await processResponse(response, `${item.provider}:${item.model}`);
+      if (result.success) {
+        content = result.content!;
+        console.log(`--- Extraction Success --- Provider: ${item.provider}, Model: ${item.model}`);
+        break;
+      } else {
+        lastError = result.error!;
+        lastStatus = result.status!;
+        if (lastStatus === 429) {
+          console.warn(`Rate limit on ${item.provider}:${item.model}. Failing over...`);
+          await new Promise(r => setTimeout(r, 800));
+        }
       }
+    }
 
-      return NextResponse.json({ error: 'AI Provider Error', details: finalDetails }, { status: response?.status || 500 });
+    if (!content) {
+      return NextResponse.json({ 
+        error: 'AI Provider Error', 
+        details: lastError || 'All providers failed.',
+        tried: queue.length
+      }, { status: lastStatus });
     }
     
     try {

@@ -57,15 +57,16 @@ RouteMate utilizes a global `viewMode` state (`summary` | `logistics`) to manage
 
 ---
 
-## 5. Smart Add Intelligence (OpenRouter AI)
+## 5. Smart Add Intelligence (Multi-Provider AI)
 
-The extraction prompt in `/api/parse-itinerary` handles logistical hardening via the **OpenRouter Free Intelligence Stack**:
-- **Primary Model Router**: `openrouter/free` (Automatically selects an available free model).
-- **High-Fidelity Fallbacks**: `nousresearch/hermes-3-llama-3.1-405b:free` and `google/gemma-3-27b-it:free`.
+The extraction prompt in `/api/parse-itinerary` handles logistical hardening via a **Dual-Provider Stack**:
+- **Primary Provider**: **OpenRouter** (`openrouter/free`, `llama-3.3-70b-instruct:free`).
+- **Backup Provider**: **Groq** (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`).
 - **Tiered Resilience Layer**:
-    1. **Primary Pass**: Attempts extraction via the free router.
-    2. **JSON Validation**: Validates the output against the schema.
-    3. **Auto-Retry**: If validation fails or the model hallucinates (common in free tiers), the engine automatically triggers a fallback attempt using the frontier-level free models.
-- **JSON Object Mode**: Forces `response_format: { type: 'json_object' }` to eliminate markdown artifacts.
-- **Headers**: Requires `HTTP-Referer` and `X-Title` for OpenRouter compliance.
-- **User Keys**: Injected via `x-user-openrouter-key` from the global `routemate-settings` store.
+    1. **Primary Pass**: Attempts extraction via OpenRouter's free router.
+    2. **Failover Loop**: If OpenRouter returns a 429 or invalid JSON, the engine automatically cycles through Groq's model pool.
+    3. **Backoff Logic**: Implements a short 800ms backoff between provider shifts to respect rate-limit headers.
+- **Headers**: 
+    - `x-user-openrouter-key`: For OpenRouter access.
+    - `x-user-groq-key`: For Groq access.
+- **User Keys**: Stored locally in the `routemate-settings` IndexedDB store and injected per request.

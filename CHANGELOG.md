@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.3] - 2026-04-25
+
+### 🛡️ Multi-Provider AI Resilience (Groq Integration)
+- **Groq Failover Stack**: Integrated Groq as a secondary AI provider. If OpenRouter's free tier is rate-limited (429), the system now automatically fails over to Groq's high-speed inference engine.
+- **Provider Failover Logic**: Implemented a global execution queue that traverses both OpenRouter and Groq model pools until a valid extraction is secured.
+- **Enhanced Settings UI**: Added a dedicated Groq API Key field in the Account Hub to empower users with a "Safety Net" provider.
+- **Reduced Latency Retries**: Optimized backoff timings during cross-provider failovers to maintain a responsive user experience.
+
 ## [3.0.1] - 2026-04-25
 
 ### 🧠 Free Model Reliability Pass

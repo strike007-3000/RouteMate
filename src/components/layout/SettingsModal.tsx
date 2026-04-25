@@ -9,6 +9,8 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
   const { 
     openRouterApiKey, 
     setOpenRouterApiKey, 
+    groqApiKey,
+    setGroqApiKey,
     clearAllKeys,
     hereApiKey,
     setHereApiKey,
@@ -19,10 +21,13 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
   } = useSettingsStore();
 
   const [tempOpenRouterKey, setTempOpenRouterKey] = useState(openRouterApiKey);
+  const [tempGroqKey, setTempGroqKey] = useState(groqApiKey || '');
   const [tempHereKey, setTempHereKey] = useState(hereApiKey || '');
   const [tempOrsKey, setTempOrsKey] = useState(orsApiKey || '');
   const [tempUnsplashKey, setTempUnsplashKey] = useState(unsplashAccessKey || '');
+  
   const [showOpenRouterKey, setShowOpenRouterKey] = useState(false);
+  const [showGroqKey, setShowGroqKey] = useState(false);
   const [showHereKey, setShowHereKey] = useState(false);
   const [showOrsKey, setShowOrsKey] = useState(false);
   const [showUnsplashKey, setShowUnsplashKey] = useState(false);
@@ -30,6 +35,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
 
   const handleSave = () => {
     setOpenRouterApiKey(tempOpenRouterKey);
+    setGroqApiKey(tempGroqKey);
     setHereApiKey(tempHereKey);
     setOrsApiKey(tempOrsKey);
     setUnsplashAccessKey(tempUnsplashKey);
@@ -55,7 +61,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-x-4 top-[10%] bottom-[10%] md:max-w-md md:mx-auto glass-card rounded-[2.5rem] z-[101] p-8 overflow-y-auto"
+            className="fixed inset-x-4 top-[5%] bottom-[5%] md:max-w-md md:mx-auto glass-card rounded-[2.5rem] z-[101] p-8 overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -95,6 +101,35 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
                   className="mt-3 flex items-center gap-1.5 text-[10px] font-bold text-primary hover:underline"
                 >
                   Get your OpenRouter key
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 block">
+                  Groq API Key (Backup Provider)
+                </label>
+                <div className="relative">
+                  <input
+                    type={showGroqKey ? "text" : "password"}
+                    value={tempGroqKey}
+                    onChange={(e) => setTempGroqKey(e.target.value)}
+                    placeholder="gsk_..."
+                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+                  />
+                  <button 
+                    onClick={() => setShowGroqKey(!showGroqKey)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showGroqKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+                <a 
+                  href="https://console.groq.com/keys" 
+                  target="_blank" 
+                  className="mt-3 flex items-center gap-1.5 text-[10px] font-bold text-primary hover:underline"
+                >
+                  Get your free Groq key
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </div>

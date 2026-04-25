@@ -15,6 +15,7 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
   const [status, setStatus] = useState<'idle' | 'parsing' | 'success' | 'error'>('idle');
   const addPoint = useTripStore((state) => state.addPoint);
   const openRouterApiKey = useSettingsStore((state) => state.openRouterApiKey);
+  const groqApiKey = useSettingsStore((state) => state.groqApiKey);
   const activeTrip = useTripStore((state) => state.activeTrip);
 
   const templates = [
@@ -42,14 +43,15 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
     try {
       const rootYear = activeTrip?.startDate ? activeTrip.startDate.split('-')[0] : "2026";
       
-      const devOpenRouterKey = typeof window !== 'undefined' ? localStorage.getItem('dev_openrouter_key') : null;
-      const apiOpenRouterKey = devOpenRouterKey || openRouterApiKey;
+      const apiOpenRouterKey = openRouterApiKey;
+      const apiGroqKey = groqApiKey;
 
       const response = await fetch('/api/parse-itinerary', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'x-user-openrouter-key': apiOpenRouterKey || ''
+          'x-user-openrouter-key': apiOpenRouterKey || '',
+          'x-user-groq-key': apiGroqKey || ''
         },
         body: JSON.stringify({ 
           text,
