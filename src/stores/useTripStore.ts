@@ -246,6 +246,23 @@ export const useTripStore = create<TripState>((set, get) => ({
     set({ points: get().sortItinerary(updated) });
   },
 
+  updatePointMetadata: async (id: number, metadata: TravelMetadata) => {
+    if (!get().activeTrip?.id) return;
+    
+    const point = await db.itineraryItems.get(id);
+    if (!point) return;
+
+    const newMetadata = { ...point.metadata, ...metadata };
+    
+    await db.transaction('rw', db.itineraryItems, async () => {
+      await db.itineraryItems.update(id, { metadata: newMetadata });
+    });
+    
+    const tripId = get().activeTrip!.id!;
+    const updated = await db.itineraryItems.where('tripId').equals(tripId).toArray();
+    set({ points: get().sortItinerary(updated) });
+  },
+
   /**
    * Core Sorting Engine: Implements 'Human-First' logistical flow.
    * 1. Groups by Date

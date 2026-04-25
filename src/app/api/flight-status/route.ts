@@ -3,10 +3,9 @@ import { NextResponse } from 'next/server';
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const flightNumber = searchParams.get('flightNumber');
-
-  if (!flightNumber) {
-    return NextResponse.json({ error: 'No flight number provided' }, { status: 400 });
-  }
+  const depIata = searchParams.get('dep_iata');
+  const arrIata = searchParams.get('arr_iata');
+  const date = searchParams.get('date');
 
   const serverKey = process.env.AVIATIONSTACK_API_KEY;
   const clientKey = req.headers.get('x-user-aviationstack-key');
@@ -17,12 +16,35 @@ export async function GET(req: Request) {
   }
 
   try {
-    // AviationStack uses flight_iata for things like SN3151
-    const res = await fetch(`http://api.aviationstack.com/v1/flights?access_key=${apiKey}&flight_iata=${flightNumber}`);
+    let apiUrl = `http://api.aviationstack.com/v1/flights?access_key=${apiKey}`;
+    
+    if (flightNumber) {
+      apiUrl += `&flight_iata=${flightNumber}`;
+    } else if (depIata && arrIata) {
+      apiUrl += `&dep_iata=${depIata}&arr_iata=${arrIata}`;
+      if (date) apiUrl += `&flight_date=${date.split('T')[0]}`;
+    } else {
+      return NextResponse.json({ error: 'Missing flight identifier (number or route)' }, { status: 400 });
+    }
+
+    const res = await fetch(apiUrl);
     const data = await res.json();
     
     if (data.error) {
       return NextResponse.json({ error: data.error.info }, { status: 500 });
+    }
+
+    if (!flightNumber) {
+      // Return list for selection
+      const list = (data.data || []).map((f: { flight: { iata: string }; airline: { name: string }; departure: { scheduled: string; gate: string; terminal: string }; flight_status: string }) => ({
+        flightNumber: f.flight.iata,
+        airline: f.airline.name,
+        departureTime: f.departure.scheduled,
+        status: f.flight_status,
+        gate: f.departure.gate,
+        terminal: f.departure.terminal
+      }));
+      return NextResponse.json({ flights: list });
     }
 
     const flight = data.data?.[0];

@@ -198,10 +198,13 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest truncate">
               {(point.metadata?.fullAddress as string) || point.address}
             </p>
-            {point.category === 'Flight' && (point.metadata?.flightNumber as string) && (
+            {point.category === 'Flight' && (
               <FlightStatusWidget 
-                flightNumber={point.metadata.flightNumber as string} 
+                pointId={point.id!}
+                flightNumber={point.metadata?.flightNumber as string} 
                 startTime={point.startTime} 
+                departureAirport={point.metadata?.departureAirport as string}
+                arrivalAirport={point.metadata?.arrivalAirport as string}
               />
             )}
           </div>

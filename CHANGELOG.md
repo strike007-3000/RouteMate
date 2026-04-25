@@ -2,17 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.1.0](https://github.com/strike007-3000/RouteMate/compare/v3.0.3...v3.1.0) (2026-04-25)
+## [3.1.0] - 2026-04-25
 
+### ⛅ Real-Time Weather Integration (WeatherStack)
+- **Context-Aware Forecasts**: Implemented a dynamic `WeatherWidget` in the Summary view day headers.
+- **API Optimization**: Configured logic to only fetch weather for the current and next day, significantly reducing API usage.
+- **Seamless UI**: Integrated a sleek, glassmorphic weather pill next to each day title.
 
-### Features
+### ✈️ Live Flight Tracking (AviationStack)
+- **Proactive Logistics**: Replaced static flight times with live status updates (Green/Red indicators), gate numbers, and terminal info.
+- **Route-Based Search**: Implemented a fallback search engine that finds flights by departure/arrival airports if the flight number is missing.
+- **One-Tap Selection**: Users can now select their specific flight from a suggested list to "lock in" real-time tracking metadata.
 
-* complete v3.0.2 architecture hardening, progressive UI, and security patches ([56b4db7](https://github.com/strike007-3000/RouteMate/commit/56b4db7d3a2ac117e3b848525765ee2937a31c36))
-
-
-### Bug Fixes
-
-* resolve remaining TypeScript type errors in TimelineItem ([0f87bab](https://github.com/strike007-3000/RouteMate/commit/0f87bab95b27e3d575251f785dd26cdac65632ea))
+### 🛠️ Codebase Hardening & Audit Fixes
+- **Cascading Render Fixes**: Eliminated all React synchronous `setState` warnings in high-traffic components.
+- **Zero Lint Errors**: Fully resolved all remaining TypeScript `any` type violations and implicit errors.
+- **Integrity Refactor**: Updated internal integrity scripts to be non-interactive and CI-compatible.
 
 ## [3.0.3] - 2026-04-25
 

@@ -73,3 +73,20 @@ The extraction prompt in `/api/parse-itinerary` handles logistical hardening via
     - `x-user-groq-key`: For Groq access.
     - `x-preferred-ai`: Injected per request based on user's Dev Settings or Settings Modal.
 - **User Keys**: Stored locally in the `routemate-settings` IndexedDB store or `localStorage` for Dev Settings, and injected per request.
+
+---
+
+## 6. Weather Intelligence (WeatherStack)
+
+The system provides localized forecasts for packing and situational awareness.
+- **Optimization (Next-Day Rule)**: Weather is only fetched for the **current day** and **next day** of the trip. Forecasts further in the future are suppressed to optimize API consumption and ensure accuracy.
+- **Contextual Anchoring**: The `WeatherWidget` identifies the forecast city using the `address` of the first itinerary item of the day.
+
+---
+
+## 7. Live Flight Logistics (AviationStack)
+
+Real-time flight tracking uses a proximity-triggered execution layer.
+- **Proximity Trigger (24h Rule)**: Live status (gates, terminals, delays) is only fetched when a flight is within **24 hours** of its scheduled departure. 
+- **Route-Based Search**: If a `flightNumber` is missing, the system uses the AI-extracted `dep_iata` and `arr_iata` codes to find matching flights for that day. 
+- **Metadata Synchronization**: Selecting a flight from the suggestion list dynamically updates the `itineraryItem` metadata via the `updatePointMetadata` store action.
