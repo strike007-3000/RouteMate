@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.1.1] - 2026-04-25
+## [3.2.0] - 2026-04-25
 
 ### 📝 Manual Itinerary Editing
 - **Metadata Control**: Introduced a new "Edit" modal allowing users to manually update flight numbers, airlines, and confirmation codes after extraction.
