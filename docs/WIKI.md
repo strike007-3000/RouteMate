@@ -48,6 +48,7 @@ The engine dynamically identifies the "Home Base" by analyzing the very first fl
 - **Priority Override**: Return flights are assigned a high tie-breaker rank (2000) to ensure they always anchor the end of the trip.
 - **Day 1 Exception**: Conversely, flight departures on Day 1 are assigned a negative rank (-100) to force them to the absolute top.
 - **Origin Suppression**: Specifically suppresses redundant check-out events from the home city on Day 1.
+- **Midnight Lodging Rule**: If a `Lodging` check-in has a time of exactly `00:00` (often from AI date-only extractions), the system overrides the explicit time and uses the **Evening Rank** (18:00) to prevent it from overlapping with morning flights.
 
 ---
 

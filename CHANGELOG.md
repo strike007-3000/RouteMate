@@ -2,20 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.2.0](https://github.com/strike007-3000/RouteMate/compare/v3.1.0...v3.2.0) (2026-04-25)
+## [3.2.0] - 2026-04-25
 
+### 📝 Manual Itinerary Editing
+- **Metadata Control**: Introduced a new "Edit" modal allowing users to manually update flight numbers, airlines, and confirmation codes after extraction.
+- **Action Bar Update**: Added a sleek pencil icon to the timeline item action bar for quick access to metadata refinement.
 
-### Features
-
-* add itinerary editing and fix midnight lodging sorting overlapping ([2a435bf](https://github.com/strike007-3000/RouteMate/commit/2a435bf8958e4447a8f8a6f65911e049a9568fce))
-* integrate real-time weather and flight tracking APIs ([24a3631](https://github.com/strike007-3000/RouteMate/commit/24a363151fdedabf6963c4ae6c62e0837fcf2d4c))
-
-
-### Bug Fixes
-
-* add updatePointMetadata to TripState interface to resolve build error ([8db9c25](https://github.com/strike007-3000/RouteMate/commit/8db9c252ac34bda494a58c871aa2c5849e2ec3ef))
-* cast unknown flightNumber metadata to boolean for ReactNode compatibility ([79382c5](https://github.com/strike007-3000/RouteMate/commit/79382c508a8e9d3a33127dc969bc4a2507abf553))
-* harden live intelligence components and APIs against null/missing data to prevent runtime crashes ([d94b76d](https://github.com/strike007-3000/RouteMate/commit/d94b76d36feed8babda8418f963376df3f2e4a13))
+### 🛡️ Hardening & Sorting Refinement
+- **Midnight Lodging Fix**: Optimized the sorting engine to treat `00:00` lodging entries as "Evening" check-ins, preventing them from overlapping with morning flights on Day 1.
+- **Runtime Resilience**: Hardened the entire React tree against malformed external API data (AviationStack/WeatherStack) to prevent "page couldn't load" errors.
 
 ## [3.1.0] - 2026-04-25
 
