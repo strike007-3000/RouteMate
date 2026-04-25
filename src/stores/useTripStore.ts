@@ -61,6 +61,7 @@ interface TripState {
   removePoint: (id: number) => Promise<void>;
   updatePointOrder: (points: ItineraryItem[]) => Promise<void>;
   updatePointTime: (id: number, startTime: string) => Promise<void>;
+  updatePointMetadata: (id: number, metadata: TravelMetadata) => Promise<void>;
   sortItinerary: (points: ItineraryItem[]) => ItineraryItem[];
 }
 
