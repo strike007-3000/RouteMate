@@ -4,6 +4,28 @@ Deep-dive documentation for RouteMate Architecture.
 
 ---
 
+## 0. Tech Stack & API Surface
+
+RouteMate is built on a hybrid architecture that balances local-first performance with live cloud intelligence.
+
+### 0.1 Core Stack
+- **Framework**: Next.js 14+ (App Router, Server Actions)
+- **State Management**: Zustand (Global Store) + Dexie.js (Offline Persistence)
+- **Styling**: Tailwind CSS + Framer Motion (Micro-animations)
+- **Database**: IndexedDB (Local-First via Dexie)
+
+### 0.2 API Service Layer
+| Service | Purpose | Environment Variable |
+| :--- | :--- | :--- |
+| **OpenRouter** | Primary AI Extraction | `OPENROUTER_API_KEY` |
+| **Groq** | Failover AI / Llama 3.3 | `GROQ_API_KEY` |
+| **Unsplash** | Luxury Imagery | `UNSPLASH_ACCESS_KEY` |
+| **ORS (OpenRouteService)** | Geocoding & Local Routes | `ORS_API_KEY` |
+| **WeatherStack** | Real-time Weather | `WEATHERSTACK_API_KEY` |
+| **AviationStack** | Live Flight Tracking | `AVIATIONSTACK_API_KEY` |
+
+---
+
 ## 1. Timeline Data Intelligence
 
 The itinerary engine uses a highly contextual logistical hierarchy to manage travel flows. Itinerary items carry classification, temporal, and directional metadata.

@@ -1,6 +1,6 @@
 # RouteMate v3.1.0 - Immersive Travel Intelligence 🌌✨
 
-RouteMate is a mobile-first, offline-capable travel intelligence application driven by a **Date-Grouped Intelligence Engine**, a **Dual-View Distinction System**, and **Live API Intelligence** (Weather & Flight Status).
+RouteMate is a mobile-first, offline-capable travel intelligence application driven by a **Date-Grouped Intelligence Engine**, a **Dual-View Distinction System**, and **Live API Intelligence** (Weather & Flight Tracking).
 
 ![RouteMate Dashboard](file:///Users/shreyasgore/Code/RouteMate/docs/dashboard_v2.7.png)
 
@@ -11,34 +11,32 @@ A state-driven interface that toggles between high-level emotional planning and 
 - **Summary Mode (Itinerary)**: Maximizes visual impact with "Day Cards" featuring curated Unsplash imagery and a unified 32px radius. It hides technical connectors and transit routing widgets to prioritize the "scannability" of the trip.
 - **Logistics Mode (Timeline)**: Enables a continuous, dashed journey thread with precision-aligned dots. It surfaces full `TransitCard` widgets (with Google Maps handoff, times, and distances) to help you understand exactly how to navigate between points.
 
+### ⛅ Live Intelligence (Weather & Flight Logistics)
+The system now proactively fetches real-time data to help you prepare for your journey.
+- **Real-Time Weather (Packing Context)**: Shows current temperatures and weather icons for today and tomorrow in your itinerary headers.
+- **Live Flight Tracking**: Displays real-time flight statuses (Active, Delayed, Landed), gate numbers, and terminals. 
+- **Smart Optimization**: Implements strict API management—weather is only fetched for the current/next day, and flight status only activates within 24 hours of departure.
+- **Route-Based Search fallback**: If a flight number is missing, the system uses extracted airport codes to find matching flights, allowing you to select and "lock in" tracking metadata.
+
 ### 📍 Intelligent Directions & Routing
 Advanced navigation logic that understands the context of your journey.
 - **Contextual 'Between-Stop' Routing**: Clicking a stop's Map Pin now automatically calculates directions **from the previous stop** in the timeline rather than just your current location.
 - **Hub Precision**: Intelligent handoff detection ensures navigation routes directly to specific **Airport Terminals** (using IATA codes) rather than generic city centers.
 
-### 🌅 Immersive Hero & Luxury Imagery
-- **Curated Unsplash Logic**: Integrated `&featured=true` and `content_filter=high` into the image engine to ensure every trip looks like a luxury travel magazine.
-- **Triple-Gradient Logic**: Deep linear gradients (`black/90` base) ensure text contrast while maintaining image clarity.
-
-### 🧠 Adaptive Intelligence Engine (Configurable Hybrid Routing)
+### 🧠 Adaptive Intelligence Engine (Hybrid AI Core)
 - **Dynamic Provider Routing**: The extraction engine execution queue dynamically re-sorts itself based on your preferences. It checks the local client's "Preferred AI" toggle, falls back to the server's `PRIMARY_AI_PROVIDER` environment variable, and defaults to OpenRouter.
-- **Zero-Cost Reliability**: Migrated to a multi-provider stack using **OpenRouter** and **Groq** for an always-free extraction experience.
 - **Multi-Tier Failover**: Implemented a hardened resilience layer. If the preferred provider fails or is rate-limited, the engine automatically traverses the queue to the next provider/model (e.g., failing over from OpenRouter Free to Groq Llama 3.3).
 - **JSON Object Enforcement**: Native `json_object` mode eliminates markdown artifacts and parsing failures.
-
-### 🧠 Logistical Engine (Hardened)
-- **Sorted Journey Thread**: Hardened sorting logic ensures Departures from destinations always precede Arrivals at the home base.
-- **Return Flight Anchoring**: Automatically detects arrivals in the "Home Base" city and forces them to the absolute bottom of the timeline.
-- **Lodging Splitting**: Multi-day stays are automatically visualized as distinct Check-in and Check-out cards.
 
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js (App Router)
 - **Styling**: Tailwind CSS + Framer Motion
 - **Database**: Dexie.js (IndexedDB)
-- **AI**: OpenRouter + Groq (Multi-Provider Free Stack)
+- **AI Core**: OpenRouter + Groq (Multi-Provider Hybrid Stack)
+- **Intelligence APIs**: WeatherStack (Weather) + AviationStack (Flight Status)
 - **Imaging**: Unsplash API
-- **Logistics**: OpenRouteService + Google Maps Handoff
+- **Logistics**: OpenRouteService (Geocoding) + Google Maps (Transit Handoff)
 
 ## 🏗️ Architecture
 
@@ -53,6 +51,7 @@ graph TD
     A --> F[Multi-Provider AI Core - OpenRouter & Groq]
     A --> G[Logistics Engine - 50km Rule]
     A --> K[Unsplash Image Engine - Caching Service]
+    A --> M[Live Intelligence - WeatherStack & AviationStack]
     G --> L[OpenRouteService - Geocoding & Local Routes]
     G --> H[Google Maps - Transit & Driving Handoff]
 ```
@@ -64,8 +63,22 @@ graph TD
    git clone https://github.com/strike007-3000/RouteMate.git
    npm install
    ```
-2. **Environment**:
-   Add `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `UNSPLASH_ACCESS_KEY`, and `ORS_API_KEY` to your `.env`.
+2. **Environment Variables**:
+   Create a `.env` file with the following keys:
+   ```env
+   # AI Providers
+   OPENROUTER_API_KEY=your_key
+   GROQ_API_KEY=your_key
+   PRIMARY_AI_PROVIDER=OpenRouter # Or Groq
+
+   # Imaging & Logistics
+   UNSPLASH_ACCESS_KEY=your_key
+   ORS_API_KEY=your_key
+
+   # Live Intelligence
+   WEATHERSTACK_API_KEY=your_key
+   AVIATIONSTACK_API_KEY=your_key
+   ```
 3. **Pre-flight Integrity Check**:
    Before deploying or testing, verify your configuration and AI logic:
    ```bash
@@ -77,4 +90,4 @@ graph TD
    ```
 
 ---
-Built with ❤️ for travelers who value intelligence and design.
+Built with ❤️ for travelers who value intelligence, design, and precision.
