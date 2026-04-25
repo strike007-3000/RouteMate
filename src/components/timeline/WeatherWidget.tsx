@@ -40,7 +40,7 @@ export const WeatherWidget = ({ date, location }: { date: string, location: stri
     fetchWeather();
   }, [date, location, isEligible]);
 
-  if (!isEligible || loading || !weather) return null;
+  if (!isEligible || loading || !weather || !weather.icon) return null;
 
   return (
     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900 border border-white/10 ml-auto shadow-lg shadow-black/50 hover:bg-zinc-800 transition-colors group">

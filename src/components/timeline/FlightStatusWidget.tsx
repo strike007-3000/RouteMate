@@ -162,7 +162,7 @@ export const FlightStatusWidget = ({
         <div className="flex items-center gap-2">
           <div className={cn("w-2 h-2 rounded-full", statusColor, status.status === 'active' && "animate-pulse")} />
           <span className="text-[10px] font-black uppercase tracking-widest text-white/90">
-            {status.status.replace('_', ' ')}
+            {status.status?.replace('_', ' ') || 'SCHEDULED'}
           </span>
         </div>
         {isDelayed && (

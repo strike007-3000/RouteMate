@@ -25,9 +25,9 @@ export async function GET(req: Request) {
     }
 
     return NextResponse.json({
-      temp: data.current.temperature,
-      icon: data.current.weather_icons[0],
-      desc: data.current.weather_descriptions[0]
+      temp: data.current?.temperature ?? 0,
+      icon: data.current?.weather_icons?.[0] || '',
+      desc: data.current?.weather_descriptions?.[0] || 'Unknown'
     });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch weather' }, { status: 500 });

@@ -36,14 +36,14 @@ export async function GET(req: Request) {
 
     if (!flightNumber) {
       // Return list for selection
-      const list = (data.data || []).map((f: { flight: { iata: string }; airline: { name: string }; departure: { scheduled: string; gate: string; terminal: string }; flight_status: string }) => ({
-        flightNumber: f.flight.iata,
-        airline: f.airline.name,
-        departureTime: f.departure.scheduled,
-        status: f.flight_status,
-        gate: f.departure.gate,
-        terminal: f.departure.terminal
-      }));
+      const list = (data.data || []).map((f: { flight?: { iata: string }; airline?: { name: string }; departure?: { scheduled: string; gate?: string; terminal?: string }; flight_status?: string }) => ({
+        flightNumber: f.flight?.iata,
+        airline: f.airline?.name,
+        departureTime: f.departure?.scheduled,
+        status: f.flight_status || 'scheduled',
+        gate: f.departure?.gate,
+        terminal: f.departure?.terminal
+      })).filter((f: { flightNumber?: string }) => !!f.flightNumber);
       return NextResponse.json({ flights: list });
     }
 
