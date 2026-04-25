@@ -113,7 +113,7 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
             <Icon className={cn("w-3.5 h-3.5", config.color)} />
             <span className={cn("text-[10px] font-bold uppercase tracking-[0.2em]", config.color)}>
               {point.category}
-              {point.category === 'Flight' && point.metadata?.flightNumber && (
+              {point.category === 'Flight' && !!point.metadata?.flightNumber && (
                 <span className="opacity-60 ml-1.5 border-l border-white/20 pl-1.5">
                   {point.metadata.flightNumber as string}
                 </span>
