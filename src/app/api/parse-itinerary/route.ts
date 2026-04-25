@@ -66,12 +66,12 @@ export async function POST(req: Request) {
       }, { status: 401 });
     }
 
-    // Pure-Free OpenRouter Stack (No credits required)
-    const primaryModel = 'meta-llama/llama-3.1-8b-instruct:free';
-    const fallbackModel = 'google/gemma-2-9b-it:free';
-    const emergencyModel = 'openrouter/auto:free';
+    // Use the official OpenRouter free model router
+    const primaryModel = 'openrouter/free';
+    const fallbackModel = 'nousresearch/hermes-3-llama-3.1-405b:free'; // Frontier-level free model
+    const emergencyModel = 'google/gemma-3-27b-it:free'; // Optimized for structured outputs
 
-    console.log('--- OpenRouter Extraction Attempt ---', { model: primaryModel, textLen: text.length });
+    console.log('--- OpenRouter Extraction Attempt (Free Stack) ---', { model: primaryModel, textLen: text.length });
 
     const callOpenRouter = async (targetModel: string) => {
       try {
@@ -114,37 +114,49 @@ export async function POST(req: Request) {
       }
     };
 
+    const processResponse = async (res: Response | null) => {
+      if (!res || !res.ok) return null;
+      try {
+        const data = await res.json();
+        const content = data.choices?.[0]?.message?.content;
+        if (!content) return null;
+        
+        // Try to find and parse JSON
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        const jsonString = jsonMatch ? jsonMatch[0] : content;
+        JSON.parse(jsonString.trim()); // Validation step
+        return content;
+      } catch (e) {
+        return null;
+      }
+    };
+
     let response = await callOpenRouter(primaryModel);
+    let content = await processResponse(response);
     
     // Tiered Fallback Strategy
-    if (!response || !response.ok || response.status === 429) {
-      console.warn(`Primary failed (${response?.status}). Trying Llama fallback...`);
+    if (!content) {
+      console.warn(`Primary (${primaryModel}) failed or returned invalid JSON. Trying fallback...`);
       response = await callOpenRouter(fallbackModel);
+      content = await processResponse(response);
     }
 
-    if (!response || !response.ok || response.status === 429) {
-      console.warn(`Secondary failed. Trying Emergency fallback...`);
+    if (!content) {
+      console.warn(`Secondary (${fallbackModel}) failed. Trying Emergency fallback...`);
       response = await callOpenRouter(emergencyModel);
+      content = await processResponse(response);
     }
 
-    if (!response || !response.ok) {
+    if (!content) {
       const errorData = await response?.json().catch(() => ({}));
-      const errorMsg = errorData?.error?.message || 'OpenRouter Service Unavailable';
+      const errorMsg = errorData?.error?.message || 'AI models failed to generate valid itinerary data.';
       
-      // Smart Suggestion for Credit Issues
       let finalDetails = errorMsg;
       if (errorMsg.toLowerCase().includes('insufficient credits') || response?.status === 402) {
         finalDetails = 'Insufficient credits on OpenRouter. Please top up at openrouter.ai or use "MOCK_MODE" in settings to continue testing.';
       }
 
       return NextResponse.json({ error: 'AI Provider Error', details: finalDetails }, { status: response?.status || 500 });
-    }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
-    
-    if (!content) {
-      return NextResponse.json({ error: 'Empty response from AI', details: 'The model failed to generate content.' }, { status: 500 });
     }
     
     try {

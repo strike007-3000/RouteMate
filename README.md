@@ -1,4 +1,4 @@
-# RouteMate v2.7.7 - Immersive Travel Intelligence 🌌✨
+# RouteMate v3.0.1 - Immersive Travel Intelligence 🌌✨
 
 RouteMate is a mobile-first, offline-capable travel intelligence application driven by a **Date-Grouped Intelligence Engine** and a **Dual-View Distinction System** that manages your entire travel flow.
 
@@ -20,11 +20,11 @@ Advanced navigation logic that understands the context of your journey.
 - **Curated Unsplash Logic**: Integrated `&featured=true` and `content_filter=high` into the image engine to ensure every trip looks like a luxury travel magazine.
 - **Triple-Gradient Logic**: Deep linear gradients (`black/90` base) ensure text contrast while maintaining image clarity.
 
-### 🧠 Adaptive Intelligence Engine (Llama 3.3 Hardened)
-- **Primary Model Shift**: Migrated to **Llama 3.3 70B** as the primary reasoning engine for 99.9% valid JSON extraction.
+### 🧠 Adaptive Intelligence Engine (Free Model Reliability Pass)
+- **Zero-Cost Routing**: Migrated to the **OpenRouter Free Model Router** (`openrouter/free`) for an always-free extraction experience.
+- **Hardened Fallback Logic**: Implemented a multi-tier resilience layer. If the primary free model returns malformed JSON, the engine automatically falls back to **Hermes 3** and **Gemma 3** to ensure data integrity.
 - **JSON Object Enforcement**: Native `json_object` mode eliminates markdown artifacts and parsing failures.
 - **Anchor Year Logic**: Automatically anchors relative dates (e.g., "April 22nd") to your trip's start year (2026).
-- **Auto-Extension**: Detects when prompts include activities beyond the current trip window and automatically extends the `endDate`.
 
 ### 🧠 Logistical Engine (Hardened)
 - **Sorted Journey Thread**: Hardened sorting logic ensures Departures from destinations always precede Arrivals at the home base.
@@ -36,7 +36,7 @@ Advanced navigation logic that understands the context of your journey.
 - **Framework**: Next.js (App Router)
 - **Styling**: Tailwind CSS + Framer Motion
 - **Database**: Dexie.js (IndexedDB)
-- **AI**: OpenRouter (Llama 3.3 70B / Nemotron 3 Super)
+- **AI**: OpenRouter (Multi-Model Free Stack)
 - **Imaging**: Unsplash API
 - **Logistics**: OpenRouteService + Google Maps Handoff
 

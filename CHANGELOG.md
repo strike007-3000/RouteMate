@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.1] - 2026-04-25
+
+### 🧠 Free Model Reliability Pass
+- **Tiered AI Resilience**: Implemented a hardened fallback system for AI extraction. If the primary free model router (`openrouter/free`) returns unparseable or malformed data, the system now automatically retries using verified high-quality free models like **Hermes 3** and **Gemma 3**.
+- **Verified Free Model Stack**: Removed outdated/non-existent Gemini free identifiers and replaced them with currently available, high-performance free models on OpenRouter.
+- **Improved JSON Validation**: Added a strict JSON parsing and validation step in the API layer to detect and recover from model hallucinations or truncation.
+
 ## [3.0.0] - 2026-04-22
 
 ### 🏛️ Unified Architecture (Version 1.0 Ready)

@@ -59,9 +59,13 @@ RouteMate utilizes a global `viewMode` state (`summary` | `logistics`) to manage
 
 ## 5. Smart Add Intelligence (OpenRouter AI)
 
-The extraction prompt in `/api/parse-itinerary` handles logistical hardening via the **OpenRouter Stack**:
-- **Primary Model**: `meta-llama/llama-3.3-70b-instruct:free`.
+The extraction prompt in `/api/parse-itinerary` handles logistical hardening via the **OpenRouter Free Intelligence Stack**:
+- **Primary Model Router**: `openrouter/free` (Automatically selects an available free model).
+- **High-Fidelity Fallbacks**: `nousresearch/hermes-3-llama-3.1-405b:free` and `google/gemma-3-27b-it:free`.
+- **Tiered Resilience Layer**:
+    1. **Primary Pass**: Attempts extraction via the free router.
+    2. **JSON Validation**: Validates the output against the schema.
+    3. **Auto-Retry**: If validation fails or the model hallucinates (common in free tiers), the engine automatically triggers a fallback attempt using the frontier-level free models.
 - **JSON Object Mode**: Forces `response_format: { type: 'json_object' }` to eliminate markdown artifacts.
-- **Fuzzy Data Recovery**: Uses a layered regex approach to recover valid JSON structures from text-padded LLM responses.
 - **Headers**: Requires `HTTP-Referer` and `X-Title` for OpenRouter compliance.
 - **User Keys**: Injected via `x-user-openrouter-key` from the global `routemate-settings` store.
