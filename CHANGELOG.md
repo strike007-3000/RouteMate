@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.10.0](https://github.com/strike007-3000/RouteMate/compare/v2.9.0...v2.10.0) (2026-04-25)
+
+
+### Features
+
+* v3.0.3 - multi-provider AI failover (OpenRouter + Groq) ([d62b6f0](https://github.com/strike007-3000/RouteMate/commit/d62b6f04acdc6a994ebeadd04769f09f55563f43))
+
 ## [3.0.3] - 2026-04-25
 
 ### 🛡️ Multi-Provider AI Resilience (Groq Integration)
