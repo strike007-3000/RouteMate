@@ -15,7 +15,7 @@ export class HereMapsProvider implements TransitProvider {
 
     // Simulate premium routing logic
     return {
-      id: 'here-' + Math.random().toString(36).substr(2, 5),
+      id: `here-${crypto.randomUUID()}`,
       mode: 'subway',
       provider: 'HERE Premium Routing',
       duration: '28m',

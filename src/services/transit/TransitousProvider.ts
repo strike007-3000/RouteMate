@@ -15,7 +15,7 @@ export class TransitousProvider implements TransitProvider {
     // For the MVP, we use the title to simulate a real search
     if (from.title.includes('LHR') || to.title.includes('Hotel')) {
       return {
-        id: 'tra-' + Math.random().toString(36).substr(2, 5),
+        id: `tra-${crypto.randomUUID()}`,
         mode: 'train',
         provider: 'National Rail / Transitous',
         duration: '42m',

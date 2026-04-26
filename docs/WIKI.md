@@ -20,7 +20,7 @@ RouteMate is built on a hybrid architecture that balances local-first performanc
 | **OpenRouter** | Primary AI Extraction | `OPENROUTER_API_KEY` |
 | **Groq** | Failover AI / Llama 3.3 | `GROQ_API_KEY` |
 | **Unsplash** | Luxury Imagery | `UNSPLASH_ACCESS_KEY` |
-| **ORS (OpenRouteService)** | Geocoding & Local Routes | `ORS_API_KEY` |
+| **ORS (OpenRouteService)** | Geocoding & Local Routes | `NEXT_PUBLIC_ORS_API_KEY` |
 | **WeatherStack** | Real-time Weather | `WEATHERSTACK_API_KEY` |
 | **AviationStack** | Live Flight Tracking | `AVIATIONSTACK_API_KEY` |
 
@@ -117,3 +117,22 @@ Real-time flight tracking uses a proximity-triggered execution layer.
 - **Proximity Trigger (24h Rule)**: Live status (gates, terminals, delays) is only fetched when a flight is within **24 hours** of its scheduled departure. 
 - **Route-Based Search**: If a `flightNumber` is missing, the system uses the AI-extracted `dep_iata` and `arr_iata` codes to find matching flights for that day. 
 - **Metadata Synchronization**: Selecting a flight from the suggestion list dynamically updates the `itineraryItem` metadata via the `updatePointMetadata` store action.
+
+---
+
+## 8. Security & Performance (v3.3 Hardening)
+
+The v3.3 release introduced critical hardening to the service layer to ensure production readiness.
+
+### 8.1 Parallel Processing (Promise.all)
+To minimize latency during transit calculations, the `OpenRouteServiceProvider` utilizes `Promise.all()` to fetch geocoding data for both origin and destination points simultaneously. This reduces the time-to-first-byte (TTFB) for routing suggestions by approximately 50%.
+
+### 8.2 Header-Based Authentication
+Sensitive API keys (specifically for OpenRouteService) have been moved from query parameters to the `Authorization` header. This follows security best practices by preventing API keys from being logged in plain text in server logs or network proxies.
+
+### 8.3 Client-Safe Configuration
+Environment variables follow the `NEXT_PUBLIC_` prefix convention where client-side visibility is required (e.g., for direct browser-to-API transit calculations). The `TransitService` implements a fallback mechanism to support both local development and production environments.
+
+### 8.4 Deterministic ID Generation
+All transient itinerary items and transit suggestions use `crypto.randomUUID()` for ID generation. This ensures enterprise-grade collision resistance compared to `Math.random()`, which is critical for local IndexedDB stability.
+

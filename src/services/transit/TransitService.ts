@@ -3,6 +3,7 @@ import { TransitProvider, TransitSuggestion } from './types';
 import { MockProvider } from './MockProvider';
 import { GoogleMapsProvider } from './GoogleMapsProvider';
 import { OpenRouteServiceProvider } from './OpenRouteServiceProvider';
+import { TransitousProvider } from './TransitousProvider';
 
 export class TransitService {
 
@@ -20,6 +21,7 @@ export class TransitService {
     // Server-safe key detection. 
     this.providers = [
       new OpenRouteServiceProvider(orsKey || undefined),
+      new TransitousProvider(),
       new GoogleMapsProvider(), 
       new MockProvider() 
     ];
