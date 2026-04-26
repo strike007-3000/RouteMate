@@ -33,8 +33,12 @@ The itinerary engine uses a highly contextual logistical hierarchy to manage tra
 - **Category Mapping**: AI extracts entries into `Flight`, `Lodging`, `Food`, `Train`, `Activity`, or `Rental`.
 - **Coordinate Fidelity**: Every item stores a `coordinates` object for point-to-point transit calculations.
 
-### 1.1 Human-First Sorting System
-To resolve chronological conflicts when times are identical or missing, the system uses a **6-rank logistical ranking sequence**:
+### 1.1 Human-First Sorting System (Optimized v3.3)
+To ensure maximum performance and logical consistency, the engine uses a **two-pass sorting architecture**:
+1. **Pass 1 (Pre-calculation)**: Generates a temporary metadata object for every item, resolving dates, normalizing titles, and determining logistical ranks in a single $O(N)$ pass.
+2. **Pass 2 (Sort)**: Performs the final sort using the pre-calculated keys, minimizing expensive operations like `new Date()` or `format()` during the $O(N \log N)$ comparison phase.
+
+The logistical ranking sequence remains:
 1. **Rank 1: Check-out** (Departure from lodging)
 2. **Rank 2: Departure** (Flight takeoff or Train departure)
 3. **Rank 3: Arrival** (Landing or station arrival)

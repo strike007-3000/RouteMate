@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.0] - 2026-04-26
+
+### 🚀 Performance & Resilience Pass
+- **Optimized Sorting Engine**: Implemented a pre-calculation pass in the `sortItinerary` store action. This reduces sort complexity by generating metadata once per item, drastically improving UI responsiveness on busy timelines.
+- **Server-Side Safety**: Fixed a critical singleton crash in the `TransitService` by removing illegal browser global access (`localStorage`/`window`) during API route execution.
+- **Transactional Hardening**: Wrapped all Dexie.js database operations in strict `try-catch` blocks with standardized error logging to prevent silent failures and UI hangs.
+
+### 🧬 Logistical Logic Refinement
+- **Long-Distance Transit**: Re-calibrated the "Ocean Crossing" suppression threshold from 500km to 2000km, enabling valid cross-country land transit and driving suggestions.
+- **Manual Order Stability**: Fixed a tie-breaking issue where manual `sortOrder` values were not correctly overriding logistical ranks in edge cases.
+
+
 ## [3.2.0] - 2026-04-25
 
 ### 📝 Manual Itinerary Editing

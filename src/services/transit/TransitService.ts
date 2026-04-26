@@ -15,29 +15,11 @@ export class TransitService {
     // 3. Google Maps (Primary Deep Link for Transit > 2km)
     // 4. Mock (Fallback)
     
-    // Reading from Zustand persist storage in LocalStorage
-    // 1. Check process.env
-    let orsKey = process.env.ORS_API_KEY;
+    const orsKey = process.env.ORS_API_KEY;
     
-    // 2. Check LocalStorage Overrides
-    if (typeof window !== 'undefined') {
-      const devKey = localStorage.getItem('dev_ors_key');
-      if (devKey) {
-        orsKey = devKey;
-      } else {
-        // Legacy fallback to routemate-settings
-        const storage = localStorage.getItem('routemate-settings');
-        if (storage) {
-          try {
-            const parsed = JSON.parse(storage);
-            orsKey = parsed.state?.orsApiKey || orsKey;
-          } catch (e) {
-            console.error('Failed to parse settings for TransitService', e);
-          }
-        }
-      }
-    }
-
+    // Server-safe key detection. 
+    // Browser overrides (localStorage) are handled in the component layer or via specialized hook
+    // if needed, but not in a singleton service shared with the API route.
     this.providers = [
       new OpenRouteServiceProvider(orsKey || undefined),
       new GoogleMapsProvider(), 

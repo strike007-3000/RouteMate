@@ -27,7 +27,7 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
   }, [from.coordinates, to.coordinates]);
 
   const isInterCity = useMemo(() => distance !== null && distance >= 50, [distance]);
-  const isOceanCrossing = useMemo(() => distance !== null && distance > 500, [distance]);
+  const isOceanCrossing = useMemo(() => distance !== null && distance > 2000, [distance]);
 
   const [suggestion, setSuggestion] = useState<TransitSuggestion | null>(null);
   const [loading, setLoading] = useState(!isOceanCrossing);

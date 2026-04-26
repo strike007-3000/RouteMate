@@ -108,55 +108,71 @@ export const useTripStore = create<TripState>((set, get) => ({
   },
 
   setActiveTrip: async (id: number) => {
-    const trip = await db.trips.get(id);
-    if (trip) {
-      const points = await db.itineraryItems.where('tripId').equals(id).toArray();
-      set({ 
-        activeTrip: trip, 
-        points: get().sortItinerary(points)
-      });
+    try {
+      const trip = await db.trips.get(id);
+      if (trip) {
+        const points = await db.itineraryItems.where('tripId').equals(id).toArray();
+        set({ 
+          activeTrip: trip, 
+          points: get().sortItinerary(points)
+        });
+      }
+    } catch (error) {
+      console.error(`Failed to set active trip ${id}:`, error);
     }
   },
 
   createTrip: async (trip) => {
-    const id = await db.trips.add(trip);
-    await get().fetchTrips();
-    return id as number;
+    try {
+      const id = await db.trips.add(trip);
+      await get().fetchTrips();
+      return id as number;
+    } catch (error) {
+      console.error('Failed to create trip:', error);
+      throw error;
+    }
   },
 
   duplicateTrip: async (id) => {
     const trip = await db.trips.get(id);
     if (!trip) return;
     
-    await db.transaction('rw', [db.trips, db.itineraryItems], async () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { id: _, ...tripData } = trip;
-      const newTripId = await db.trips.add({ 
-        ...tripData, 
-        name: `${tripData.name} (Copy)`,
-        status: 'draft' 
+    try {
+      await db.transaction('rw', [db.trips, db.itineraryItems], async () => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id: _, ...tripData } = trip;
+        const newTripId = await db.trips.add({ 
+          ...tripData, 
+          name: `${tripData.name} (Copy)`,
+          status: 'draft' 
+        });
+        
+        const points = await db.itineraryItems.where('tripId').equals(id).toArray();
+        const newPoints = points.map(({ id: unused, ...item }) => ({
+          ...item,
+          tripId: newTripId as number
+        }));
+        
+        await db.itineraryItems.bulkAdd(newPoints);
       });
-      
-      const points = await db.itineraryItems.where('tripId').equals(id).toArray();
-      const newPoints = points.map(({ id: unused, ...item }) => ({
-        ...item,
-        tripId: newTripId as number
-      }));
-      
-      await db.itineraryItems.bulkAdd(newPoints);
-    });
-    await get().fetchTrips();
+      await get().fetchTrips();
+    } catch (error) {
+      console.error(`Failed to duplicate trip ${id}:`, error);
+    }
   },
 
   deleteTrip: async (id) => {
-
-    await db.transaction('rw', [db.trips, db.itineraryItems], async () => {
-      await db.itineraryItems.where('tripId').equals(id).delete();
-      await db.trips.delete(id);
-    });
-    await get().fetchTrips();
-    if (get().activeTrip?.id === id) {
-      set({ activeTrip: null, points: [] });
+    try {
+      await db.transaction('rw', [db.trips, db.itineraryItems], async () => {
+        await db.itineraryItems.where('tripId').equals(id).delete();
+        await db.trips.delete(id);
+      });
+      await get().fetchTrips();
+      if (get().activeTrip?.id === id) {
+        set({ activeTrip: null, points: [] });
+      }
+    } catch (error) {
+      console.error(`Failed to delete trip ${id}:`, error);
     }
   },
 
@@ -164,234 +180,240 @@ export const useTripStore = create<TripState>((set, get) => ({
     if (!get().activeTrip?.id) return;
     const tripId = get().activeTrip!.id!;
     
-    // Remove temporary id to avoid ConstraintError (Key already exists)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id: _, ...pointData } = point as ItineraryItem;
+    try {
+      // Remove temporary id to avoid ConstraintError (Key already exists)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id: _, ...pointData } = point as ItineraryItem;
 
-    // Auto-Split Lodging Logic
-    if (pointData.category === 'Lodging') {
-      const start = new Date(pointData.startTime);
-      const end = new Date(pointData.endTime);
-      const isMultiDay = start.toDateString() !== end.toDateString();
+      // Auto-Split Lodging Logic
+      if (pointData.category === 'Lodging') {
+        const start = new Date(pointData.startTime);
+        const end = new Date(pointData.endTime);
+        const isMultiDay = start.toDateString() !== end.toDateString();
 
-      if (isMultiDay) {
-        // Create Check-in
-        const checkIn: ItineraryItem = {
-          ...pointData,
-          tripId,
-          title: `Check-in at ${pointData.title}`,
-          endTime: pointData.startTime, // One-point event
-          sortOrder: 0,
-          isTimeExplicit: pointData.isTimeExplicit ?? false
-        } as ItineraryItem;
+        if (isMultiDay) {
+          // Create Check-in
+          const checkIn: ItineraryItem = {
+            ...pointData,
+            tripId,
+            title: `Check-in at ${pointData.title}`,
+            endTime: pointData.startTime, // One-point event
+            sortOrder: 0,
+            isTimeExplicit: pointData.isTimeExplicit ?? false
+          } as ItineraryItem;
 
-        // Create Check-out
-        const checkOut: ItineraryItem = {
-          ...pointData,
-          tripId,
-          title: `Check-out from ${pointData.title}`,
-          startTime: pointData.endTime,
-          endTime: pointData.endTime,
-          sortOrder: 0,
-          isTimeExplicit: pointData.isTimeExplicit ?? false
-        } as ItineraryItem;
+          // Create Check-out
+          const checkOut: ItineraryItem = {
+            ...pointData,
+            tripId,
+            title: `Check-out from ${pointData.title}`,
+            startTime: pointData.endTime,
+            endTime: pointData.endTime,
+            sortOrder: 0,
+            isTimeExplicit: pointData.isTimeExplicit ?? false
+          } as ItineraryItem;
 
-        await db.itineraryItems.bulkAdd([checkIn, checkOut]);
+          await db.itineraryItems.bulkAdd([checkIn, checkOut]);
+        } else {
+          await db.itineraryItems.add({ ...pointData, tripId, sortOrder: 0 } as ItineraryItem);
+        }
       } else {
         await db.itineraryItems.add({ ...pointData, tripId, sortOrder: 0 } as ItineraryItem);
       }
-    } else {
-      await db.itineraryItems.add({ ...pointData, tripId, sortOrder: 0 } as ItineraryItem);
-    }
 
-    const updated = await db.itineraryItems.where('tripId').equals(tripId).toArray();
-    set({ points: get().sortItinerary(updated) });
+      const updated = await db.itineraryItems.where('tripId').equals(tripId).toArray();
+      set({ points: get().sortItinerary(updated) });
+    } catch (error) {
+      console.error('Failed to add itinerary point:', error);
+    }
   },
 
   removePoint: async (id: number) => {
     if (!get().activeTrip?.id) return;
-    await db.itineraryItems.where('id').equals(id).delete();
-    const updated = get().points.filter((p) => p.id !== id);
-    set({ points: updated });
+    try {
+      await db.itineraryItems.where('id').equals(id).delete();
+      const updated = get().points.filter((p) => p.id !== id);
+      set({ points: updated });
+    } catch (error) {
+      console.error(`Failed to remove point ${id}:`, error);
+    }
   },
 
   updatePointOrder: async (orderedPoints: ItineraryItem[]) => {
     if (!get().activeTrip?.id) return;
     
-    // Update sortOrder for each item based on its index in the array
-    const updates = orderedPoints.map((p, idx) => ({
-      ...p,
-      sortOrder: idx
-    }));
-    
-    await db.transaction('rw', db.itineraryItems, async () => {
-      for (const p of updates) {
-        if (p.id) {
-          await db.itineraryItems.update(p.id, { sortOrder: p.sortOrder });
+    try {
+      // Update sortOrder for each item based on its index in the array
+      const updates = orderedPoints.map((p, idx) => ({
+        ...p,
+        sortOrder: idx
+      }));
+      
+      await db.transaction('rw', db.itineraryItems, async () => {
+        for (const p of updates) {
+          if (p.id) {
+            await db.itineraryItems.update(p.id, { sortOrder: p.sortOrder });
+          }
         }
-      }
-    });
+      });
 
-    set({ points: updates });
+      set({ points: updates });
+    } catch (error) {
+      console.error('Failed to update point order:', error);
+    }
   },
 
   updatePointTime: async (id: number, startTime: string) => {
     if (!get().activeTrip?.id) return;
     
-    await db.transaction('rw', db.itineraryItems, async () => {
-      await db.itineraryItems.update(id, { startTime, isTimeExplicit: true });
-    });
-    
-    const tripId = get().activeTrip!.id!;
-    const updated = await db.itineraryItems.where('tripId').equals(tripId).toArray();
-    set({ points: get().sortItinerary(updated) });
+    try {
+      await db.transaction('rw', db.itineraryItems, async () => {
+        await db.itineraryItems.update(id, { startTime, isTimeExplicit: true });
+      });
+      
+      const tripId = get().activeTrip!.id!;
+      const updated = await db.itineraryItems.where('tripId').equals(tripId).toArray();
+      set({ points: get().sortItinerary(updated) });
+    } catch (error) {
+      console.error(`Failed to update point time for ${id}:`, error);
+    }
   },
 
   updatePointMetadata: async (id: number, metadata: TravelMetadata) => {
     if (!get().activeTrip?.id) return;
     
-    const point = await db.itineraryItems.get(id);
-    if (!point) return;
+    try {
+      const point = await db.itineraryItems.get(id);
+      if (!point) return;
 
-    const newMetadata = { ...point.metadata, ...metadata };
-    
-    await db.transaction('rw', db.itineraryItems, async () => {
-      await db.itineraryItems.update(id, { metadata: newMetadata });
-    });
-    
-    const tripId = get().activeTrip!.id!;
-    const updated = await db.itineraryItems.where('tripId').equals(tripId).toArray();
-    set({ points: get().sortItinerary(updated) });
+      const newMetadata = { ...point.metadata, ...metadata };
+      
+      await db.transaction('rw', db.itineraryItems, async () => {
+        await db.itineraryItems.update(id, { metadata: newMetadata });
+      });
+      
+      const tripId = get().activeTrip!.id!;
+      const updated = await db.itineraryItems.where('tripId').equals(tripId).toArray();
+      set({ points: get().sortItinerary(updated) });
+    } catch (error) {
+      console.error(`Failed to update point metadata for ${id}:`, error);
+    }
   },
 
   /**
    * Core Sorting Engine: Implements 'Human-First' logistical flow.
-   * 1. Groups by Date
-   * 2. Respects Manual sortOrder
-   * 3. Uses Explicit/Predicted Time
-   * 4. Tie-breaks with Logistical Ranking (Checkout -> Departure -> Arrival -> Checkin)
-   * 
-   * Special Logic:
-   * - Detects 'Home Base' from the first flight to identify return flights.
-   * - Forces Day 1 departures to the top.
-   * - Forces Last Day return flights to the bottom.
+   * Optimized for performance by pre-calculating sort keys.
    */
   sortItinerary: (points) => {
     if (points.length === 0) return [];
     
-    // 0. Pre-calculate Trip Context for Smart Sorting
-    // Identify the origin of the trip to detect when the traveler is 'heading home'
-    const sortedByStart = [...points].sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
-    const firstFlight = sortedByStart.find(p => p.category === 'Flight' && p.title.toLowerCase().includes('departure'));
-    const homeBase = firstFlight?.metadata?.departureCity?.toLowerCase();
+    // 1. Pre-calculate Trip Context for Smart Sorting
+    const times = points.map(p => new Date(p.startTime).getTime());
+    const minTime = Math.min(...times);
+    const maxTime = Math.max(...times);
     
-    // Day boundaries for contextual overrides
-    const lastDate = format(new Date(Math.max(...points.map(p => new Date(p.startTime).getTime()))), 'yyyy-MM-dd');
-    const firstDate = format(new Date(Math.min(...points.map(p => new Date(p.startTime).getTime()))), 'yyyy-MM-dd');
+    const firstDate = format(new Date(minTime), 'yyyy-MM-dd');
+    const lastDate = format(new Date(maxTime), 'yyyy-MM-dd');
 
-    /**
-     * Determines the logistical rank (1-7) for same-day items.
-     * Lower numbers = Earlier in the day.
-     */
-    const getRank = (item: ItineraryItem) => {
+    // Find Home Base once
+    let homeBase: string | undefined;
+    const initialFlight = [...points]
+      .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+      .find(p => p.category === 'Flight' && p.title.toLowerCase().includes('departure'));
+    
+    if (initialFlight?.metadata?.departureCity) {
+      homeBase = initialFlight.metadata.departureCity.toLowerCase();
+    }
+
+    // 2. Pre-calculate sort keys for each point to avoid O(N log N * expensive_ops)
+    const pointsWithMetadata = points.map(item => {
+      const dateObj = new Date(item.startTime);
+      const itemDateStr = format(dateObj, 'yyyy-MM-dd');
       const title = item.title.toLowerCase();
       const cat = item.category;
-      const date = format(new Date(item.startTime), 'yyyy-MM-dd');
-      const isDay1 = date === firstDate;
-      const isLastDay = date === lastDate;
-      // isLastDay is currently unused but kept for future logistical anchoring logic
-      if (isLastDay) { /* Future logic placeholder */ }
-
-      // Smart Return Flight Detection: If we land in the home city, this is the trip's anchor.
+      
+      const isDay1 = itemDateStr === firstDate;
+      const isLastDay = itemDateStr === lastDate;
+      
+      // Rank calculation
+      let rank = 5; // Default for Activities, Food, etc.
       const arrivalCity = item.metadata?.arrivalCity?.toLowerCase();
       const isReturnFlight = cat === 'Flight' && arrivalCity && homeBase && arrivalCity === homeBase;
-
-      // Priority 1: Home Base Departure (Force to top on Day 1)
-      if (isDay1 && cat === 'Flight' && title.includes('departure')) return -100;
-      
-      // Suppression: On Day 1, if we have a checkout from Home Base, or transit from Home Base, suppress it.
-      // (Simplified by giving it a rank that might be ignored if we add a 'filter' later, but for now we rank it low)
-      if (isDay1 && (title.includes('check-out from') && title.includes(homeBase || ''))) return 1000;
-
-      // Priority 6: Return Flight (Link home arrival sequence to absolute bottom)
-      // Any flight arriving at home base, or departing to arrive at home base, is part of the final anchor.
-      if (isReturnFlight) {
-        return title.includes('departure') ? 1999 : 2000;
-      }
-
-      // 1-5 Logistical Sequence for normal days
-      if (cat === 'Flight') {
-        if (title.includes('departure')) return 2;
-        if (title.includes('arrival')) return 4;
-        return 3; 
-      }
-      if (cat === 'Lodging') {
-        if (title.includes('check-out')) return 1;
-        return 10; // All other lodging defaults to Check-in (Evening anchor)
-      }
-      
-      return 5; // Activities, Food, etc.
-    };
-
-    const getSortTime = (item: ItineraryItem) => {
-      const date = new Date(item.startTime);
-      const title = item.title.toLowerCase();
-      const cat = item.category;
-
-      if (item.isTimeExplicit !== false) {
-        // Special case: Lodging check-ins at 00:00 are usually just 'date' entries from AI.
-        // We force them to follow predicted ranking (evening) to avoid overlapping morning flights.
-        const isMidnightLodging = cat === 'Lodging' && !title.includes('check-out') && date.getUTCHours() === 0 && date.getUTCMinutes() === 0;
-        if (!isMidnightLodging) {
-          return date.getTime();
-        }
-      }
-      
-      const itemDate = format(date, 'yyyy-MM-dd');
-      
-      const isDay1 = itemDate === firstDate;
-      const arrivalCity = item.metadata?.arrivalCity?.toLowerCase();
-      const isReturnFlight = cat === 'Flight' && arrivalCity && homeBase && arrivalCity === homeBase;
-
-      let hour = CATEGORY_DEFAULTS.ACTIVITY;
 
       if (isDay1 && cat === 'Flight' && title.includes('departure')) {
-        hour = 0; // Day 1 departure flights anchor to absolute morning
+        rank = -100;
+      } else if (isDay1 && (title.includes('check-out from') && title.includes(homeBase || ''))) {
+        rank = 1000;
       } else if (isReturnFlight) {
-        hour = 23; // Return flights anchor to absolute night
-      } else if (cat === 'Lodging') {
-        hour = title.includes('check-out') ? CATEGORY_DEFAULTS.CHECK_OUT : CATEGORY_DEFAULTS.CHECK_IN;
+        rank = title.includes('departure') ? 1999 : 2000;
       } else if (cat === 'Flight') {
-        hour = title.includes('arrival') ? CATEGORY_DEFAULTS.FLIGHT_ARRIVAL : CATEGORY_DEFAULTS.FLIGHT_DEPARTURE;
+        if (title.includes('departure')) rank = 2;
+        else if (title.includes('arrival')) rank = 4;
+        else rank = 3;
+      } else if (cat === 'Lodging') {
+        rank = title.includes('check-out') ? 1 : 10;
       }
 
-      date.setHours(hour, 0, 0, 0);
-      return date.getTime();
-    };
+      // Time calculation
+      let sortTime: number;
+      if (item.isTimeExplicit !== false) {
+        const isMidnightLodging = cat === 'Lodging' && !title.includes('check-out') && dateObj.getUTCHours() === 0 && dateObj.getUTCMinutes() === 0;
+        if (!isMidnightLodging) {
+          sortTime = dateObj.getTime();
+        } else {
+          // Force predicted evening for midnight lodging
+          const d = new Date(dateObj);
+          d.setHours(CATEGORY_DEFAULTS.CHECK_IN, 0, 0, 0);
+          sortTime = d.getTime();
+        }
+      } else {
+        const d = new Date(dateObj);
+        let hour = CATEGORY_DEFAULTS.ACTIVITY;
 
-    return [...points].sort((a, b) => {
-      const dateA = format(new Date(a.startTime), 'yyyy-MM-dd');
-      const dateB = format(new Date(b.startTime), 'yyyy-MM-dd');
-      
-      // 1. Primary Sort: Day
-      if (dateA !== dateB) {
-        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+        if (isDay1 && cat === 'Flight' && title.includes('departure')) {
+          hour = 0;
+        } else if (isReturnFlight) {
+          hour = 23;
+        } else if (cat === 'Lodging') {
+          hour = title.includes('check-out') ? CATEGORY_DEFAULTS.CHECK_OUT : CATEGORY_DEFAULTS.CHECK_IN;
+        } else if (cat === 'Flight') {
+          hour = title.includes('arrival') ? CATEGORY_DEFAULTS.FLIGHT_ARRIVAL : CATEGORY_DEFAULTS.FLIGHT_DEPARTURE;
+        }
+        
+        d.setHours(hour, 0, 0, 0);
+        sortTime = d.getTime();
       }
-      
-      // 3. Secondary Sort: Manual sortOrder (if defined and non-zero)
-      const orderA = a.sortOrder || 0;
-      const orderB = b.sortOrder || 0;
-      if (orderA !== orderB) return orderA - orderB;
 
-      // 4. Tertiary Sort: Time (Explicit or Predicted)
-      const timeA = getSortTime(a);
-      const timeB = getSortTime(b);
-      if (timeA !== timeB) return timeA - timeB;
-
-      // 5. Final Tie-breaker: Logistical Rank
-      const rankA = getRank(a);
-      const rankB = getRank(b);
-      return rankA - rankB;
+      return {
+        item,
+        dateStr: itemDateStr,
+        sortTime,
+        rank,
+        sortOrder: item.sortOrder ?? 0
+      };
     });
+
+    // 3. Perform the sort using pre-calculated metadata
+    return pointsWithMetadata
+      .sort((a, b) => {
+        // Primary: Day
+        if (a.dateStr !== b.dateStr) {
+          return new Date(a.item.startTime).getTime() - new Date(b.item.startTime).getTime();
+        }
+        
+        // Secondary: Manual sortOrder (crucial for drag-and-drop)
+        if (a.sortOrder !== b.sortOrder) {
+          return a.sortOrder - b.sortOrder;
+        }
+
+        // Tertiary: Time (Explicit or Predicted)
+        if (a.sortTime !== b.sortTime) {
+          return a.sortTime - b.sortTime;
+        }
+
+        // Final Tie-breaker: Logistical Rank
+        return a.rank - b.rank;
+      })
+      .map(p => p.item);
   },
 }));
