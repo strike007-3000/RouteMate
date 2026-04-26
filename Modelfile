@@ -1,0 +1,4 @@
+FROM qwen2.5-coder:7b
+PARAMETER num_ctx 32768
+PARAMETER temperature 0
+SYSTEM "You are a helpful coding assistant. When using tools, output the raw JSON tool call only."

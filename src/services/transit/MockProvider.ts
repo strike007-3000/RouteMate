@@ -12,7 +12,7 @@ export class MockProvider implements TransitProvider {
     if (fromText.includes('airport') || fromText.includes('lhr') || fromText.includes('jfk')) {
       if (fromText.includes('lhr') || fromText.includes('heathrow')) {
         return {
-          id: Math.random().toString(36).substr(2, 9),
+          id: crypto.randomUUID(),
           mode: 'train',
           provider: 'Elizabeth Line',
           duration: '35m',
@@ -22,7 +22,7 @@ export class MockProvider implements TransitProvider {
       }
       if (fromText.includes('jfk')) {
          return {
-          id: Math.random().toString(36).substr(2, 9),
+          id: crypto.randomUUID(),
           mode: 'subway',
           provider: 'MTA AirTrain + Blue Line',
           duration: '50m',
@@ -34,7 +34,7 @@ export class MockProvider implements TransitProvider {
 
     if (from.type === 'hotel' && to.type === 'attraction') {
        return {
-        id: Math.random().toString(36).substr(2, 9),
+        id: crypto.randomUUID(),
         mode: 'walk',
         provider: 'Walking Map',
         duration: '12m',
@@ -44,7 +44,7 @@ export class MockProvider implements TransitProvider {
     }
 
     return {
-      id: Math.random().toString(36).substr(2, 9),
+      id: crypto.randomUUID(),
       mode: 'bus',
       provider: 'Local Bus Service',
       duration: '22m',

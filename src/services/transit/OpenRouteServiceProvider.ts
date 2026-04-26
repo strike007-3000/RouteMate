@@ -9,13 +9,24 @@ export class OpenRouteServiceProvider implements TransitProvider {
   private async geocode(address: string): Promise<[number, number] | null> {
     if (!this.apiKey) return null;
     try {
-      const resp = await fetch(`https://api.openrouteservice.org/geocode/search?api_key=${this.apiKey}&text=${encodeURIComponent(address)}&layers=venue,address,coarse&size=1`);
+      const resp = await fetch(`https://api.openrouteservice.org/geocode/search?text=${encodeURIComponent(address)}&layers=venue,address,coarse&size=1`, {
+        headers: {
+          'Authorization': this.apiKey,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!resp.ok) {
+        const errorText = await resp.text();
+        throw new Error(`ORS Geocode failed (${resp.status}): ${errorText}`);
+      }
+
       const data = await resp.json();
       if (data.features && data.features.length > 0) {
         return data.features[0].geometry.coordinates as [number, number];
       }
     } catch (err) {
-      console.error('ORS geocoding error:', err);
+      console.error('ORS geocoding error:', err instanceof Error ? err.message : err);
     }
     return null;
   }
@@ -23,13 +34,30 @@ export class OpenRouteServiceProvider implements TransitProvider {
   async getRoute(from: TripPoint, to: TripPoint): Promise<TransitSuggestion | null> {
     if (!this.apiKey) return null;
 
-    const fromCoords = await this.geocode(from.address);
-    const toCoords = await this.geocode(to.address);
-
-    if (!fromCoords || !toCoords) return null;
-
     try {
-      const resp = await fetch(`https://api.openrouteservice.org/v2/directions/foot-walking?api_key=${this.apiKey}&start=${fromCoords.join(',')}&end=${toCoords.join(',')}`);
+      // PERFORMANCE: Fetch geocodes in parallel
+      const [fromCoords, toCoords] = await Promise.all([
+        this.geocode(from.address),
+        this.geocode(to.address)
+      ]);
+
+      if (!fromCoords || !toCoords) {
+        console.warn('ORS: Could not geocode one or both points');
+        return null;
+      }
+
+      const resp = await fetch(`https://api.openrouteservice.org/v2/directions/foot-walking?start=${fromCoords.join(',')}&end=${toCoords.join(',')}`, {
+        headers: {
+          'Authorization': this.apiKey,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!resp.ok) {
+        const errorText = await resp.text();
+        throw new Error(`ORS Routing failed (${resp.status}): ${errorText}`);
+      }
+
       const data = await resp.json();
 
       if (data.features && data.features.length > 0) {
@@ -40,7 +68,7 @@ export class OpenRouteServiceProvider implements TransitProvider {
         if (distance > 2000) return null;
 
         return {
-          id: 'ors-' + Math.random().toString(36).substr(2, 5),
+          id: `ors-${crypto.randomUUID()}`,
           mode: 'walk',
           provider: 'ORS Walking',
           duration: `${Math.round(route.duration / 60)}m`,
@@ -50,7 +78,7 @@ export class OpenRouteServiceProvider implements TransitProvider {
         };
       }
     } catch (err) {
-      console.error('ORS routing error:', err);
+      console.error('ORS routing error:', err instanceof Error ? err.message : err);
     }
 
     return null;

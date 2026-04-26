@@ -15,7 +15,7 @@ export class GoogleMapsProvider implements TransitProvider {
     const deepLink = `https://www.google.com/maps/dir/?api=1&origin=${queryOrigin}&destination=${queryDest}&travelmode=transit`;
 
     return {
-      id: 'google-' + Math.random().toString(36).substr(2, 5),
+      id: `google-${crypto.randomUUID()}`,
       mode: 'bus',
       provider: 'Google Maps',
       duration: 'Live Data',

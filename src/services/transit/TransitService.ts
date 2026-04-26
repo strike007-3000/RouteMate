@@ -15,11 +15,9 @@ export class TransitService {
     // 3. Google Maps (Primary Deep Link for Transit > 2km)
     // 4. Mock (Fallback)
     
-    const orsKey = process.env.ORS_API_KEY;
+    const orsKey = process.env.NEXT_PUBLIC_ORS_API_KEY || process.env.ORS_API_KEY;
     
     // Server-safe key detection. 
-    // Browser overrides (localStorage) are handled in the component layer or via specialized hook
-    // if needed, but not in a singleton service shared with the API route.
     this.providers = [
       new OpenRouteServiceProvider(orsKey || undefined),
       new GoogleMapsProvider(), 
@@ -30,6 +28,7 @@ export class TransitService {
 
 
   async getCheapRoute(from: TripPoint, to: TripPoint): Promise<TransitSuggestion> {
+    const errors: string[] = [];
     for (const provider of this.providers) {
       try {
         const suggestion = await provider.getRoute(from, to);
@@ -37,18 +36,22 @@ export class TransitService {
           return suggestion;
         }
       } catch (err) {
-        console.error(`Provider ${provider.name} failed:`, err);
+        const msg = err instanceof Error ? err.message : String(err);
+        errors.push(`${provider.name}: ${msg}`);
+        console.error(`Provider ${provider.name} failed:`, msg);
       }
     }
 
     // Default emergency fallback
     return {
-      id: 'err-' + Math.random().toString(36).substr(2, 5),
+      id: `err-${crypto.randomUUID()}`,
       mode: 'walk',
       provider: 'System Default',
       duration: 'Unknown',
       cost: 'Free',
-      description: 'Unable to calculate specific route. Check local signs.'
+      description: errors.length > 0 
+        ? `Transit calculation failed across ${errors.length} providers. Check connectivity.` 
+        : 'Unable to calculate specific route. Check local signs.'
     };
   }
 }

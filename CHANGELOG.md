@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.1] - 2026-04-26
+
+### 🛡️ Security & Architecture Hardening
+- **Enhanced Security**: Moved ORS API keys from URL parameters to `Authorization` headers to prevent sensitive data leakage in logs.
+- **Client-Safe Config**: Renamed and synchronized environment variables to `NEXT_PUBLIC_ORS_API_KEY` for cross-context compatibility (Browser + Server).
+- **Parallel Processing**: Upgraded `OpenRouteServiceProvider` to use `Promise.all()` for geocoding, cutting transit calculation latency in half.
+- **Architectural Refactor**: Extracted the complex `sortItinerary` engine from the Zustand store into a standalone utility for improved testability and cleaner core logic.
+- **Collision Resistance**: Replaced all `Math.random()` ID generation with `crypto.randomUUID()` for enterprise-grade ID stability.
+
+
 ## [3.3.0] - 2026-04-26
 
 ### 🚀 Performance & Resilience Pass
