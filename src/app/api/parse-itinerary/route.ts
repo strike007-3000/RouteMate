@@ -208,9 +208,29 @@ export async function POST(req: Request) {
         if (cat === 'Transit' || cat === 'Bus' || cat === 'Ferry') cat = 'Train';
         if (!['Flight', 'Lodging', 'Train', 'Food', 'Activity', 'Rental'].includes(cat)) cat = 'Activity';
 
+        // Validate and sanitize dates
+        let startTime = typeof p.startTime === 'string' ? p.startTime : '';
+        let endTime = typeof p.endTime === 'string' ? p.endTime : '';
+        
+        let startD = new Date(startTime);
+        if (isNaN(startD.getTime())) {
+          startTime = `${rootYear}-01-01T12:00:00Z`;
+        } else {
+          startTime = startD.toISOString();
+        }
+
+        let endD = new Date(endTime);
+        if (isNaN(endD.getTime())) {
+          endTime = startTime;
+        } else {
+          endTime = endD.toISOString();
+        }
+
         return {
           ...p,
           category: cat,
+          startTime,
+          endTime,
           id: Math.random().toString(36).substr(2, 9)
         };
       });

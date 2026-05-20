@@ -17,9 +17,11 @@ export const sortItinerary = (points: ItineraryItem[]): ItineraryItem[] => {
   if (points.length === 0) return [];
   
   // 1. Pre-calculate Trip Context for Smart Sorting
-  const times = points.map(p => new Date(p.startTime).getTime());
-  const minTime = Math.min(...times);
-  const maxTime = Math.max(...times);
+  const times = points
+    .map(p => p.startTime ? new Date(p.startTime).getTime() : NaN)
+    .filter(t => !isNaN(t));
+  const minTime = times.length > 0 ? Math.min(...times) : Date.now();
+  const maxTime = times.length > 0 ? Math.max(...times) : Date.now();
   
   const firstDate = format(new Date(minTime), 'yyyy-MM-dd');
   const lastDate = format(new Date(maxTime), 'yyyy-MM-dd');
@@ -27,6 +29,7 @@ export const sortItinerary = (points: ItineraryItem[]): ItineraryItem[] => {
   // Find Home Base once
   let homeBase: string | undefined;
   const initialFlight = [...points]
+    .filter(p => p.startTime && !isNaN(new Date(p.startTime).getTime()))
     .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
     .find(p => p.category === 'Flight' && p.title.toLowerCase().includes('departure'));
   
@@ -36,7 +39,10 @@ export const sortItinerary = (points: ItineraryItem[]): ItineraryItem[] => {
 
   // 2. Pre-calculate sort keys for each point to avoid O(N log N * expensive_ops)
   const pointsWithMetadata = points.map(item => {
-    const dateObj = new Date(item.startTime);
+    let dateObj = item.startTime ? new Date(item.startTime) : new Date(minTime);
+    if (isNaN(dateObj.getTime())) {
+      dateObj = new Date(minTime);
+    }
     const itemDateStr = format(dateObj, 'yyyy-MM-dd');
     const title = item.title.toLowerCase();
     const cat = item.category;
@@ -106,7 +112,11 @@ export const sortItinerary = (points: ItineraryItem[]): ItineraryItem[] => {
     .sort((a, b) => {
       // Primary: Day
       if (a.dateStr !== b.dateStr) {
-        return new Date(a.item.startTime).getTime() - new Date(b.item.startTime).getTime();
+        const timeA = a.item.startTime ? new Date(a.item.startTime).getTime() : minTime;
+        const timeB = b.item.startTime ? new Date(b.item.startTime).getTime() : minTime;
+        const validTimeA = isNaN(timeA) ? minTime : timeA;
+        const validTimeB = isNaN(timeB) ? minTime : timeB;
+        return validTimeA - validTimeB;
       }
       
       // Secondary: Manual sortOrder (crucial for drag-and-drop)
