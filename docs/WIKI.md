@@ -54,6 +54,11 @@ The engine dynamically identifies the "Home Base" by analyzing the very first fl
 - **Origin Suppression**: Specifically suppresses redundant check-out events from the home city on Day 1.
 - **Midnight Lodging Rule**: If a `Lodging` check-in has a time of exactly `00:00` (often from AI date-only extractions), the system overrides the explicit time and uses the **Evening Rank** (18:00) to prevent it from overlapping with morning flights.
 
+### 1.3 Smart Paste & Date Hardening
+AI-extracted itinerary entries can occasionally contain missing, malformed, or invalid date fields due to LLM hallucinations or incomplete input texts. The engine employs two layers of protection to guarantee stability:
+- **Server-Side Sanitization**: The `/api/parse-itinerary` API inspects all generated `startTime` and `endTime` fields. If a date is unparseable or missing, it constructs a safe fallback string using the trip's start year (e.g., `${rootYear}-01-01T12:00:00Z`). All valid dates are normalized to strict ISO-8601 strings.
+- **Client-Side Resilience**: The `sortItinerary` utility filters out `NaN` timestamps from its context range calculations and defaults to `Date.now()` if no valid dates exist. Inside the item mapping loop, invalid or missing `startTime` properties default to the calculated trip bounds (`minTime`). This ensures that `format()` from `date-fns` never receives an invalid time value, preventing client-side crashes (e.g., `RangeError: Invalid time value`).
+
 ---
 
 ## 2. Design System & Geometry

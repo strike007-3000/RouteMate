@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.4.0] - 2026-05-20
+
+### 💎 UX & Gestures (UX Review)
+- **Scroll-Driven Shrinking Header**: Implemented native CSS scroll timelines to dynamically shrink timeline and list headers, fade backdrop blurs, and scale titles.
+- **Premium Mobile Gestures**: Integrated swipe-to-delete cards on the timeline powered by Framer Motion, with interactive slide-lock confirmation zones.
+- **View Transitions**: Handled dashboard page navigation via native View Transitions API for fluid, morphing asset transitions.
+
+### 🛡️ Smart Paste Hardening
+- **Server-Side Sanitization**: Extracted, validated, and normalized AI-generated timestamps, mapping missing or malformed inputs to clean ISO-8601 root-year fallbacks.
+- **Client-Side Resilience**: Upgraded sorting utilities to filter `NaN` context bounds and fall back safely, preventing `date-fns` crashes.
+
+### 🔒 Security Upgrades
+- **Dependency Upgrades**: Bumped Next.js and ESLint configuration from `16.2.4` to `16.2.6`, resolving 26 security vulnerabilities reported by GitHub Dependabot.
+
+
 ## [3.3.1] - 2026-04-26
 
 ### 🛡️ Security & Architecture Hardening
