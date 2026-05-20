@@ -2,20 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.4.0] - 2026-05-20
+## [3.4.0](https://github.com/strike007-3000/RouteMate/compare/v3.3.5...v3.4.0) (2026-05-20)
 
-### 💎 UX & Gestures (UX Review)
-- **Scroll-Driven Shrinking Header**: Implemented native CSS scroll timelines to dynamically shrink timeline and list headers, fade backdrop blurs, and scale titles.
-- **Premium Mobile Gestures**: Integrated swipe-to-delete cards on the timeline powered by Framer Motion, with interactive slide-lock confirmation zones.
-- **View Transitions**: Handled dashboard page navigation via native View Transitions API for fluid, morphing asset transitions.
 
-### 🛡️ Smart Paste Hardening
-- **Server-Side Sanitization**: Extracted, validated, and normalized AI-generated timestamps, mapping missing or malformed inputs to clean ISO-8601 root-year fallbacks.
-- **Client-Side Resilience**: Upgraded sorting utilities to filter `NaN` context bounds and fall back safely, preventing `date-fns` crashes.
+### Features
 
-### 🔒 Security Upgrades
-- **Dependency Upgrades**: Bumped Next.js and ESLint configuration from `16.2.4` to `16.2.6`, resolving 26 security vulnerabilities reported by GitHub Dependabot.
+* implement scroll-driven shrinking header, swipe-to-delete gestures, and view transitions ([d254d3a](https://github.com/strike007-3000/RouteMate/commit/d254d3a0b741da4654c9564478098442905a6f4b))
 
+
+### Bug Fixes
+
+* harden timeline sorting and AI date extraction against malformed/invalid dates ([f8eb6b6](https://github.com/strike007-3000/RouteMate/commit/f8eb6b6567b27bed980629415cebbff4f375478a))
 
 ## [3.3.1] - 2026-04-26
 
