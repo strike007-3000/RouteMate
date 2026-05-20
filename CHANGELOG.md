@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.4.0](https://github.com/strike007-3000/RouteMate/compare/v3.3.5...v3.4.0) (2026-05-20)
+
+
+### Features
+
+* implement scroll-driven shrinking header, swipe-to-delete gestures, and view transitions ([d254d3a](https://github.com/strike007-3000/RouteMate/commit/d254d3a0b741da4654c9564478098442905a6f4b))
+
+
+### Bug Fixes
+
+* harden timeline sorting and AI date extraction against malformed/invalid dates ([f8eb6b6](https://github.com/strike007-3000/RouteMate/commit/f8eb6b6567b27bed980629415cebbff4f375478a))
+
 ## [3.3.1] - 2026-04-26
 
 ### 🛡️ Security & Architecture Hardening
