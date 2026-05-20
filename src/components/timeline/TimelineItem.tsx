@@ -88,16 +88,46 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
   const displayTime = point.startTime?.includes('T') ? point.startTime.slice(11, 16) : '00:00';
 
   return (
-    <div className="relative pb-8 last:pb-0 pl-[var(--gutter,24px)]">
+    <div className="relative pb-8 last:pb-0 pl-[var(--gutter,24px)] overflow-hidden">
       <div className="absolute left-[calc(var(--gutter,24px)/2)] top-0 bottom-0 w-[1px] bg-primary/20 border-l border-dashed z-0" />
       <div className="absolute left-0 top-0 w-[var(--gutter,24px)] h-full flex justify-center pt-3 z-10">
         <div className={cn("timeline-dot", config.color.replace('text-', 'bg-'), config.color)} />
       </div>
+
+      {/* Swipe Action Background revealed behind the card */}
+      <div className="absolute inset-y-0 right-0 left-[var(--gutter,24px)] mb-8 rounded-[var(--radius-card,24px)] overflow-hidden z-0 bg-zinc-950 flex justify-end">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            if (point.id) removePoint(point.id);
+          }}
+          className="h-full w-28 bg-red-600 hover:bg-red-700 flex flex-col items-center justify-center gap-1.5 text-white transition-colors cursor-pointer"
+        >
+          <Trash2 className="w-5 h-5 text-white animate-pulse" />
+          <span className="text-[8px] font-black uppercase tracking-widest text-center text-white">Confirm?</span>
+        </button>
+      </div>
       
       <motion.div 
         layout
+        drag="x"
+        dragDirectionLock
+        dragConstraints={{ left: -112, right: 0 }}
+        dragElastic={{ left: 0.15, right: 0.05 }}
+        animate={{ 
+          x: isDeleting ? -112 : 0,
+          opacity: 1, 
+          scale: 1 
+        }}
+        onDragEnd={(event, info) => {
+          if (info.offset.x < -40) {
+            setIsDeleting(true);
+            setTimeout(() => setIsDeleting(false), 3000);
+          } else if (info.offset.x > 40) {
+            setIsDeleting(false);
+          }
+        }}
         initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
         transition={{ 
           type: "spring",
           stiffness: 300,
@@ -177,7 +207,7 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
                       const origin = getPreciseLocation(prevPoint, 'arrival');
                       url += `&origin=${encodeURIComponent(origin)}`;
                     }
-
+ 
                     window.open(url, '_blank');
                   }}
                   className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-500 hover:text-primary transition-all active:scale-90"

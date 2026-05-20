@@ -91,3 +91,89 @@
   @apply bg-zinc-700;
 }
 
+/* Shrinking Header on Scroll */
+.shrinking-header {
+  padding-bottom: calc(1rem - 0.5rem * var(--scroll-percent, 0));
+  background-color: rgba(0, 0, 0, calc(0.6 + 0.35 * var(--scroll-percent, 0)));
+  backdrop-filter: blur(calc(16px + 8px * var(--scroll-percent, 0)));
+  border-bottom-color: rgba(255, 255, 255, calc(0.05 + 0.05 * var(--scroll-percent, 0)));
+}
+
+.shrinking-header .header-inner {
+  height: calc(4rem - 0.75rem * var(--scroll-percent, 0));
+  transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shrinking-header .header-brand {
+  opacity: calc(1 - var(--scroll-percent, 0));
+  transform: translateY(calc(-4px * var(--scroll-percent, 0)));
+  height: calc(15px * (1 - var(--scroll-percent, 0)));
+  margin-bottom: calc(4px * (1 - var(--scroll-percent, 0)));
+  overflow: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease, height 0.2s ease, margin 0.2s ease;
+}
+
+.shrinking-header .header-title {
+  transform: scale(calc(1 - 0.12 * var(--scroll-percent, 0)));
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scroll-Driven animations for browsers that support it */
+@supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+  @keyframes shrink-header-bg {
+    to {
+      padding-bottom: 0.5rem;
+      background-color: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(24px);
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  @keyframes shrink-header-inner {
+    to {
+      height: 3.25rem;
+    }
+  }
+
+  @keyframes fade-header-brand {
+    to {
+      opacity: 0;
+      height: 0px;
+      margin-bottom: 0px;
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes scale-header-title {
+    to {
+      transform: scale(0.88);
+    }
+  }
+
+  .shrinking-header {
+    animation: shrink-header-bg auto linear both;
+    animation-timeline: scroll(block root);
+    animation-range: 0px 100px;
+  }
+
+  .shrinking-header .header-inner {
+    animation: shrink-header-inner auto linear both;
+    animation-timeline: scroll(block root);
+    animation-range: 0px 100px;
+  }
+
+  .shrinking-header .header-brand {
+    animation: fade-header-brand auto linear both;
+    animation-timeline: scroll(block root);
+    animation-range: 0px 100px;
+  }
+
+  .shrinking-header .header-title {
+    animation: scale-header-title auto linear both;
+    animation-timeline: scroll(block root);
+    animation-range: 0px 100px;
+    transform-origin: left center;
+  }
+}
+

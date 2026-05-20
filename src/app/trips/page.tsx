@@ -7,6 +7,7 @@ import { useTripStore } from '@/stores/useTripStore';
 import { TripCard } from '@/components/trips/TripCard';
 import { useRouter } from 'next/navigation';
 
+import { Header } from '@/components/layout/Header';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { NewTripModal } from '@/components/trips/NewTripModal';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -37,6 +38,15 @@ export default function Dashboard() {
   const pastTrips = trips.filter(t => t.status === 'past');
   const draftTrips = trips.filter(t => t.status === 'draft');
 
+  const handleSelect = (id: number) => {
+    const navigate = () => router.push(`/trip/${id}/timeline`);
+    if (document.startViewTransition) {
+      document.startViewTransition(navigate);
+    } else {
+      navigate();
+    }
+  };
+
   const handleCreateNew = async (data: { destination: string, startDate: string, endDate: string }) => {
     const id = await createTrip({
       name: `Trip to ${data.destination}`,
@@ -52,34 +62,22 @@ export default function Dashboard() {
     }
 
     setIsModalOpen(false);
-    router.push(`/trip/${id}/timeline`);
+    handleSelect(id);
   };
 
   return (
     <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto overflow-x-hidden relative flex flex-col">
-      {/* Premium Header */}
-      <header className="px-[var(--gutter,24px)] pb-10 pt-[var(--header-pt,16px)] relative">
-        <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
-          <Globe className="w-60 h-60 rotate-12" />
-        </div>
-        
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="relative z-10"
-        >
-          <span className="text-[10px] font-bold text-primary uppercase tracking-[0.4em] mb-1 block">ROUTEMATE</span>
-          <h1 className="text-[clamp(1.5rem,5vw,2.25rem)] font-black text-white tracking-tighter leading-none mb-3">My Trips</h1>
-        </motion.div>
-
+      <Header />
+      
+      <div className="px-[var(--gutter,24px)] pt-6 pb-4">
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="mt-10 btn-primary w-full"
+          className="btn-primary w-full"
         >
           <Plus className="w-5 h-5" />
           <span>Create New Trip</span>
         </button>
-      </header>
+      </div>
 
       <section className="px-[var(--gutter,24px)] space-y-12 pb-10">
         {upcomingTrips.length > 0 && (
@@ -90,7 +88,7 @@ export default function Dashboard() {
             </div>
             <div className="space-y-6">
               {upcomingTrips.map(trip => (
-                <TripCard key={trip.id} trip={trip} onSelect={(id) => router.push(`/trip/${id}/timeline`)} />
+                <TripCard key={trip.id} trip={trip} onSelect={handleSelect} />
               ))}
             </div>
           </div>
@@ -104,7 +102,7 @@ export default function Dashboard() {
             </div>
             <div className="space-y-6">
               {draftTrips.map(trip => (
-                <TripCard key={trip.id} trip={trip} onSelect={(id) => router.push(`/trip/${id}/timeline`)} />
+                <TripCard key={trip.id} trip={trip} onSelect={handleSelect} />
               ))}
             </div>
           </div>

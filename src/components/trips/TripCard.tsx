@@ -59,6 +59,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
             onError={handleImageError}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2000ms] select-none scale-105"
             loading="lazy"
+            style={{ viewTransitionName: `trip-image-${trip.id}` } as React.CSSProperties}
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 via-zinc-900 to-black animate-pulse" />
@@ -138,7 +139,10 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
             <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">{trip.destination}</span>
           </div>
           
-          <h3 className="text-3xl font-black text-white tracking-tighter leading-none mb-3 drop-shadow-2xl">
+          <h3 
+            className="text-3xl font-black text-white tracking-tighter leading-none mb-3 drop-shadow-2xl"
+            style={{ viewTransitionName: `trip-title-${trip.id}` } as React.CSSProperties}
+          >
             {trip.name}
           </h3>
           

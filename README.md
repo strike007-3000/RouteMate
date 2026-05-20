@@ -11,6 +11,11 @@ A state-driven interface that toggles between high-level emotional planning and 
 - **Summary Mode (Itinerary)**: Maximizes visual impact with "Day Cards" featuring curated Unsplash imagery and a unified 32px radius. It hides technical connectors and transit routing widgets to prioritize the "scannability" of the trip.
 - **Logistics Mode (Timeline)**: Enables a continuous, dashed journey thread with precision-aligned dots. It surfaces full `TransitCard` widgets (with Google Maps handoff, times, and distances) to help you understand exactly how to navigate between points.
 
+### 🌌 Premium Micro-interactions & Polish (v3.4+)
+- **Scroll-Driven Headers**: Enforces the Zero-Jump Header Rhythm. Headers shrink dynamically on scroll by fading the top brand label and scaling down titles, leveraging native CSS scroll timelines and custom property fallbacks.
+- **Swipe-to-Delete Gestures**: Implements a horizontal swipe action (via Framer Motion) on timeline items. Swiping left reveals a red deletion zone and locks the card to prompt confirmation, matching the interactive delete confirmation state.
+- **Fluid Page Morphing (View Transitions)**: Connects page transitions by morphing card cover images and titles into their corresponding page hero components.
+
 ### 🛡️ Hardening & Architecture (v3.3+)
 Enterprise-grade reliability and security pass.
 - **Header-Based Auth**: Moved sensitive API keys to request headers to prevent plain-text logging.

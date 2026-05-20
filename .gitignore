@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local dev tools (not for repo)
+CLAUDE.md
+litellm_config.yaml
+Modelfile

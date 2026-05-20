@@ -61,9 +61,21 @@ The engine dynamically identifies the "Home Base" by analyzing the very first fl
 RouteMate follows a strict "Minimalist Premium" design system to ensure zero visual cognitive load.
 
 - **The Sole Button Standard**: All primary actions must use the `.btn-primary` utility: `h-14`, `rounded-[24px]`, `border-2 border-primary`, and `tracking-[0.2em]`.
-- **Zero-Jump Header Rhythm**: All 4 global navigation tabs share a synchronized `pt-[var(--header-pt)]` padding and a 4px gap between the brand and page title.
+- **Zero-Jump Header Rhythm**: All global navigation routes share a synchronized header layout. The header implements a **Scroll-Driven Animation** using native CSS scroll timelines (with a React-driven `scrollY` custom property fallback for unsupported browsers) that dynamically shrinks padding, transitions background blur opacity, and scales down the page title to maximize screen real estate when scrolling.
 - **The 24px Rule**: All interactive containers, cards, and bento cards must use a standardized `rounded-[24px]` radius.
 - **Intrinsic Sizing**: List items (e.g., in Account Hub) use `min-h-[64px]` and `py-4` instead of fixed heights to accommodate dynamic typography clamping.
+
+### 2.1 Premium Mobile Gestures (Swipe-to-Delete)
+Itinerary stops in the timeline support horizontal swiping for quick management:
+- **Gesture Mechanics**: Powered by Framer Motion's `drag="x"`. Dragging left reveals a high-contrast red delete zone (`w-28`) containing a trash icon and a "Confirm?" label.
+- **Confirmation Mirroring**: Swiping past a `-40px` offset triggers the same 3-second confirmation grace period as clicking the default delete button. During this state, the card automatically animates and locks to `-112px` left, prompting the user to tap the revealed background zone or the card's red confirmation button to delete. Swiping right resets the confirmation loop.
+
+---
+
+## 2.2 View Transitions (Morphing Page Navigation)
+Navigation between dashboard pages and sub-pages uses the browser's native **View Transitions API**:
+- **Morphing Assets**: The trip cover image (`trip-image-[id]`) and trip destination title (`trip-title-[id]`) carry shared transition tokens across the `TripCard` and `TripHero` layout elements.
+- **Trigger Loop**: All page navigation hooks in `<BottomNav />` and card click handlers are wrapped in `document.startViewTransition(...)` to morph assets seamlessly instead of doing a hard jump.
 
 ---
 

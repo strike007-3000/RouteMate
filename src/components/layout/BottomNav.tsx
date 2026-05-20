@@ -55,10 +55,18 @@ export const BottomNav = () => {
           <button
             key={item.label}
             onClick={() => {
-              if (item.action) {
-                item.action();
-              } else if (item.path) {
-                router.push(item.path);
+              const navigate = () => {
+                if (item.action) {
+                  item.action();
+                } else if (item.path) {
+                  router.push(item.path);
+                }
+              };
+
+              if (document.startViewTransition) {
+                document.startViewTransition(navigate);
+              } else {
+                navigate();
               }
             }}
             className={cn(

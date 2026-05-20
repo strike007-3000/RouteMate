@@ -26,21 +26,48 @@ export const Header = () => {
   else if (pathname === '/account') title = 'Account Hub';
   else if (pathname === '/trips' || pathname === '/') title = 'My Trips';
 
+  // Javascript fallback for browsers that do not support CSS scroll-driven animations
+  const [scrollPercent, setScrollPercent] = React.useState(0);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const isScrollTimelineSupported = 
+      window.CSS && 
+      window.CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)');
+
+    if (isScrollTimelineSupported) return;
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const percent = Math.min(1, scrollY / 100);
+      setScrollPercent(percent);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <header 
-      style={{ paddingTop: 'var(--safe-top)' }}
+      style={{ 
+        paddingTop: 'var(--safe-top)',
+        '--scroll-percent': scrollPercent
+      } as React.CSSProperties}
       className={cn(
-        "sticky top-0 z-50 w-full px-[var(--gutter,24px)] pb-4 transition-all duration-500",
-        isSubRoute ? "bg-black/60 backdrop-blur-xl" : "bg-black border-b border-white/5"
+        "sticky top-0 z-50 w-full px-[var(--gutter,24px)] pb-4 transition-all duration-300 shrinking-header border-b",
+        isSubRoute ? "bg-black/60 backdrop-blur-xl border-white/5" : "bg-black border-white/5"
       )}
     >
-      <div className="h-16 flex items-center justify-between">
+      <div className="h-16 flex items-center justify-between header-inner">
         <div className="flex items-center gap-4">
           <div className="flex flex-col">
-            <div className="flex items-center gap-3 mb-1">
+            <div className="flex items-center gap-3 mb-1 header-brand">
               <span className="text-[10px] font-bold text-primary uppercase tracking-[0.4em]">ROUTEMATE</span>
             </div>
-            <h1 className="text-[clamp(1.5rem,5vw,2.25rem)] font-black text-white tracking-tighter leading-none truncate max-w-[250px]">
+            <h1 className="text-[clamp(1.5rem,5vw,2.25rem)] font-black text-white tracking-tighter leading-none truncate max-w-[250px] header-title">
               {title}
             </h1>
           </div>

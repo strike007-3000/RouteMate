@@ -68,6 +68,7 @@ export const TripHero = ({ trip, mode, onAction }: TripHeroProps) => {
             src={trip.coverImage} 
             alt={trip.destination} 
             className="w-full h-full object-cover aspect-video transition-all duration-1000 group-hover/hero:scale-105"
+            style={{ viewTransitionName: `trip-image-${trip.id}` } as React.CSSProperties}
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 via-zinc-900 to-black" />
@@ -83,7 +84,10 @@ export const TripHero = ({ trip, mode, onAction }: TripHeroProps) => {
           className="flex flex-col items-center w-full"
         >
           {/* Main Title (Clamp Logic) */}
-          <h1 className="text-[clamp(1.5rem,8vw,3rem)] font-black text-white tracking-tighter mb-4 leading-none drop-shadow-2xl px-4">
+          <h1 
+            className="text-[clamp(1.5rem,8vw,3rem)] font-black text-white tracking-tighter mb-4 leading-none drop-shadow-2xl px-4"
+            style={{ viewTransitionName: `trip-title-${trip.id}` } as React.CSSProperties}
+          >
             {trip.destination}
           </h1>
 
