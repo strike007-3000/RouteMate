@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.9.0](https://github.com/strike007-3000/RouteMate/compare/v3.8.0...v3.9.0) (2026-05-30)
+
+
+### Features
+
+* **explore:** implement hybrid AI city discovery, details drawers, s… ([96c9036](https://github.com/strike007-3000/RouteMate/commit/96c90364bbb5a395e81b03846be7b3dd7b69b8b0))
+* **explore:** implement hybrid AI city discovery, details drawers, search/filters, and custom date trip builder ([6560ea6](https://github.com/strike007-3000/RouteMate/commit/6560ea60145580057da82b6dad01e9df2632b70c))
+
 ## [3.6.0](https://github.com/strike007-3000/RouteMate/compare/v3.5.0...v3.6.0) (2026-05-30)
 
 
