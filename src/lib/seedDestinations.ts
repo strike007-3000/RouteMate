@@ -659,10 +659,10 @@ export const seedDestinations: Destination[] = [
   },
   {
     id: "sydney-coastal",
-    name: "Sydney Coast",
+    name: "Sydney",
     country: "Australia",
     image: "https://images.unsplash.com/photo-1524820197278-540916411e20?auto=format&fit=crop&w=1200&q=80",
-    description: "Sydney Coast offers a second, spectacular look at the city's outer beaches, surf hotspots, and lush national parks. From learning to surf at Manly Beach to hiking along dramatic ocean cliffs in the Royal National Park, it represents the epitome of Australia's coastal outdoor lifestyle. Enjoy fresh seafood, pristine bays, and beautiful sun-drenched coastlines.",
+    description: "Sydney offers a second, spectacular look at the city's outer beaches, surf hotspots, and lush national parks. From learning to surf at Manly Beach to hiking along dramatic ocean cliffs in the Royal National Park, it represents the epitome of Australia's coastal outdoor lifestyle. Enjoy fresh seafood, pristine bays, and beautiful sun-drenched coastlines.",
     tags: ["BEACH", "SURFING", "ADVENTURE"],
     category: "Beaches",
     highlights: [
