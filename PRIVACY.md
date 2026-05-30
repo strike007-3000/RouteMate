@@ -19,7 +19,7 @@ When you log in to RouteMate using your Google Account, we access public profile
 ### B. User-Generated Content and Local Storage
 RouteMate is designed with a local-first philosophy. 
 *   **Travel Plans & Itineraries:** Your trip lists, itineraries, saved items, and settings are stored locally on your device in **IndexedDB** (using Dexie.js).
-*   **API Keys:** If you input custom API keys, they are stored securely on your device or passed securely through HTTPS headers.
+*   **API Keys:** If you input custom API keys, they are stored on your device and are transmitted to the respective third-party integration endpoints (such as WeatherStack, AviationStack, OpenRouteService, etc.) to fetch the requested weather, flight, and routing data.
 
 ### C. Live Intelligence Services
 To fetch flight tracking data and real-time weather forecasts, RouteMate interacts with third-party service providers (WeatherStack and AviationStack). We do not transmit your personal Google profile data to these services.
