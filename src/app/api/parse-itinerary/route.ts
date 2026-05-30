@@ -170,7 +170,6 @@ export async function POST(req: Request) {
       const result = await processResponse(response, `${item.provider}:${item.model}`);
       if (result.success) {
         content = result.content!;
-        console.log(`--- Extraction Success --- Provider: ${item.provider}, Model: ${item.model}`);
         break;
       } else {
         lastError = result.error!;

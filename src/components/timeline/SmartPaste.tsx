@@ -71,8 +71,7 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
       });
 
       const data = await response.json();
-      console.log('--- Extraction Result ---', data);
-      
+
       if (response.ok && data.points && data.points.length > 0) {
         let successCount = 0;
         for (const point of data.points) {
@@ -93,13 +92,13 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
           let minDate = activeTrip.startDate || '';
           let maxDate = activeTrip.endDate || '';
           let changed = false;
-          const addedDates: string[] = [];
+          const addedDates = new Set<string>();
           
           for (const point of data.points) {
             const pointStart = point.startTime.split('T')[0];
             const pointEnd = point.endTime.split('T')[0];
             
-            if (!addedDates.includes(pointStart)) addedDates.push(pointStart);
+            addedDates.add(pointStart);
             
             // Extend Start Date backwards
             if (!minDate || pointStart < minDate) {
@@ -117,7 +116,7 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
           // Expand the new days
           useTripStore.getState().setExpandedDays([
             ...useTripStore.getState().expandedDays,
-            ...addedDates
+            ...Array.from(addedDates)
           ]);
 
           if (changed) {

@@ -148,10 +148,11 @@ export const useTripStore = create<TripState>((set, get) => ({
         });
         
         const points = await db.itineraryItems.where('tripId').equals(id).toArray();
-        const newPoints = points.map(({ id: unused, ...item }) => ({
-          ...item,
-          tripId: newTripId as number
-        }));
+        const newPoints = points.map((item) => {
+          const newItem = { ...item, tripId: newTripId as number };
+          delete newItem.id;
+          return newItem;
+        });
         
         await db.itineraryItems.bulkAdd(newPoints);
       });
@@ -250,11 +251,7 @@ export const useTripStore = create<TripState>((set, get) => ({
       }));
       
       await db.transaction('rw', db.itineraryItems, async () => {
-        for (const p of updates) {
-          if (p.id) {
-            await db.itineraryItems.update(p.id, { sortOrder: p.sortOrder });
-          }
-        }
+        await db.itineraryItems.bulkPut(updates);
       });
 
       set({ points: updates });
