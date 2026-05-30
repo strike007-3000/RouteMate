@@ -73,6 +73,11 @@ export default function TimelinePage() {
     // Ensure start and end are pinned to local 00:00 for stable iteration
     const start = startOfDay(parseISO(trip.startDate));
     const end = startOfDay(parseISO(trip.endDate));
+    
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return [];
+    }
+    
     const totalDays = Math.max(1, differenceInDays(end, start) + 1);
     
     return Array.from({ length: totalDays }).map((_, i) => {
@@ -108,9 +113,9 @@ export default function TimelinePage() {
       const tripStart = startOfDay(parseISO(trip.startDate));
       const tripEnd = startOfDay(parseISO(trip.endDate));
       
-      if (today >= tripStart && today <= tripEnd) {
+      if (!isNaN(tripStart.getTime()) && !isNaN(tripEnd.getTime()) && today >= tripStart && today <= tripEnd) {
         setExpandedDays([today.toISOString().split('T')[0]]);
-      } else {
+      } else if (groupedTimeline[0]?.date) {
         setExpandedDays([groupedTimeline[0].date.split('T')[0]]);
       }
       initializationRef.current = tripId;

@@ -50,16 +50,20 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
       
       const apiOpenRouterKey = devOpenRouterKey || openRouterApiKey;
       const apiGroqKey = devGroqKey || groqApiKey;
-      const finalPreferredAi = devPreferredAi || preferredAiProvider || 'OpenRouter';
+      const finalPreferredAi = devPreferredAi || preferredAiProvider || '';
+
+      const headers: Record<string, string> = { 
+        'Content-Type': 'application/json',
+        'x-user-openrouter-key': apiOpenRouterKey || '',
+        'x-user-groq-key': apiGroqKey || '',
+      };
+      if (finalPreferredAi) {
+        headers['x-preferred-ai'] = finalPreferredAi;
+      }
 
       const response = await fetch('/api/parse-itinerary', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-user-openrouter-key': apiOpenRouterKey || '',
-          'x-user-groq-key': apiGroqKey || '',
-          'x-preferred-ai': finalPreferredAi
-        },
+        headers,
         body: JSON.stringify({ 
           text,
           rootYear
@@ -86,8 +90,8 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
 
         // Auto-expand and adaptive dates
         if (activeTrip && activeTrip.id) {
-          let minDate = activeTrip.startDate;
-          let maxDate = activeTrip.endDate;
+          let minDate = activeTrip.startDate || '';
+          let maxDate = activeTrip.endDate || '';
           let changed = false;
           const addedDates: string[] = [];
           
@@ -98,13 +102,13 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
             if (!addedDates.includes(pointStart)) addedDates.push(pointStart);
             
             // Extend Start Date backwards
-            if (pointStart < minDate) {
+            if (!minDate || pointStart < minDate) {
               minDate = pointStart;
               changed = true;
             }
             
             // Extend End Date forwards
-            if (pointEnd > maxDate) {
+            if (!maxDate || pointEnd > maxDate) {
               maxDate = pointEnd;
               changed = true;
             }

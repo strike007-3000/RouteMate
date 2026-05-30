@@ -2,7 +2,10 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { text, rootYear = "2026" } = await req.json();
+    let { text, rootYear = "2026" } = await req.json();
+    if (!/^\d{4}$/.test(String(rootYear))) {
+      rootYear = new Date().getFullYear().toString();
+    }
 
     if (!text) {
       return NextResponse.json({ error: 'No text provided' }, { status: 400 });
@@ -212,18 +215,22 @@ export async function POST(req: Request) {
         let startTime = typeof p.startTime === 'string' ? p.startTime : '';
         let endTime = typeof p.endTime === 'string' ? p.endTime : '';
         
-        const startD = new Date(startTime);
+        let startD = new Date(startTime);
         if (isNaN(startD.getTime())) {
-          startTime = `${rootYear}-01-01T12:00:00Z`;
-        } else {
-          startTime = startD.toISOString();
+          const fallbackYear = /^\d{4}$/.test(String(rootYear)) ? rootYear : new Date().getFullYear();
+          startTime = `${fallbackYear}-01-01T12:00:00Z`;
+          startD = new Date(startTime);
         }
+        startTime = isNaN(startD.getTime()) ? new Date().toISOString() : startD.toISOString();
 
-        const endD = new Date(endTime);
+        let endD = new Date(endTime);
         if (isNaN(endD.getTime())) {
           endTime = startTime;
         } else {
           endTime = endD.toISOString();
+          if (isNaN(new Date(endTime).getTime())) {
+            endTime = startTime;
+          }
         }
 
         return {

@@ -22,6 +22,16 @@ export const TripHero = ({ trip, mode, onAction }: TripHeroProps) => {
   const metadata = useMemo(() => {
     const start = parseISO(trip.startDate);
     const end = parseISO(trip.endDate);
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return {
+        dateRange: "TBD - TBD",
+        duration: "TBD",
+        cost: "TBD (EST. COST)",
+        countdown: "DATE NOT CONFIGURED"
+      };
+    }
+
     const now = startOfDay(new Date());
     const tripStart = startOfDay(start);
     const tripEnd = startOfDay(end);

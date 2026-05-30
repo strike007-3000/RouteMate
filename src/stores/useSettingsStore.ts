@@ -7,13 +7,13 @@ interface SettingsState {
   hereApiKey: string;
   orsApiKey: string;
   unsplashAccessKey: string;
-  preferredAiProvider: 'OpenRouter' | 'Groq';
+  preferredAiProvider: 'OpenRouter' | 'Groq' | '';
   setOpenRouterApiKey: (key: string) => void;
   setGroqApiKey: (key: string) => void;
   setHereApiKey: (key: string) => void;
   setOrsApiKey: (key: string) => void;
   setUnsplashAccessKey: (key: string) => void;
-  setPreferredAiProvider: (provider: 'OpenRouter' | 'Groq') => void;
+  setPreferredAiProvider: (provider: 'OpenRouter' | 'Groq' | '') => void;
   clearAllKeys: () => void;
 }
 
@@ -25,7 +25,7 @@ export const useSettingsStore = create<SettingsState>()(
       hereApiKey: '',
       orsApiKey: '',
       unsplashAccessKey: '',
-      preferredAiProvider: 'OpenRouter',
+      preferredAiProvider: '',
       setOpenRouterApiKey: (key) => set({ openRouterApiKey: key }),
       setGroqApiKey: (key) => set({ groqApiKey: key }),
       setHereApiKey: (key) => set({ hereApiKey: key }),
@@ -38,7 +38,7 @@ export const useSettingsStore = create<SettingsState>()(
         hereApiKey: '', 
         orsApiKey: '', 
         unsplashAccessKey: '',
-        preferredAiProvider: 'OpenRouter'
+        preferredAiProvider: ''
       }),
     }),
 

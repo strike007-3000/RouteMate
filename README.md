@@ -81,7 +81,7 @@ graph TD
    # AI Providers
    OPENROUTER_API_KEY=your_key
    GROQ_API_KEY=your_key
-   PRIMARY_AI_PROVIDER=OpenRouter # Or Groq
+   PRIMARY_AI_PROVIDER=OpenRouter # Or Groq (defaults to OpenRouter if unset)
 
    # Imaging & Logistics
    UNSPLASH_ACCESS_KEY=your_key
@@ -91,6 +91,7 @@ graph TD
    WEATHERSTACK_API_KEY=your_key
    AVIATIONSTACK_API_KEY=your_key
    ```
+   *Note: `PRIMARY_AI_PROVIDER` controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default.*
 3. **Pre-flight Integrity Check**:
    Before deploying or testing, verify your configuration and AI logic:
    ```bash
