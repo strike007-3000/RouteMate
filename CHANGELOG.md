@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.6.0](https://github.com/strike007-3000/RouteMate/compare/v3.5.0...v3.6.0) (2026-05-30)
+
+
+### Features
+
+* migrate authentication to Clerk, add proxy.ts, clean up old endpoints ([3715881](https://github.com/strike007-3000/RouteMate/commit/37158818b02921ed240bb7ac2034d8f414b411fa))
+
+
+### Bug Fixes
+
+* **build:** correct NextRequest import and wrap verify page in Suspense boundary ([07bb317](https://github.com/strike007-3000/RouteMate/commit/07bb3170816715dca4acd37336c3ab82fe5fb847))
+* **settings:** migrate legacy preferredAiProvider default to empty string ([1105eae](https://github.com/strike007-3000/RouteMate/commit/1105eae5f85fa6221226de7de229e10a09924f27))
+* **smart-paste:** resolve date parsing crashes and preference overrides ([0029714](https://github.com/strike007-3000/RouteMate/commit/002971499327df308ec6ac2625259e7f20b68070))
+* **smart-paste:** resolve date parsing crashes and preference overrides ([a117a7f](https://github.com/strike007-3000/RouteMate/commit/a117a7f082a892bfc00d81ce3712dc737f66ede3))
+
 ## [3.5.0](https://github.com/strike007-3000/RouteMate/compare/v3.4.0...v3.5.0) (2026-05-30)
 
 
