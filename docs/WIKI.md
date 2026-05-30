@@ -33,8 +33,8 @@ To enforce the application's premium dark mode aesthetics, RouteMate uses embedd
   - **Login Route**: `/login` (renders `<SignIn />` component)
   - **Signup Route**: `/signup` (renders `<SignUp />` component)
 - **Visual Overrides**: Both pages share custom layout styling wrapped in a dark container with background ambient radial glows (`bg-primary/20` and `blue-500/10`) and micro-animations (Framer Motion).
-- **Component Styling**: Styled using Clerk's appearance configuration:
-  - **Card Container**: Custom `bg-zinc-950`, `border-white/10`, `rounded-[24px]` radius.
+- **Component Styling**: Styled using Clerk's appearance configuration (aligned with the Stitch Design System):
+  - **Card Container**: Glassmorphic styling (`!bg-zinc-950/60`, `backdrop-blur-xl`, `border-white/5`, `rounded-[24px]` radius, `!shadow-none`).
   - **Primary Buttons**: Custom `.btn-primary` overrides, presenting a sleek, borders-only button styling.
   - **Social Providers**: Configured for Google Sign-In with customized dark buttons.
 - **Routing Configuration**: The login and signup redirects are configured both code-side (in `.env`) and in the Clerk Dashboard under **Component paths** to point to:
