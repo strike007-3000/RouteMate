@@ -34,25 +34,25 @@ export async function POST(req: Request) {
         highlights: [
           {
             title: `${capitalizedCity} City Center`,
-            description: `Walk through the historic central square of ${capitalizedCity}, featuring iconic monuments, bustling markets, and historical architectures.`,
+            description: `Explore the historic central square of ${capitalizedCity}.`,
             category: 'Activity',
             address: 'Downtown'
           },
           {
             title: 'The Grand Boulevard',
-            description: 'Stroll down the primary avenue famed for local shops, cafes, and historic street art.',
+            description: 'Stroll down the primary avenue famed for local shops and cafes.',
             category: 'Activity',
             address: 'Main Avenue'
           },
           {
             title: 'Local Delights Tavern',
-            description: `A highly-rated classic eatery serving traditional dishes and street food authentic to ${capitalizedCity}.`,
+            description: `A classic eatery serving traditional dishes authentic to ${capitalizedCity}.`,
             category: 'Food',
             address: 'Culinary Lane'
           },
           {
             title: 'Scenic Panorama Overlook',
-            description: `The best high-ground vantage point to view the skyline of ${capitalizedCity}, especially during sunset.`,
+            description: `Vantage point offering beautiful views of the skyline.`,
             category: 'Activity',
             address: 'Summit Peak'
           }
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
       "highlights": [
         {
           "title": "Name of Landmark or Activity",
-          "description": "1-2 sentences about what makes it famous and why a traveler must visit it.",
+          "description": "A concise, single-sentence description of what makes it famous (around 12-18 words max).",
           "category": "Activity", // Must be exactly "Activity" or "Food"
           "address": "General location or address"
         }
