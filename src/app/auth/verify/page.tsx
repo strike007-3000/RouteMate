@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Sparkles, Loader2 } from 'lucide-react';
 
-export default function VerifyPage() {
+function VerifyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -48,5 +48,17 @@ export default function VerifyPage() {
         </motion.div>
       </div>
     </main>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-black flex items-center justify-center font-sans">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </main>
+    }>
+      <VerifyContent />
+    </Suspense>
   );
 }
