@@ -27,8 +27,8 @@ RouteMate is built on a hybrid architecture that balances local-first performanc
 | **AviationStack** | Live Flight Tracking | `AVIATIONSTACK_API_KEY` |
 
 ### 0.3 Authentication Design & Identity
-To enforce the application's premium dark mode aesthetics, the embedded Clerk `<SignIn />` component utilizes `@clerk/themes`'s standard `dark` base theme combined with granular, custom style overrides. 
-- **Card Styling**: Customized using the `appearance` property with Tailwind classes to apply the RouteMate standard `bg-zinc-950`, `border-white/10`, and `rounded-[24px]` radius.
+To enforce the application's premium dark mode aesthetics, the embedded Clerk `<SignIn />` component utilizes `@clerk/ui/themes`'s standard `dark` theme combined with granular, custom style overrides. 
+- **Card Styling**: Customized using the `appearance` property with Tailwind classes to apply the RouteMate standard `bg-zinc-950`, `border-white/10`, and `rounded-[24px]` radius, configured under `appearance.theme`.
 - **Interactive Elements**: Input fields utilize matching black backgrounds and clean border-color indicators, while the primary action buttons override standard Clerk buttons with the custom, gold/themed `.btn-primary` standard layouts.
 
 ---

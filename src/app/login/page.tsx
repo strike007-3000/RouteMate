@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { SignIn } from '@clerk/nextjs';
-import { dark } from '@clerk/themes';
+import { dark } from '@clerk/ui/themes';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
@@ -37,7 +37,7 @@ export default function LoginPage() {
         >
           <SignIn 
             appearance={{
-              baseTheme: dark,
+              theme: dark,
               elements: {
                 rootBox: "w-full",
                 card: "bg-zinc-950 border border-white/10 rounded-[24px] shadow-2xl text-white",

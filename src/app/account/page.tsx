@@ -78,8 +78,6 @@ export default function AccountPage() {
     };
   });
 
-  // useEffect removed to avoid cascading renders; initialization handled by useState lazy initializer.
-
   const handleDevKeyChange = (key: keyof typeof devKeys, value: string) => {
     setDevKeys(prev => ({ ...prev, [key]: value }));
     localStorage.setItem(`dev_${key}_key`, value);
