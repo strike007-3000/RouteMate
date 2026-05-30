@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    let { text, rootYear = "2026" } = await req.json();
+    const body = await req.json();
+    const { text } = body;
+    let { rootYear = "2026" } = body;
     if (!/^\d{4}$/.test(String(rootYear))) {
       rootYear = new Date().getFullYear().toString();
     }
@@ -151,7 +153,7 @@ export async function POST(req: Request) {
 
     const clientPreference = req.headers.get('x-preferred-ai');
     const serverPreference = process.env.PRIMARY_AI_PROVIDER;
-    const primaryProvider = clientPreference || serverPreference || 'OpenRouter';
+    const primaryProvider = clientPreference || serverPreference || 'Groq';
 
     const queue = [...baseQueue].sort((a, b) => {
       if (a.provider === primaryProvider && b.provider !== primaryProvider) return -1;
@@ -222,7 +224,7 @@ export async function POST(req: Request) {
         }
         startTime = isNaN(startD.getTime()) ? new Date().toISOString() : startD.toISOString();
 
-        let endD = new Date(endTime);
+        const endD = new Date(endTime);
         if (isNaN(endD.getTime())) {
           endTime = startTime;
         } else {

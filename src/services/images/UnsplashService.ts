@@ -46,6 +46,35 @@ export class UnsplashService {
     }
   }
 
+  static async getCityImage(query: string, userKey?: string): Promise<string> {
+    const devKey = typeof window !== 'undefined' ? localStorage.getItem('dev_unsplash_key') : null;
+    const key = userKey || devKey || this.ACCESS_KEY;
+    
+    if (!key || key === 'your_unsplash_access_key' || key === '') {
+      return this.getPlaceholder(query);
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query + ' landmark scenery tourism')}&orientation=landscape&per_page=5&content_filter=high&featured=true`,
+        {
+          headers: {
+            Authorization: `Client-ID ${key}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error(`Unsplash API failed: ${response.status}`);
+
+      const data = await response.json();
+      const results = data.results || [];
+      return results[0]?.urls?.regular || results[1]?.urls?.regular || this.getPlaceholder(query);
+    } catch (error) {
+      console.error('Unsplash City Image Error:', error);
+      return this.getPlaceholder(query);
+    }
+  }
+
   static getPlaceholder(query: string): string {
     // Return a high-quality, reliable scenic placeholder if everything else fails
     const fallbacks = [
