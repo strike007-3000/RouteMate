@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { GeolocationProvider } from "@/components/layout/GeolocationProvider";
+import { AuthProvider } from "@/components/layout/AuthProvider";
 
 export default function RootLayout({
   children,
@@ -35,9 +36,11 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <GeolocationProvider>
-          <div className="flex-1 w-full max-w-[500px] mx-auto bg-black relative flex flex-col min-h-screen">
-            {children}
-          </div>
+          <AuthProvider>
+            <div className="flex-1 w-full max-w-[500px] mx-auto bg-black relative flex flex-col min-h-screen">
+              {children}
+            </div>
+          </AuthProvider>
         </GeolocationProvider>
       </body>
     </html>

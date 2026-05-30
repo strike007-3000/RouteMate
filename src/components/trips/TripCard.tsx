@@ -18,6 +18,12 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
+  const formatDateSafe = (dateStr: string | undefined | null) => {
+    if (!dateStr) return 'TBD';
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? 'TBD' : d.toLocaleDateString();
+  };
+
   const imageUrl = hasError 
     ? 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1000'
     : (trip.coverImage || '');
@@ -149,7 +155,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 text-[10px] text-zinc-300 font-bold uppercase tracking-[0.2em] drop-shadow-md">
               <Calendar className="w-4 h-4 text-primary" />
-              <span>{new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}</span>
+              <span>{formatDateSafe(trip.startDate)} - {formatDateSafe(trip.endDate)}</span>
             </div>
             
             {/* Minimal Arrow on hover */}
