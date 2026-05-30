@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useTripStore } from '@/stores/useTripStore';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, ItineraryItem } from '@/lib/db';
@@ -13,7 +13,7 @@ import { TransitCard } from '@/components/timeline/TransitCard';
 import { SmartPaste } from '@/components/timeline/SmartPaste';
 import { Timeline } from '@/components/timeline/Timeline';
 import { BentoGrid } from '@/components/dashboard/BentoGrid';
-import { format, parseISO, differenceInDays, startOfDay, addDays, isSameDay } from 'date-fns';
+import { format, parseISO, differenceInDays, startOfDay, addDays } from 'date-fns';
 import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion';
 import { Sparkles, Calendar } from 'lucide-react';
 import { TripHero } from '@/components/trip/TripHero';
@@ -45,9 +45,8 @@ const TimelineReorderItem = ({ item, prevItem, nextItem }: { item: ItineraryItem
 export default function TimelinePage() {
   const { id } = useParams();
   const tripId = Number(id);
-  const router = useRouter();
   
-  const { activeTrip, setActiveTrip, expandedDays, toggleDay, setExpandedDays, sortItinerary, viewMode, setViewMode } = useTripStore();
+  const { setActiveTrip, expandedDays, toggleDay, setExpandedDays, sortItinerary, viewMode, setViewMode } = useTripStore();
   const [isSmartAddOpen, setIsSmartAddOpen] = useState(false);
   const initializationRef = React.useRef<number | null>(null);
   
@@ -59,10 +58,11 @@ export default function TimelinePage() {
   }, [tripId, setActiveTrip]);
 
   const trip = useLiveQuery(() => db.trips.get(tripId), [tripId]);
-  const points = useLiveQuery(
+  const livePoints = useLiveQuery(
     () => db.itineraryItems.where('tripId').equals(tripId).toArray(),
     [tripId]
-  ) || [];
+  );
+  const points = useMemo(() => livePoints || [], [livePoints]);
 
   // Group items by date using the store's unified sorting logic
   const sortedAllPoints = useMemo(() => sortItinerary(points), [points, sortItinerary]);
@@ -130,8 +130,6 @@ export default function TimelinePage() {
       
       <TripHero 
         trip={trip} 
-        mode="timeline" 
-        onAction={() => setIsSmartAddOpen(true)} 
       />
 
       <section className="relative z-10 -mt-8 mb-4">
@@ -177,7 +175,6 @@ export default function TimelinePage() {
                   categories={day.items.map(item => item.category)}
                   isExpanded={isExpanded}
                   onToggle={() => toggleDay(dateStr)}
-                  trip={trip}
                   location={day.items[0]?.address || trip.destination}
                 />
                 

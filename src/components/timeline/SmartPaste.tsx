@@ -6,8 +6,7 @@ import { Sparkles, X, Loader2, CheckCircle2, AlertCircle, Plane, Hotel, Train, U
 import { useTripStore } from '@/stores/useTripStore';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 import { cn } from '@/lib/utils';
-import { db, Trip } from '@/lib/db';
-import { UnsplashService } from '@/services/images/UnsplashService';
+import { db } from '@/lib/db';
 import { Toast } from '../layout/Toast';
 
 export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
@@ -145,7 +144,7 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
         // Reset to active state after a brief moment so user can retry
         setTimeout(() => setStatus('idle'), 2000);
       }
-    } catch (err) {
+    } catch {
       setErrorMessage('Network error. Please try again.');
       setStatus('error');
       setTimeout(() => setStatus('idle'), 2000);

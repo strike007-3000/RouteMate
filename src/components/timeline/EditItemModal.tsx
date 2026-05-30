@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, Plane, Hotel, MapPin, Hash } from 'lucide-react';
+import { X, Save, Plane, Hash } from 'lucide-react';
 import { useTripStore } from '@/stores/useTripStore';
 import { ItineraryItem } from '@/lib/db';
 

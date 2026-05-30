@@ -10,12 +10,9 @@ import { Timeline } from '@/components/timeline/Timeline';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { SmartPaste } from '@/components/timeline/SmartPaste';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
-import { format, parseISO } from 'date-fns';
-import { Calendar } from 'lucide-react';
 
 export default function TripPage() {
   const { id } = useParams();
@@ -41,7 +38,7 @@ export default function TripPage() {
     <main className="min-h-screen bg-black pb-32 flex flex-col relative overflow-x-hidden max-w-[500px] mx-auto">
       <Header />
       
-      <TripHero trip={activeTrip} mode="dashboard" />
+      <TripHero trip={activeTrip} />
 
       <section className="relative z-10 mt-4">
         <BentoGrid onOpenSmartAdd={() => setIsSmartAddOpen(true)} />

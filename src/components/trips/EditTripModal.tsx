@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, Calendar, Save, Sparkles } from 'lucide-react';
+import { X, MapPin, Calendar, Save } from 'lucide-react';
 import { db, Trip } from '@/lib/db';
-import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 interface EditTripModalProps {

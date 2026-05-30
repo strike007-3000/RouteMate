@@ -31,7 +31,6 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
   
   const [showOpenRouterKey, setShowOpenRouterKey] = useState(false);
   const [showGroqKey, setShowGroqKey] = useState(false);
-  const [showHereKey, setShowHereKey] = useState(false);
   const [showOrsKey, setShowOrsKey] = useState(false);
   const [showUnsplashKey, setShowUnsplashKey] = useState(false);
   const [isSaved, setIsSaved] = useState(false);

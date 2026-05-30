@@ -6,7 +6,6 @@ export class MockProvider implements TransitProvider {
 
   async getRoute(from: TripPoint, to: TripPoint): Promise<TransitSuggestion | null> {
     const fromText = (from.title + ' ' + from.address).toLowerCase();
-    const toText = (to.title + ' ' + to.address).toLowerCase();
 
     // Heuristics moved from transit.ts
     if (fromText.includes('airport') || fromText.includes('lhr') || fromText.includes('jfk')) {

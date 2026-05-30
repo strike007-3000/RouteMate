@@ -15,8 +15,6 @@ const categoryIcons = {
   Rental: Car
 };
 
-import { useTripStore } from '@/stores/useTripStore';
-import { Trip } from '@/lib/db';
 import { WeatherWidget } from './WeatherWidget';
 
 interface TimelineHeaderProps {
@@ -25,7 +23,6 @@ interface TimelineHeaderProps {
   categories: string[];
   isExpanded: boolean;
   onToggle: () => void;
-  trip?: Trip;
   location?: string;
 }
 
@@ -35,7 +32,6 @@ export const TimelineHeader = ({
   categories, 
   isExpanded, 
   onToggle,
-  trip,
   location
 }: TimelineHeaderProps) => {
   const formattedDate = format(parseISO(date), 'EEEE, MMM do');

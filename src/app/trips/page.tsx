@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Globe, Plane, Navigation } from 'lucide-react';
+import { Plus, Plane } from 'lucide-react';
 import { useTripStore } from '@/stores/useTripStore';
 import { TripCard } from '@/components/trips/TripCard';
 import { useRouter } from 'next/navigation';
@@ -20,7 +20,8 @@ export default function Dashboard() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-  const trips = useLiveQuery(() => db.trips.toArray(), []) || [];
+  const liveTrips = useLiveQuery(() => db.trips.toArray(), []);
+  const trips = useMemo(() => liveTrips || [], [liveTrips]);
   const { unsplashAccessKey } = useSettingsStore();
   
   // Dashboard Fetcher: Background fetch images for trips missing them
@@ -35,7 +36,6 @@ export default function Dashboard() {
   }, [trips, unsplashAccessKey]);
 
   const upcomingTrips = trips.filter(t => t.status === 'upcoming');
-  const pastTrips = trips.filter(t => t.status === 'past');
   const draftTrips = trips.filter(t => t.status === 'draft');
 
   const handleSelect = (id: number) => {
