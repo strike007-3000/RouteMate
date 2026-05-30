@@ -178,3 +178,26 @@ Environment variables follow the `NEXT_PUBLIC_` prefix convention where client-s
 ### 8.4 Deterministic ID Generation
 All transient itinerary items and transit suggestions use `crypto.randomUUID()` for ID generation. This ensures enterprise-grade collision resistance compared to `Math.random()`, which is critical for local IndexedDB stability.
 
+---
+
+## 9. Explore Screen & Hybrid AI Discovery Engine (v3.9)
+
+RouteMate v3.9 introduces a hybrid travel discovery and itinerary builder interface.
+
+### 9.1 Database Store Migration (v7)
+To support caching AI-discovered destinations locally, the database schema (Dexie.js) is migrated to version `7`. It defines the `destinations` table:
+- **Index Definition**: `destinations: 'id, name, country, category'`
+- **Attributes**: `id` (slug), `name`, `country`, `image` (dynamic Unsplash URL), `description`, `tags`, `category` (`Cities` | `Beaches` | `Nature` | `Culture`), and `highlights` (a nested array of `HighlightItem` points of interest).
+
+### 9.2 API Discovery Endpoint
+The POST endpoint `/api/explore-city` handles dynamic AI curations of un-seeded locations:
+- **Load Balancing**: The execution queue prioritize **OpenRouter** models (`openrouter/free`, `meta-llama/llama-3.3-70b-instruct:free`, `google/gemma-3-27b-it:free`) to balance the developer keys, while the **Smart Paste** (`/api/parse-itinerary`) endpoint defaults to **Groq** models.
+- **Structured System Prompt**: Commands the model to strictly generate a valid JSON matching the client's `Destination` interface.
+- **Resilient Fallback**: Gracefully parses and defaults fields like `tags` and `category` to prevent UI parsing crashes. It also includes support for `MOCK_MODE` to allow full testing without live network calls.
+
+### 9.3 Custom Itinerary Generation (Date & Vibe Wizard)
+A wizard component parses user-selected dates and vibe tags (e.g. `Chill`, `Adventure`, `Foodie`, `Culture & History`) to automatically generate a trip outline.
+- **Prompt Translation**: Builds a text prompt embedding selected dates and destination highlights. It maps this text request to `/api/parse-itinerary`.
+- **Database Entry**: Inserts the new trip and generated itinerary activities into IndexedDB, then navigates the user to their new itinerary.
+
+

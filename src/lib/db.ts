@@ -23,10 +23,29 @@ export interface ItineraryItem extends TripPoint {
   };
 }
 
+export interface HighlightItem {
+  title: string;
+  description: string;
+  category: 'Flight' | 'Lodging' | 'Train' | 'Food' | 'Activity' | 'Rental';
+  address: string;
+}
+
+export interface Destination {
+  id: string;
+  name: string;
+  country: string;
+  image: string;
+  description: string;
+  tags: string[];
+  category: 'Cities' | 'Beaches' | 'Nature' | 'Culture';
+  highlights: HighlightItem[];
+}
+
 export class RouteMateDatabase extends Dexie {
   trips!: Table<Trip>;
   itineraryItems!: Table<ItineraryItem>;
   favorites!: Table<Favorite>;
+  destinations!: Table<Destination>;
   points!: Table<TripPoint>; // Kept for v1 migration
   
   constructor() {
@@ -76,6 +95,13 @@ export class RouteMateDatabase extends Dexie {
       trips: '++id, name, destination, startDate, status',
       itineraryItems: '++id, tripId, type, startTime, category, sortOrder, isTimeExplicit',
       favorites: '++id, name, category, image'
+    });
+
+    this.version(7).stores({
+      trips: '++id, name, destination, startDate, status',
+      itineraryItems: '++id, tripId, type, startTime, category, sortOrder, isTimeExplicit',
+      favorites: '++id, name, category, image',
+      destinations: 'id, name, country, category'
     });
   }
 }
