@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, CreditCard, Navigation, Sparkles } from 'lucide-react';
+import { Calendar, Navigation, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, ItineraryItem } from '@/lib/db';
 import { useTripStore } from '@/stores/useTripStore';
-import { format, formatDistanceToNow, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 interface BentoBoxProps {
   title: string;
@@ -66,7 +66,7 @@ export const BentoGrid = ({ onOpenSmartAdd }: { onOpenSmartAdd: () => void }) =>
       try {
         const itemTime = parseISO(p.startTime);
         return itemTime.getTime() > now.getTime();
-      } catch (e) {
+      } catch {
         return false;
       }
     })

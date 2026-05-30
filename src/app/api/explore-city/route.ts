@@ -134,7 +134,7 @@ export async function POST(req: Request) {
       } catch { return null; }
     };
 
-    const processResponse = async (res: Response | null, _modelName: string) => {
+    const processResponse = async (res: Response | null) => {
       if (!res) return { success: false, error: 'Network Error', status: 500 };
       const status = res.status;
       if (!res.ok) {
@@ -180,7 +180,7 @@ export async function POST(req: Request) {
       const response = await item.call(item.model);
       if (!response) continue;
 
-      const result = await processResponse(response, `${item.provider}:${item.model}`);
+      const result = await processResponse(response);
       if (result.success) {
         content = result.content!;
         break;

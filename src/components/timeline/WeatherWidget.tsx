@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { isToday, isTomorrow, parseISO } from 'date-fns';
-import { cn } from '@/lib/utils';
 
 interface WeatherData {
   temp: number;
@@ -45,11 +44,12 @@ export const WeatherWidget = ({ date, location }: { date: string, location: stri
   return (
     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900 border border-white/10 ml-auto shadow-lg shadow-black/50 hover:bg-zinc-800 transition-colors group">
       <div className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center bg-white/5 border border-white/5">
-         <img 
-           src={weather.icon} 
-           alt={weather.desc} 
-           className="w-full h-full object-cover grayscale brightness-150 contrast-125 scale-125 group-hover:scale-110 transition-transform" 
-         />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img 
+          src={weather.icon} 
+          alt={weather.desc} 
+          className="w-full h-full object-cover grayscale brightness-150 contrast-125 scale-125 group-hover:scale-110 transition-transform" 
+        />
       </div>
       <span className="text-[10px] font-black text-white/90 tracking-widest">{weather.temp}°C</span>
     </div>

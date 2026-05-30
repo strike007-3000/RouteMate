@@ -4,11 +4,10 @@ import React from 'react';
 import { useTripStore } from '@/stores/useTripStore';
 import { TimelineItem } from './TimelineItem';
 import { TransitCard } from './TransitCard';
-import { Plus, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, ItineraryItem } from '@/lib/db';
 import { Reorder, motion, useDragControls } from 'framer-motion';
-import { format, isToday, startOfDay } from 'date-fns';
 
 const DraggableItem = ({ point, nextPoint }: { point: ItineraryItem, nextPoint?: ItineraryItem }) => {
   const dragControls = useDragControls();
@@ -29,10 +28,12 @@ const DraggableItem = ({ point, nextPoint }: { point: ItineraryItem, nextPoint?:
 export const Timeline = ({ onOpenSmartAdd, hideHeader = false }: { onOpenSmartAdd: () => void, hideHeader?: boolean }) => {
   const { activeTrip, updatePointOrder } = useTripStore();
   
-  const points = useLiveQuery<ItineraryItem[]>(
+  const livePoints = useLiveQuery<ItineraryItem[]>(
     () => activeTrip?.id ? db.itineraryItems.where('tripId').equals(activeTrip.id).toArray() : Promise.resolve([] as ItineraryItem[]),
     [activeTrip?.id]
-  ) || [];
+  );
+
+  const points = React.useMemo(() => livePoints || [], [livePoints]);
 
   const sortedPoints = React.useMemo(() => 
     points ? useTripStore.getState().sortItinerary(points) : [],

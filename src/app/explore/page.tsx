@@ -353,6 +353,7 @@ Please output this in chronological order.`;
               className="group relative h-96 rounded-[32px] overflow-hidden border border-white/5 shadow-2xl"
             >
               {dest.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img 
                   src={dest.image} 
                   alt={dest.name} 
@@ -534,6 +535,7 @@ Please output this in chronological order.`;
               {/* Image banner */}
               {selectedDestination.image && (
                 <div className="h-48 rounded-[24px] overflow-hidden my-6 border border-white/5 shadow-lg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={selectedDestination.image} 
                     alt={selectedDestination.name} 

@@ -59,7 +59,7 @@ export async function GET(req: Request) {
       delay: flight.departure.delay, // minutes
       estimated: flight.departure.estimated
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch flight status' }, { status: 500 });
   }
 }

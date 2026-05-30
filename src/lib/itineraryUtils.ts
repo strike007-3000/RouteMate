@@ -21,10 +21,8 @@ export const sortItinerary = (points: ItineraryItem[]): ItineraryItem[] => {
     .map(p => p.startTime ? new Date(p.startTime).getTime() : NaN)
     .filter(t => !isNaN(t));
   const minTime = times.length > 0 ? Math.min(...times) : Date.now();
-  const maxTime = times.length > 0 ? Math.max(...times) : Date.now();
   
   const firstDate = format(new Date(minTime), 'yyyy-MM-dd');
-  const lastDate = format(new Date(maxTime), 'yyyy-MM-dd');
 
   // Find Home Base once
   let homeBase: string | undefined;

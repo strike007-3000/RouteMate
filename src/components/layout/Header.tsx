@@ -1,23 +1,13 @@
 'use client';
 
 import React from 'react';
-import { ChevronLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useParams, useRouter, usePathname } from 'next/navigation';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '@/lib/db';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 export const Header = () => {
-  const router = useRouter();
   const pathname = usePathname();
-  const { id } = useParams();
-  const tripId = Number(id);
-  
-  const activeTrip = useLiveQuery(() => db.trips.get(tripId || -1), [tripId]);
 
   const isSubRoute = pathname.includes('/trip/') || pathname.includes('/explore/') || pathname.includes('/timeline/');
-  const isDashboard = pathname === '/trips' || pathname === '/';
 
   // Determine Title based on current architecture
   let title = 'My Trips';

@@ -29,7 +29,7 @@ export async function GET(req: Request) {
       icon: data.current?.weather_icons?.[0] || '',
       desc: data.current?.weather_descriptions?.[0] || 'Unknown'
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch weather' }, { status: 500 });
   }
 }

@@ -26,14 +26,6 @@ export interface TripPoint {
   metadata?: TravelMetadata;
 }
 
-const CATEGORY_DEFAULTS = {
-  CHECK_OUT: 10,       // 10:00 AM
-  FLIGHT_DEPARTURE: 11, // 11:00 AM
-  ACTIVITY: 13,        // 01:00 PM
-  FLIGHT_ARRIVAL: 16,  // 04:00 PM
-  CHECK_IN: 18,       // 06:00 PM
-};
-
 interface TripState {
   trips: Trip[];
   activeTrip: Trip | null;

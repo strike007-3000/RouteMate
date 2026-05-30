@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { differenceInHours, parseISO, format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Loader2, Info, Check, Search } from 'lucide-react';
+import { Loader2, Info } from 'lucide-react';
 import { useTripStore } from '@/stores/useTripStore';
 
 interface FlightStatus {
@@ -41,7 +41,7 @@ export const FlightStatusWidget = ({
   const hoursToFlight = differenceInHours(parseISO(startTime), new Date());
   const isWithin24Hours = hoursToFlight >= -2 && hoursToFlight <= 24;
 
-  const fetchStatus = async (targetFlight?: string) => {
+  const fetchStatus = useCallback(async (targetFlight?: string) => {
     const flightToSearch = targetFlight || flightNumber;
     if (!flightToSearch) return;
 
@@ -60,9 +60,9 @@ export const FlightStatusWidget = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [flightNumber]);
 
-  const searchFlightsByRoute = async () => {
+  const searchFlightsByRoute = useCallback(async () => {
     if (!departureAirport || !arrivalAirport) return;
     
     setSearching(true);
@@ -85,12 +85,11 @@ export const FlightStatusWidget = ({
     } finally {
       setSearching(false);
     }
-  };
+  }, [departureAirport, arrivalAirport, startTime]);
 
   useEffect(() => {
     if (!isWithin24Hours) return;
     
-    let isMounted = true;
     const trigger = async () => {
       if (flightNumber) {
         await fetchStatus();
@@ -100,8 +99,7 @@ export const FlightStatusWidget = ({
     };
 
     trigger();
-    return () => { isMounted = false; };
-  }, [flightNumber, startTime, isWithin24Hours, departureAirport, arrivalAirport]);
+  }, [flightNumber, isWithin24Hours, departureAirport, arrivalAirport, fetchStatus, searchFlightsByRoute]);
 
   const handleSelectFlight = async (flight: FlightStatus) => {
     if (!flight.flightNumber) return;

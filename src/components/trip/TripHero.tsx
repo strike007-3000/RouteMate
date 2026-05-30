@@ -1,22 +1,18 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { format, parseISO, differenceInDays, startOfDay, isToday, isBefore, isAfter } from 'date-fns';
 import { Trip } from '@/lib/db';
-import { Calendar, Euro, Clock, Compass, Sparkles, MapPin, PencilLine } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import { Calendar, PencilLine } from 'lucide-react';
 import { EditTripModal } from '../trips/EditTripModal';
 
 interface TripHeroProps {
   trip: Trip;
-  mode: 'dashboard' | 'timeline';
-  onAction?: () => void;
 }
 
-export const TripHero = ({ trip, mode, onAction }: TripHeroProps) => {
-  const router = useRouter();
+export const TripHero = ({ trip }: TripHeroProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   
   const metadata = useMemo(() => {
@@ -59,14 +55,6 @@ export const TripHero = ({ trip, mode, onAction }: TripHeroProps) => {
       countdown
     };
   }, [trip]);
-
-  const handlePrimaryAction = () => {
-    if (mode === 'dashboard') {
-      router.push(`/trip/${trip.id}/timeline`);
-    } else if (onAction) {
-      onAction();
-    }
-  };
 
   return (
     <div className="relative w-full h-[40vh] min-h-[350px] max-h-[500px] overflow-hidden flex flex-col items-center justify-end pb-12 px-[var(--gutter,24px)] group/hero rounded-[2.5rem] shadow-2xl border border-white/5">

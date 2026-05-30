@@ -4,15 +4,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   User, 
-  MapPin, 
   ChevronRight, 
   Settings, 
   Globe, 
   Bell, 
   Shield, 
   LogOut,
-  CreditCard,
-  History,
   Sparkles
 } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -21,12 +18,10 @@ import { BottomNav } from '@/components/layout/BottomNav';
 import { Header } from '@/components/layout/Header';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { useRouter } from 'next/navigation';
 import { useClerk } from '@clerk/nextjs';
 
 export default function AccountPage() {
-  const { user, logout, isLoggedIn } = useAuthStore();
-  const router = useRouter();
+  const { user, logout } = useAuthStore();
   const { signOut } = useClerk();
   const tripCount = useLiveQuery(() => db.trips.count(), []) ?? 0;
   const favoriteCount = useLiveQuery(() => db.favorites.count(), []) ?? 0;
@@ -98,6 +93,7 @@ export default function AccountPage() {
           >
             <div className="w-full h-full rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center relative overflow-hidden">
               {user?.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
               ) : (
                 <User className="w-1/2 h-1/2 text-zinc-700" />

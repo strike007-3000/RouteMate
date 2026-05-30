@@ -101,7 +101,7 @@ export async function POST(req: Request) {
             temperature: 0.1,
           }),
         });
-      } catch (e) { return null; }
+      } catch { return null; }
     };
 
     const callGroq = async (targetModel: string) => {
@@ -120,10 +120,10 @@ export async function POST(req: Request) {
             temperature: 0.1,
           }),
         });
-      } catch (e) { return null; }
+      } catch { return null; }
     };
 
-    const processResponse = async (res: Response | null, modelName: string) => {
+    const processResponse = async (res: Response | null) => {
       if (!res) return { success: false, error: 'Network Error', status: 500 };
       const status = res.status;
       if (!res.ok) {
@@ -137,7 +137,7 @@ export async function POST(req: Request) {
         const jsonString = jsonMatch ? jsonMatch[0] : content;
         JSON.parse(jsonString.trim());
         return { success: true, content, status };
-      } catch (e) {
+      } catch {
         return { success: false, error: 'Invalid JSON', status: 500 };
       }
     };
@@ -169,7 +169,7 @@ export async function POST(req: Request) {
       const response = await item.call(item.model);
       if (!response) continue; // Skip if provider key missing
 
-      const result = await processResponse(response, `${item.provider}:${item.model}`);
+      const result = await processResponse(response);
       if (result.success) {
         content = result.content!;
         break;
@@ -244,7 +244,7 @@ export async function POST(req: Request) {
       });
       
       return NextResponse.json({ points: parsedPoints });
-    } catch (parseError) {
+    } catch {
       console.error('JSON Parse Error:', content);
       return NextResponse.json({ error: 'Failed to parse AI output', details: 'The model did not return valid JSON.' }, { status: 500 });
     }

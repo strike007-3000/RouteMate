@@ -4,7 +4,6 @@ import React from 'react';
 import { Plane, Hotel, MapPin, Clock, Utensils, Train, Car, GripVertical, ArrowDownToLine, ArrowUpFromLine, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ItineraryItem } from '@/lib/db';
-import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useTripStore } from '@/stores/useTripStore';
 import { FlightStatusWidget } from './FlightStatusWidget';

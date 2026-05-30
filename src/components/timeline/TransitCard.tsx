@@ -5,7 +5,6 @@ import { Bus, Train, Footprints, ArrowRight, Loader2, Sparkles, Navigation } fro
 import { motion, AnimatePresence } from 'framer-motion';
 import { TripPoint } from '@/stores/useTripStore';
 import { TransitSuggestion } from '@/services/transit/types';
-import { useTripStore } from '@/stores/useTripStore';
 
 interface TransitCardProps {
   from: TripPoint;

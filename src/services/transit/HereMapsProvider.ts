@@ -1,4 +1,3 @@
-import { TripPoint } from '@/stores/useTripStore';
 import { TransitProvider, TransitSuggestion } from './types';
 
 /**
@@ -10,7 +9,7 @@ export class HereMapsProvider implements TransitProvider {
 
   constructor(private apiKey?: string) {}
 
-  async getRoute(from: TripPoint, to: TripPoint): Promise<TransitSuggestion | null> {
+  async getRoute(): Promise<TransitSuggestion | null> {
     if (!this.apiKey) return null;
 
     // Simulate premium routing logic

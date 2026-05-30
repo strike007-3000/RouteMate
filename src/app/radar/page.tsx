@@ -1,10 +1,9 @@
 'use client';
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Radar, Navigation, MapPin, Compass, Loader2, AlertCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Navigation, MapPin, Compass, Loader2, AlertCircle } from 'lucide-react';
 import { useGeolocation } from '@/components/layout/GeolocationProvider';
-import { useTripStore } from '@/stores/useTripStore';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { Header } from '@/components/layout/Header';
 
@@ -33,11 +32,9 @@ const globalHubs = [
 ];
 
 export default function RadarPage() {
-  const { coords, permission, loading, error } = useGeolocation();
-  const { activeTrip } = useTripStore();
+  const { coords, permission, loading } = useGeolocation();
 
   const isPermissionDenied = permission === 'denied';
-  const displayHubs = isPermissionDenied ? globalHubs : []; // In a real app we would fetch nearby
 
   return (
     <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto overflow-x-hidden relative flex flex-col">
@@ -83,7 +80,8 @@ export default function RadarPage() {
               >
                 <div className="flex gap-4">
                   <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 border border-white/10">
-                    <img src={hub.image} className="w-full h-full object-cover" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={hub.image} alt={hub.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
