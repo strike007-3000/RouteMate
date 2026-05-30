@@ -6,7 +6,7 @@ export const seedDestinations: Destination[] = [
     name: "Tokyo",
     country: "Japan",
     image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1200&q=80",
-    description: "A neon-lit metropolis where futuristic technology meets centuries-old shrines and traditions.",
+    description: "Tokyo, the capital of Japan, is a neon-lit metropolis where futuristic technology and skyscrapers seamlessly blend with centuries-old shrines and tranquil gardens. From the hyper-interactive digital art exhibits to the historic alleys of Asakusa, it offers an incomparable experience for travelers. Explore world-class dining, fashion-forward boutiques, and legendary cultural landmarks in a city that is both incredibly modern and deeply rooted in tradition.",
     tags: ["URBAN", "FOOD", "TECHNOLOGY"],
     category: "Cities",
     highlights: [
@@ -47,7 +47,7 @@ export const seedDestinations: Destination[] = [
     name: "Paris",
     country: "France",
     image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1200&q=80",
-    description: "The global center for art, fashion, gastronomy, and architectural masterpieces along the Seine.",
+    description: "Paris, France's capital, is a global center for art, fashion, gastronomy, and architectural masterpieces. Famous for its romantic atmosphere along the Seine, the city boasts iconic monuments like the Eiffel Tower and the Notre-Dame Cathedral. Visitors can stroll down historic boulevards, indulge in exquisite pastries at local bistros, and explore renowned museums housing centuries of legendary artistic treasures.",
     tags: ["ROMANTIC", "ART", "HISTORY"],
     category: "Cities",
     highlights: [
@@ -88,7 +88,7 @@ export const seedDestinations: Destination[] = [
     name: "Bali",
     country: "Indonesia",
     image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80",
-    description: "A tropical paradise famed for its forested volcanic mountains, iconic rice paddies, and beaches.",
+    description: "Bali, the famed Island of the Gods in Indonesia, is a tropical paradise known for its forested volcanic mountains, iconic terraced rice paddies, pristine beaches, and coral reefs. The island is deeply spiritual, featuring thousands of ornate Hindu temples and a rich artistic culture. Whether you are looking for surf-friendly coastlines, wellness retreats, or vibrant night markets, Bali promises a magical escape.",
     tags: ["NATURE", "BEACH", "CULTURE"],
     category: "Beaches",
     highlights: [
@@ -129,7 +129,7 @@ export const seedDestinations: Destination[] = [
     name: "London",
     country: "United Kingdom",
     image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1200&q=80",
-    description: "A vibrant 21st-century capital deeply rooted in royal heritage, theater, and global finance.",
+    description: "London, the capital of the United Kingdom, is a vibrant 21st-century metropolis deeply rooted in royal heritage, theater, and global commerce. The city's history stretches back to Roman times, highlighted by landmarks like the Tower of London, Big Ben, and Westminster Abbey. With its diverse neighborhoods, vast public parks, and world-class museums, London offers an endless array of history and culture to discover.",
     tags: ["HISTORY", "URBAN", "CULTURE"],
     category: "Cities",
     highlights: [
@@ -170,7 +170,7 @@ export const seedDestinations: Destination[] = [
     name: "New York City",
     country: "United States",
     image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=1200&q=80",
-    description: "The city that never sleeps, known for its iconic skyscrapers, Broadway shows, and diverse neighborhoods.",
+    description: "New York City, the city that never sleeps, is a dynamic hub of culture, entertainment, and culinary delights. Known for its iconic Manhattan skyline, sprawling Central Park, and the neon lights of Broadway, it draws millions of travelers from around the globe. From historical neighborhoods like Greenwich Village to the modern heights of the Empire State Building, NYC offers a unique, fast-paced adventure.",
     tags: ["URBAN", "ENTERTAINMENT", "FOOD"],
     category: "Cities",
     highlights: [
@@ -211,7 +211,7 @@ export const seedDestinations: Destination[] = [
     name: "Rome",
     country: "Italy",
     image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80",
-    description: "A sprawling cosmopolitan city with nearly 3,000 years of globally influential art and architecture.",
+    description: "Rome, Italy's capital, is a sprawling cosmopolitan city with nearly 3,000 years of globally influential art, architecture, and culture. The ruins of the Roman Forum and Colosseum evoke the power of the ancient Roman Empire, while Vatican City showcases stunning Renaissance landmarks like St. Peter's Basilica. Rome's vibrant street life, delicious culinary tradition, and historic piazzas make it a timeless destination.",
     tags: ["HISTORY", "ART", "FOOD"],
     category: "Culture",
     highlights: [
@@ -252,7 +252,7 @@ export const seedDestinations: Destination[] = [
     name: "Barcelona",
     country: "Spain",
     image: "https://images.unsplash.com/photo-1583422874117-1a0027a3a6f9?auto=format&fit=crop&w=1200&q=80",
-    description: "The seaside capital of Catalonia, characterized by whimsical Gaudí architecture and a lively beach scene.",
+    description: "Barcelona, the seaside capital of Catalonia in Spain, is characterized by its whimsical modernist architecture, vibrant street life, and sandy Mediterranean beaches. Antoni Gaudí’s architectural masterpieces, including the Sagrada Família and Park Güell, dot the city with colorful, organic designs. Stroll along the bustling La Rambla, feast on authentic tapas in historic quarters, and enjoy the lively coast.",
     tags: ["ARCHITECTURE", "BEACH", "FOOD"],
     category: "Culture",
     highlights: [
@@ -293,7 +293,7 @@ export const seedDestinations: Destination[] = [
     name: "Sydney",
     country: "Australia",
     image: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=1200&q=80",
-    description: "Australia's largest city, best known for its sparkling harbor, golden beaches, and majestic opera house.",
+    description: "Sydney, Australia's largest city, is best known for its sparkling harbor, golden beaches, and majestic Opera House. The city offers a perfect blend of outdoor lifestyle and urban sophistication, from the historic Rocks district to the sands of Bondi Beach. Visitors can take scenic harbor cruises, climb the iconic Harbour Bridge, and dine at world-class waterfront restaurants.",
     tags: ["BEACH", "URBAN", "NATURE"],
     category: "Cities",
     highlights: [
@@ -334,7 +334,7 @@ export const seedDestinations: Destination[] = [
     name: "San Francisco",
     country: "United States",
     image: "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=1200&q=80",
-    description: "A cultural and financial centerpiece of California, famous for rolling hills, fog, and the Golden Gate.",
+    description: "San Francisco, a cultural and financial centerpiece of California, is famous for its rolling hills, summer fog, and the iconic Golden Gate Bridge. The city is a hub of technological innovation and artistic expression, featuring colorful Victorian houses, historic cable cars, and a diverse culinary scene. Explore historic Alcatraz Island, stroll through bustling Fisherman's Wharf, or hike in the nearby redwood forests.",
     tags: ["URBAN", "NATURE", "FOOD"],
     category: "Cities",
     highlights: [
@@ -375,7 +375,7 @@ export const seedDestinations: Destination[] = [
     name: "Cape Town",
     country: "South Africa",
     image: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=1200&q=80",
-    description: "A port city beneath the majestic Table Mountain, where wild oceans meet rich heritage and wine fields.",
+    description: "Cape Town, a stunning port city beneath South Africa's majestic Table Mountain, is where wild oceans meet rich heritage and lush wine valleys. The city offers spectacular natural beauty, from dramatic coastal cliffs to sandy beaches home to wild African penguins. Stroll through the colorful streets of Bo-Kaap, ride the cableway for panoramic views, and enjoy historic vineyards.",
     tags: ["NATURE", "ADVENTURE", "WINE"],
     category: "Nature",
     highlights: [
@@ -416,7 +416,7 @@ export const seedDestinations: Destination[] = [
     name: "Cairo",
     country: "Egypt",
     image: "https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=1200&q=80",
-    description: "An ancient metropolis set on the Nile River, housing monumental pharaonic history and bustling markets.",
+    description: "Cairo, the ancient capital of Egypt set on the banks of the Nile River, houses monumental pharaonic history and bustling markets. It is home to the Giza Pyramids and the Great Sphinx, the last remaining wonder of the ancient world. Visitors can explore the vast collection of royal mummies at the Egyptian Museum, shop in medieval bazaars, and experience traditional cruises along the historic river.",
     tags: ["HISTORY", "CULTURE", "ARCHAEOLOGY"],
     category: "Culture",
     highlights: [
@@ -457,7 +457,7 @@ export const seedDestinations: Destination[] = [
     name: "Reykjavik",
     country: "Iceland",
     image: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1200&q=80",
-    description: "The coastal capital of Iceland, serving as a gateway to geothermal wonders, glaciers, and aurora views.",
+    description: "Reykjavik, the coastal capital of Iceland, is a charming and artistic city that serves as the gateway to geothermal wonders, massive glaciers, and majestic aurora views. Known for its colorful buildings, creative culture, and lively nightlife, it is the perfect base for exploring the Golden Circle and relaxing in natural hot springs like the Blue Lagoon.",
     tags: ["NATURE", "ADVENTURE", "GEOTHERMAL"],
     category: "Nature",
     highlights: [
@@ -498,7 +498,7 @@ export const seedDestinations: Destination[] = [
     name: "Rio de Janeiro",
     country: "Brazil",
     image: "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?auto=format&fit=crop&w=1200&q=80",
-    description: "A huge seaside city famed for its Copacabana beach, Corcovado mountain, and explosive Carnival.",
+    description: "Rio de Janeiro, a massive seaside city in Brazil, is famed for its Copacabana and Ipanema beaches, Corcovado Mountain, and its explosive annual Carnival. The colossal Christ the Redeemer statue overlooks the city from its mountaintop, offering breathtaking panoramic views of Guanabara Bay. Rio is a place of rich musical rhythm, vibrant street food, and stunning natural landscapes.",
     tags: ["BEACH", "CULTURE", "FESTIVAL"],
     category: "Beaches",
     highlights: [
@@ -539,7 +539,7 @@ export const seedDestinations: Destination[] = [
     name: "Bangkok",
     country: "Thailand",
     image: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1200&q=80",
-    description: "A high-rise metropolis filled with ornate shrines, vibrant canal life, and intense street food.",
+    description: "Bangkok, the high-rise capital of Thailand, is a bustling metropolis filled with ornate shrines, vibrant canal life, and legendary street food markets. The grand palaces and gold-spired temples, such as Wat Arun, contrast beautifully with the city's modern skyscrapers and shopping centers. Enjoy canal tours, shop at floating markets, and experience the city's legendary nightlife.",
     tags: ["FOOD", "CULTURE", "URBAN"],
     category: "Cities",
     highlights: [
@@ -580,7 +580,7 @@ export const seedDestinations: Destination[] = [
     name: "Brussels",
     country: "Belgium",
     image: "https://images.unsplash.com/photo-1491557345352-5929e343484a?auto=format&fit=crop&w=1200&q=80",
-    description: "The capital of the European Union, celebrated for its opulent Grand Place, comics, chocolate, and beer.",
+    description: "Brussels, the capital of the European Union, is celebrated for its opulent Grand Place, historic comic strip routes, world-famous chocolates, and classic Trappist beers. The city features a blend of historic gothic architecture and modern international institutions, making it a unique cultural crossroads. Stroll past gold-trimmed guild houses and indulge in fresh Belgian waffles.",
     tags: ["CULTURE", "FOOD", "ARCHITECTURE"],
     category: "Culture",
     highlights: [
@@ -621,7 +621,7 @@ export const seedDestinations: Destination[] = [
     name: "Singapore",
     country: "Singapore",
     image: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1200&q=80",
-    description: "A global financial hub and garden city, known for its ultra-modern design and diverse hawker culture.",
+    description: "Singapore is a global financial hub and garden city, renowned for its futuristic design, clean streets, and incredibly diverse hawker food culture. Highlights like the Gardens by the Bay, with its giant glowing Supertrees, and the iconic Marina Bay Sands hotel define the skyline. The city-state is a melting pot of cultures, offering green sanctuaries alongside high-tech architecture.",
     tags: ["URBAN", "FOOD", "FUTURE"],
     category: "Cities",
     highlights: [
@@ -662,7 +662,7 @@ export const seedDestinations: Destination[] = [
     name: "Sydney Coast",
     country: "Australia",
     image: "https://images.unsplash.com/photo-1524820197278-540916411e20?auto=format&fit=crop&w=1200&q=80",
-    description: "A second look at Sydney's outer coastal beauty, surfing hotspots, and sub-tropical National Parks.",
+    description: "Sydney Coast offers a second, spectacular look at the city's outer beaches, surf hotspots, and lush national parks. From learning to surf at Manly Beach to hiking along dramatic ocean cliffs in the Royal National Park, it represents the epitome of Australia's coastal outdoor lifestyle. Enjoy fresh seafood, pristine bays, and beautiful sun-drenched coastlines.",
     tags: ["BEACH", "SURFING", "ADVENTURE"],
     category: "Beaches",
     highlights: [
@@ -703,7 +703,7 @@ export const seedDestinations: Destination[] = [
     name: "Auckland",
     country: "New Zealand",
     image: "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=1200&q=80",
-    description: "A major city built around two large harbors, dominated by volcanic cones and close wine islands.",
+    description: "Auckland, New Zealand's largest city, is built around two large harbors and dominated by volcanic cones and nearby vineyard islands. Known as the City of Sails, it offers a superb outdoor lifestyle with black-sand surf beaches, sailing excursions, and wine tasting on Waiheke Island. Explore the Sky Tower for panoramic views or hike up volcanic craters.",
     tags: ["NATURE", "ADVENTURE", "WINE"],
     category: "Nature",
     highlights: [
@@ -744,7 +744,7 @@ export const seedDestinations: Destination[] = [
     name: "Mumbai",
     country: "India",
     image: "https://images.unsplash.com/photo-1566552881560-0be862a7c445?auto=format&fit=crop&w=1200&q=80",
-    description: "A chaotic, high-energy metropolis home to the massive Bollywood industry and historic colonial architecture.",
+    description: "Mumbai, a chaotic and high-energy metropolis on India's west coast, is home to the massive Bollywood film industry, historic colonial architecture, and bustling markets. The city is a financial powerhouse and a cultural melting pot, highlighted by the iconic Gateway of India monument. Savor delicious street foods, walk along the Marine Drive promenade, and explore ancient cave temples.",
     tags: ["CULTURE", "FOOD", "HISTORY"],
     category: "Culture",
     highlights: [
@@ -785,7 +785,7 @@ export const seedDestinations: Destination[] = [
     name: "Shanghai",
     country: "China",
     image: "https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=1200&q=80",
-    description: "China's largest economic capital, where colonial waterfront buildings stand across from space-age towers.",
+    description: "Shanghai, China's largest economic capital, is a space-age metropolis where historic colonial waterfront buildings stand across from soaring towers in Pudong. The Bund offers a walk through 1930s European architectural history, while the Shanghai Tower looks toward the future. Enjoy delicious soup dumplings, traditional gardens, and vibrant shopping streets.",
     tags: ["URBAN", "FUTURE", "FOOD"],
     category: "Cities",
     highlights: [
