@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.9.1](https://github.com/strike007-3000/RouteMate/compare/v3.9.0...v3.9.1) (2026-05-30)
+
+
+### Bug Fixes
+
+* **explore:** rename Sydney Coast to Sydney in seedDestinations ([083d733](https://github.com/strike007-3000/RouteMate/commit/083d7339e3e59074c72a2d714600afc749cea57d))
+* update barcelona and brussels images to official sagrada familia and atomium photos ([3eb4ab0](https://github.com/strike007-3000/RouteMate/commit/3eb4ab020c7640f2d39216873406a132a7f58413))
+* update broken unsplash image links for barcelona and brussels ([111e828](https://github.com/strike007-3000/RouteMate/commit/111e8286eb0e79726874797e920e30e27e833d94))
+
 ## [3.9.0](https://github.com/strike007-3000/RouteMate/compare/v3.8.0...v3.9.0) (2026-05-30)
 
 
