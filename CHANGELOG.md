@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.5.0](https://github.com/strike007-3000/RouteMate/compare/v3.4.0...v3.5.0) (2026-05-30)
+
+
+### Features
+
+* align all screens to design system guidelines ([848cb21](https://github.com/strike007-3000/RouteMate/commit/848cb21ccbba013a4a75708f6990e6a1cbb65618))
+* align all screens to design system guidelines ([b3a36e8](https://github.com/strike007-3000/RouteMate/commit/b3a36e80ccbb8d1f6f4edcd8668c3aa46d6508fd))
+
 ## [3.4.0](https://github.com/strike007-3000/RouteMate/compare/v3.3.5...v3.4.0) (2026-05-20)
 
 
