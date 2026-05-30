@@ -26,10 +26,26 @@ RouteMate is built on a hybrid architecture that balances local-first performanc
 | **WeatherStack** | Real-time Weather | `WEATHERSTACK_API_KEY` |
 | **AviationStack** | Live Flight Tracking | `AVIATIONSTACK_API_KEY` |
 
-### 0.3 Authentication Design & Identity
-To enforce the application's premium dark mode aesthetics, the embedded Clerk `<SignIn />` component utilizes `@clerk/ui/themes`'s standard `dark` theme combined with granular, custom style overrides. 
-- **Card Styling**: Customized using the `appearance` property with Tailwind classes to apply the RouteMate standard `bg-zinc-950`, `border-white/10`, and `rounded-[24px]` radius, configured under `appearance.theme`.
-- **Interactive Elements**: Input fields utilize matching black backgrounds and clean border-color indicators, while the primary action buttons override standard Clerk buttons with the custom, gold/themed `.btn-primary` standard layouts.
+### 0.3 Authentication Design & Identity (Embedded Flow)
+To enforce the application's premium dark mode aesthetics, RouteMate uses embedded, custom-styled Clerk components rather than the hosted Clerk Account Portal. This keeps users completely on the primary domain (`routemate.top`) and maintains the bespoke look and feel.
+
+- **Embedded Routes**:
+  - **Login Route**: `/login` (renders `<SignIn />` component)
+  - **Signup Route**: `/signup` (renders `<SignUp />` component)
+- **Visual Overrides**: Both pages share custom layout styling wrapped in a dark container with background ambient radial glows (`bg-primary/20` and `blue-500/10`) and micro-animations (Framer Motion).
+- **Component Styling**: Styled using Clerk's appearance configuration:
+  - **Card Container**: Custom `bg-zinc-950`, `border-white/10`, `rounded-[24px]` radius.
+  - **Primary Buttons**: Custom `.btn-primary` overrides, presenting a sleek, borders-only button styling.
+  - **Social Providers**: Configured for Google Sign-In with customized dark buttons.
+- **Routing Configuration**: The login and signup redirects are configured both code-side (in `.env`) and in the Clerk Dashboard under **Component paths** to point to:
+  - `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login`
+  - `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/signup`
+  - `Unauthorized sign-in redirect`: `https://routemate.top/login`
+
+### 0.4 Dependency & Security Overrides
+To resolve vulnerabilities in transitive dependencies (e.g. security warnings inside `uuid` imported by Clerk UI's Solana wallet adapters) and clean up deprecation warnings in builds, RouteMate enforces package-level overrides in `package.json`:
+- **`uuid`**: Overridden to `^11.1.1` to patch moderate-severity bounds checks and deprecations.
+- **`postcss`**: Overridden to `^8.5.10`.
 
 ---
 
