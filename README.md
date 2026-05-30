@@ -1,8 +1,8 @@
-# RouteMate v3.3.5 - Immersive Travel Intelligence 🌌✨
+# RouteMate - Immersive Travel Intelligence 🌌✨
 
 RouteMate is a mobile-first, offline-capable travel intelligence application driven by a **Date-Grouped Intelligence Engine**, a **Dual-View Distinction System**, and **Live API Intelligence** (Weather & Flight Tracking).
 
-![RouteMate Dashboard](file:///Users/shreyasgore/Code/RouteMate/docs/dashboard_v2.7.png)
+---
 
 ## ✨ Core Features
 
@@ -11,12 +11,12 @@ A state-driven interface that toggles between high-level emotional planning and 
 - **Summary Mode (Itinerary)**: Maximizes visual impact with "Day Cards" featuring curated Unsplash imagery and a unified 32px radius. It hides technical connectors and transit routing widgets to prioritize the "scannability" of the trip.
 - **Logistics Mode (Timeline)**: Enables a continuous, dashed journey thread with precision-aligned dots. It surfaces full `TransitCard` widgets (with Google Maps handoff, times, and distances) to help you understand exactly how to navigate between points.
 
-### 🌌 Premium Micro-interactions & Polish (v3.4+)
+### 🌌 Premium Micro-interactions & Polish
 - **Scroll-Driven Headers**: Enforces the Zero-Jump Header Rhythm. Headers shrink dynamically on scroll by fading the top brand label and scaling down titles, leveraging native CSS scroll timelines and custom property fallbacks.
 - **Swipe-to-Delete Gestures**: Implements a horizontal swipe action (via Framer Motion) on timeline items. Swiping left reveals a red deletion zone and locks the card to prompt confirmation, matching the interactive delete confirmation state.
 - **Fluid Page Morphing (View Transitions)**: Connects page transitions by morphing card cover images and titles into their corresponding page hero components.
 
-### 🛡️ Hardening & Architecture (v3.3+)
+### 🛡️ Hardening & Architecture
 Enterprise-grade reliability and security pass.
 - **Header-Based Auth**: Moved sensitive API keys to request headers to prevent plain-text logging.
 - **Parallel Logistics**: Leverages `Promise.all()` for concurrent geocoding, cutting transit calculation time by 50%.
@@ -40,15 +40,25 @@ Advanced navigation logic that understands the context of your journey.
 - **Multi-Tier Failover**: Implemented a hardened resilience layer. If the preferred provider fails or is rate-limited, the engine automatically traverses the queue to the next provider/model (e.g., failing over from OpenRouter Free to Groq Llama 3.3).
 - **JSON Object Enforcement**: Native `json_object` mode eliminates markdown artifacts and parsing failures.
 
+### 🔒 Secure Authentication
+Seamless integration with Clerk for user management and secure authentication.
+- **Embedded Interface**: Uses custom-styled, dark mode Clerk forms embedded directly on `/login` and `/signup` routes.
+- **Single Sign-On (SSO)**: Supports fast onboarding using Google Sign-in.
+
+---
+
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js (App Router)
+- **Authentication**: Clerk (Embedded Components & Social/Magic Links)
 - **Styling**: Tailwind CSS + Framer Motion
 - **Database**: Dexie.js (IndexedDB)
 - **AI Core**: OpenRouter + Groq (Multi-Provider Hybrid Stack)
 - **Intelligence APIs**: WeatherStack (Weather) + AviationStack (Flight Status)
 - **Imaging**: Unsplash API
 - **Logistics**: OpenRouteService (Geocoding) + Google Maps (Transit Handoff)
+
+---
 
 ## 🏗️ Architecture
 
@@ -67,6 +77,8 @@ graph TD
     G --> L[OpenRouteService - Geocoding & Local Routes]
     G --> H[Google Maps - Transit & Driving Handoff]
 ```
+
+---
 
 ## 🚀 Getting Started
 
@@ -95,9 +107,9 @@ graph TD
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_your_publishable_key
    CLERK_SECRET_KEY=sk_your_secret_key
    NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login
-   NEXT_PUBLIC_CLERK_SIGN_UP_URL=/login
+   NEXT_PUBLIC_CLERK_SIGN_UP_URL=/signup
    ```
-   *Note: `PRIMARY_AI_PROVIDER` controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default. In RouteMate v3.4.1+, the client-side `preferredAiProvider` store has been migrated (via a Version 1 Zustand schema upgrade) to default to an empty string (`""`) for existing profiles, ensuring the server-side fallback (`PRIMARY_AI_PROVIDER`) behaves correctly without being overridden by stale rehydrated defaults.*
+   *Note: `PRIMARY_AI_PROVIDER` controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default.*
 3. **Pre-flight Integrity Check**:
    Before deploying or testing, verify your configuration and AI logic:
    ```bash
