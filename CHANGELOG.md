@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.7.0](https://github.com/strike007-3000/RouteMate/compare/v3.6.0...v3.7.0) (2026-05-30)
+
+
+### Features
+
+* **auth:** create sleek embedded signup page matching the login desi… ([2cd81f7](https://github.com/strike007-3000/RouteMate/commit/2cd81f7a6f0ba3cf3ac84e5f344977789f350849))
+* **auth:** create sleek embedded signup page matching the login design language ([c51656a](https://github.com/strike007-3000/RouteMate/commit/c51656a01b932ff06566259ae555d3b1d30752df))
+
 ## [3.6.0](https://github.com/strike007-3000/RouteMate/compare/v3.5.0...v3.6.0) (2026-05-30)
 
 
