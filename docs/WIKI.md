@@ -10,6 +10,7 @@ RouteMate is built on a hybrid architecture that balances local-first performanc
 
 ### 0.1 Core Stack
 - **Framework**: Next.js 14+ (App Router, Server Actions)
+- **Authentication**: Clerk (Session Management & Social/Magic Links)
 - **State Management**: Zustand (Global Store) + Dexie.js (Offline Persistence)
 - **Styling**: Tailwind CSS + Framer Motion (Micro-animations)
 - **Database**: IndexedDB (Local-First via Dexie)
@@ -17,6 +18,7 @@ RouteMate is built on a hybrid architecture that balances local-first performanc
 ### 0.2 API Service Layer
 | Service | Purpose | Environment Variable |
 | :--- | :--- | :--- |
+| **Clerk** | Authentication Gateway | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` |
 | **OpenRouter** | Primary AI Extraction | `OPENROUTER_API_KEY` |
 | **Groq** | Failover AI / Llama 3.3 | `GROQ_API_KEY` |
 | **Unsplash** | Luxury Imagery | `UNSPLASH_ACCESS_KEY` |

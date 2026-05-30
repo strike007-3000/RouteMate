@@ -90,6 +90,12 @@ graph TD
    # Live Intelligence
    WEATHERSTACK_API_KEY=your_key
    AVIATIONSTACK_API_KEY=your_key
+
+   # Authentication (Clerk)
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_your_publishable_key
+   CLERK_SECRET_KEY=sk_your_secret_key
+   NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login
+   NEXT_PUBLIC_CLERK_SIGN_UP_URL=/login
    ```
    *Note: `PRIMARY_AI_PROVIDER` controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default. In RouteMate v3.4.1+, the client-side `preferredAiProvider` store has been migrated (via a Version 1 Zustand schema upgrade) to default to an empty string (`""`) for existing profiles, ensuring the server-side fallback (`PRIMARY_AI_PROVIDER`) behaves correctly without being overridden by stale rehydrated defaults.*
 3. **Pre-flight Integrity Check**:

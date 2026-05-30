@@ -22,16 +22,18 @@ import { Header } from '@/components/layout/Header';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useRouter } from 'next/navigation';
+import { useClerk } from '@clerk/nextjs';
 
 export default function AccountPage() {
   const { user, logout, isLoggedIn } = useAuthStore();
   const router = useRouter();
+  const { signOut } = useClerk();
   const tripCount = useLiveQuery(() => db.trips.count(), []) ?? 0;
   const favoriteCount = useLiveQuery(() => db.favorites.count(), []) ?? 0;
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     logout();
-    window.location.replace('/api/auth/logout');
+    await signOut();
   };
 
   const settingsItems = [

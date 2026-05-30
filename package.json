@@ -10,6 +10,7 @@
     "test:integrity": "node scripts/integrity-check.js"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.4.2",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "dexie": "^4.4.2",

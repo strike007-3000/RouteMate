@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 import { GeolocationProvider } from "@/components/layout/GeolocationProvider";
 import { AuthProvider } from "@/components/layout/AuthProvider";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export default function RootLayout({
   children,
@@ -35,13 +36,15 @@ export default function RootLayout({
         className="min-h-full bg-black antialiased flex flex-col"
         suppressHydrationWarning
       >
-        <GeolocationProvider>
-          <AuthProvider>
-            <div className="flex-1 w-full max-w-[500px] mx-auto bg-black relative flex flex-col min-h-screen">
-              {children}
-            </div>
-          </AuthProvider>
-        </GeolocationProvider>
+        <ClerkProvider>
+          <GeolocationProvider>
+            <AuthProvider>
+              <div className="flex-1 w-full max-w-[500px] mx-auto bg-black relative flex flex-col min-h-screen">
+                {children}
+              </div>
+            </AuthProvider>
+          </GeolocationProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
