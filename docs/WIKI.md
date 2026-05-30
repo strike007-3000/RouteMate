@@ -117,7 +117,8 @@ The extraction prompt in `/api/parse-itinerary` handles logistical hardening via
     - `x-user-openrouter-key`: For OpenRouter access.
     - `x-user-groq-key`: For Groq access.
     - `x-preferred-ai`: Injected per request based on user's Dev Settings or Settings Modal.
-- **User Keys**: Stored locally in the `routemate-settings` IndexedDB store or `localStorage` for Dev Settings, and injected per request.
+- **User Keys**: Stored locally in the `routemate-settings` IndexedDB store (Zustand `persist`) or `localStorage` for Dev Settings, and injected per request.
+- **Settings Store Schema Migration**: In version 1 of `routemate-settings`, any legacy default state that persisted `preferredAiProvider: 'OpenRouter'` (version 0) is dynamically migrated to an empty string `""` on rehydration. This permits the API gateway to correctly route to server-side preferences unless the user has explicitly selected a custom provider.
 
 ---
 

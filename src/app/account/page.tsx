@@ -29,6 +29,11 @@ export default function AccountPage() {
   const tripCount = useLiveQuery(() => db.trips.count(), []) ?? 0;
   const favoriteCount = useLiveQuery(() => db.favorites.count(), []) ?? 0;
 
+  const handleLogout = () => {
+    logout();
+    window.location.replace('/api/auth/logout');
+  };
+
   const settingsItems = [
     { icon: User, label: 'Personal Info', color: 'text-blue-400' },
     { icon: Settings, label: 'App Settings', color: 'text-zinc-400' },
@@ -40,10 +45,7 @@ export default function AccountPage() {
       label: 'Logout', 
       color: 'text-red-500/80', 
       isLast: true,
-      onClick: () => {
-        logout();
-        router.push('/login');
-      }
+      onClick: handleLogout
     },
   ];
 

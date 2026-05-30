@@ -91,7 +91,7 @@ graph TD
    WEATHERSTACK_API_KEY=your_key
    AVIATIONSTACK_API_KEY=your_key
    ```
-   *Note: `PRIMARY_AI_PROVIDER` controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default.*
+   *Note: `PRIMARY_AI_PROVIDER` controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default. In RouteMate v3.4.1+, the client-side `preferredAiProvider` store has been migrated (via a Version 1 Zustand schema upgrade) to default to an empty string (`""`) for existing profiles, ensuring the server-side fallback (`PRIMARY_AI_PROVIDER`) behaves correctly without being overridden by stale rehydrated defaults.*
 3. **Pre-flight Integrity Check**:
    Before deploying or testing, verify your configuration and AI logic:
    ```bash

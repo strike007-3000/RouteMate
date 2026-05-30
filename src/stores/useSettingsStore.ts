@@ -44,6 +44,15 @@ export const useSettingsStore = create<SettingsState>()(
 
     {
       name: 'routemate-settings',
+      version: 1,
+      migrate: (persistedState: any, version: number) => {
+        if (version === 0 && persistedState) {
+          if (persistedState.preferredAiProvider === 'OpenRouter') {
+            persistedState.preferredAiProvider = '';
+          }
+        }
+        return persistedState as SettingsState;
+      },
     }
   )
 );
