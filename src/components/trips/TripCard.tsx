@@ -89,7 +89,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
             initial={{ opacity: 0, y: -10, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.9 }}
-            className="absolute top-16 right-6 w-48 bg-zinc-950/90 backdrop-blur-2xl border border-white/10 rounded-[28px] p-2 z-30 shadow-2xl"
+            className="absolute top-16 right-6 w-48 bg-zinc-950/90 backdrop-blur-2xl border border-white/10 rounded-[24px] p-2 z-30 shadow-2xl"
           >
             <button
               onClick={(e) => {

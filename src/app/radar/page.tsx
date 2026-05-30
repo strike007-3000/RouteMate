@@ -6,6 +6,7 @@ import { Radar, Navigation, MapPin, Compass, Loader2, AlertCircle } from 'lucide
 import { useGeolocation } from '@/components/layout/GeolocationProvider';
 import { useTripStore } from '@/stores/useTripStore';
 import { BottomNav } from '@/components/layout/BottomNav';
+import { Header } from '@/components/layout/Header';
 
 const globalHubs = [
   {
@@ -39,24 +40,8 @@ export default function RadarPage() {
   const displayHubs = isPermissionDenied ? globalHubs : []; // In a real app we would fetch nearby
 
   return (
-    <main className="min-h-screen bg-background pb-32 max-w-md mx-auto border-x border-border/50 shadow-2xl relative overflow-x-hidden">
-      <header className="p-8 pb-10 pt-16 relative">
-        <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
-          <Radar className="w-60 h-60 animate-pulse text-primary" />
-        </div>
-        
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="relative z-10"
-        >
-          <span className="text-xs font-black text-primary uppercase tracking-[0.5em] mb-4 block">RouteMate</span>
-          <h1 className="text-4xl font-black text-white tracking-tighter leading-none mb-3">Radar</h1>
-          <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
-            Scanning for nearby logistics & transit hubs.
-          </p>
-        </motion.div>
-      </header>
+    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto overflow-x-hidden relative flex flex-col">
+      <Header />
 
       <section className="px-6 relative min-h-[400px]">
         {loading && !isPermissionDenied && (
@@ -94,7 +79,7 @@ export default function RadarPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="group p-5 rounded-[2rem] bg-zinc-900/50 border border-white/5 hover:border-primary/30 transition-all duration-500"
+                className="group p-5 rounded-[24px] bg-zinc-900/50 border border-white/5 hover:border-primary/30 transition-all duration-500"
               >
                 <div className="flex gap-4">
                   <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 border border-white/10">

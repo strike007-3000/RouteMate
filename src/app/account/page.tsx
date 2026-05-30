@@ -82,17 +82,8 @@ export default function AccountPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black pb-32 flex flex-col relative overflow-x-hidden">
-      <header className="px-[var(--gutter,24px)] pb-10 pt-[var(--header-pt,16px)] relative">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="relative z-10"
-        >
-          <span className="text-[10px] font-bold text-primary uppercase tracking-[0.4em] mb-1 block">ROUTEMATE</span>
-          <h1 className="text-[clamp(1.5rem,5vw,2.25rem)] font-black text-white tracking-tighter leading-none mb-3">Account Hub</h1>
-        </motion.div>
-      </header>
+    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto overflow-x-hidden relative flex flex-col">
+      <Header />
       
       <div className="px-[var(--gutter,24px)] pt-8 space-y-10">
         {/* Identity Section */}

@@ -23,6 +23,7 @@ export const Header = () => {
   let title = 'My Trips';
   if (pathname.includes('/timeline')) title = 'Itinerary';
   else if (pathname === '/explore') title = 'Explore';
+  else if (pathname === '/radar') title = 'Radar';
   else if (pathname === '/account') title = 'Account Hub';
   else if (pathname === '/trips' || pathname === '/') title = 'My Trips';
 
@@ -65,7 +66,7 @@ export const Header = () => {
         <div className="flex items-center gap-4">
           <div className="flex flex-col">
             <div className="flex items-center gap-3 mb-1 header-brand">
-              <span className="text-[10px] font-bold text-primary uppercase tracking-[0.4em]">ROUTEMATE</span>
+              <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">ROUTEMATE</span>
             </div>
             <h1 className="text-[clamp(1.5rem,5vw,2.25rem)] font-black text-white tracking-tighter leading-none truncate max-w-[250px] header-title">
               {title}
