@@ -50,12 +50,12 @@ rl.question('Please enter your Unsplash Access Key: ', async (apiKey) => {
 
     for (let i = 0; i < matches.length; i++) {
       const dest = matches[i];
-      const query = `${dest.name} landmark ${dest.country}`;
+      const query = `${dest.name} landmark scenery tourism`;
       console.log(`[${i + 1}/${matches.length}] Fetching image for: "${dest.name}, ${dest.country}"...`);
       
       try {
         const response = await fetch(
-          `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=1`,
+          `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&orientation=landscape&per_page=5&content_filter=high&featured=true`,
           {
             headers: {
               Authorization: `Client-ID ${apiKey.trim()}`
