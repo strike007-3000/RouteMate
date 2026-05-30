@@ -72,8 +72,9 @@ rl.question('Please enter your Unsplash Access Key: ', async (apiKey) => {
         const data = await response.json();
         const photo = data.results?.[0];
 
-        if (photo && photo.id) {
-          const newUrl = `https://images.unsplash.com/photo-${photo.id}?auto=format&fit=crop&w=1200&q=80`;
+        if (photo && photo.urls && photo.urls.raw) {
+          const baseUrl = photo.urls.raw.split('?')[0];
+          const newUrl = `${baseUrl}?auto=format&fit=crop&w=1200&q=80`;
           
           // Re-build the target content with the new URL
           const targetToReplace = dest.prefix + dest.oldUrl + dest.suffix;
