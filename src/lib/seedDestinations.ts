@@ -5,7 +5,7 @@ export const seedDestinations: Destination[] = [
     id: "tokyo",
     name: "Tokyo",
     country: "Japan",
-    image: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1200&q=80",
     description: "A neon-lit metropolis where futuristic technology meets centuries-old shrines and traditions.",
     tags: ["URBAN", "FOOD", "TECHNOLOGY"],
     category: "Cities",

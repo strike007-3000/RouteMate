@@ -180,9 +180,9 @@ All transient itinerary items and transit suggestions use `crypto.randomUUID()` 
 
 ---
 
-## 9. Explore Screen & Hybrid AI Discovery Engine (v3.9)
+## 9. Explore Screen & Hybrid AI Discovery Engine (v3.9.1)
 
-RouteMate v3.9 introduces a hybrid travel discovery and itinerary builder interface.
+RouteMate v3.9.1 introduces a hybrid travel discovery and itinerary builder interface.
 
 ### 9.1 Database Store Migration (v7)
 To support caching AI-discovered destinations locally, the database schema (Dexie.js) is migrated to version `7`. It defines the `destinations` table:

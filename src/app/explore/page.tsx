@@ -357,6 +357,9 @@ Please output this in chronological order.`;
                   src={dest.image} 
                   alt={dest.name} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[3000ms]"
+                  onError={(e) => {
+                    e.currentTarget.src = UnsplashService.getPlaceholder(dest.name);
+                  }}
                 />
               ) : (
                 <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
@@ -531,12 +534,19 @@ Please output this in chronological order.`;
               {/* Image banner */}
               {selectedDestination.image && (
                 <div className="h-48 rounded-[24px] overflow-hidden my-6 border border-white/5 shadow-lg">
-                  <img src={selectedDestination.image} alt={selectedDestination.name} className="w-full h-full object-cover" />
+                  <img 
+                    src={selectedDestination.image} 
+                    alt={selectedDestination.name} 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = UnsplashService.getPlaceholder(selectedDestination.name);
+                    }}
+                  />
                 </div>
               )}
 
               {/* Description */}
-              <p className="text-xs text-zinc-400 font-bold leading-relaxed mb-8 uppercase tracking-wide">
+              <p className="text-[13px] text-zinc-400 font-medium leading-relaxed mb-8">
                 {selectedDestination.description}
               </p>
 
