@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import { SignUp } from '@clerk/nextjs';
+import { SignIn } from '@clerk/nextjs';
 import { dark } from '@clerk/ui/themes';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
-export default function SignUpPage() {
+export default function LoginPage() {
   return (
     <main className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
       {/* Ambient Background Elements */}
@@ -35,7 +35,8 @@ export default function SignUpPage() {
           transition={{ delay: 0.1 }}
           className="w-full flex justify-center"
         >
-          <SignUp 
+          <SignIn 
+            path="/login"
             appearance={{
               theme: dark,
               elements: {
