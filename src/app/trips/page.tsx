@@ -121,7 +121,7 @@ export default function Dashboard() {
             <p className="text-xs text-zinc-500 font-bold mb-8">Start by creating your first itinerary. We&apos;ll handle the logistics.</p>
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="px-8 py-4 rounded-2xl border border-primary/20 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 transition-colors"
+              className="btn-primary px-8"
             >
               Plan first trip
             </button>

@@ -62,7 +62,7 @@ export default function LoginPage() {
           {/* Social Auth Buttons */}
           <button 
             onClick={() => handleLogin('google')}
-            className="w-full h-14 bg-white text-black rounded-2xl flex items-center justify-center gap-3 font-black text-sm uppercase tracking-widest active:scale-[0.98] transition-all hover:bg-zinc-200"
+            className="w-full h-14 bg-white text-black rounded-[24px] flex items-center justify-center gap-3 font-black text-sm uppercase tracking-widest active:scale-[0.98] transition-all hover:bg-zinc-200"
           >
             <Globe className="w-5 h-5" />
             <span>Continue with Google</span>
@@ -70,7 +70,7 @@ export default function LoginPage() {
 
           <button 
             onClick={() => handleLogin('apple')}
-            className="w-full h-14 bg-zinc-900 border border-white/10 text-white rounded-2xl flex items-center justify-center gap-3 font-black text-sm uppercase tracking-widest active:scale-[0.98] transition-all hover:bg-zinc-800"
+            className="w-full h-14 bg-zinc-900 border border-white/10 text-white rounded-[24px] flex items-center justify-center gap-3 font-black text-sm uppercase tracking-widest active:scale-[0.98] transition-all hover:bg-zinc-800"
           >
             <Apple className="w-5 h-5 fill-white" />
             <span>Continue with Apple</span>
@@ -92,7 +92,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="w-full h-14 bg-zinc-900/50 border border-white/5 rounded-2xl pl-12 pr-4 text-sm font-bold text-white focus:outline-none focus:border-primary/30 transition-all placeholder:text-zinc-600"
+                className="w-full h-14 bg-zinc-900/50 border border-white/5 rounded-[24px] pl-12 pr-4 text-sm font-bold text-white focus:outline-none focus:border-primary/30 transition-all placeholder:text-zinc-600"
               />
             </div>
             
@@ -100,10 +100,8 @@ export default function LoginPage() {
               onClick={() => handleLogin('email')}
               disabled={!email}
               className={cn(
-                "w-full h-14 rounded-2xl flex items-center justify-center gap-2 font-black text-sm uppercase tracking-widest transition-all",
-                email 
-                  ? "bg-primary text-white shadow-lg shadow-primary/20 active:scale-[0.98] hover:bg-blue-600" 
-                  : "bg-zinc-900 text-zinc-600 border border-white/5 cursor-not-allowed"
+                "w-full btn-primary",
+                !email && "opacity-30 cursor-not-allowed pointer-events-none"
               )}
             >
               <span>Get Magic Link</span>

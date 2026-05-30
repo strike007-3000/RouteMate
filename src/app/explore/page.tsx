@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Globe, MapPin, Sparkles, Navigation } from 'lucide-react';
 import { BottomNav } from '@/components/layout/BottomNav';
+import { Header } from '@/components/layout/Header';
 
 const destinations = [
   {
@@ -34,33 +35,17 @@ const destinations = [
 
 export default function ExplorePage() {
   return (
-    <main className="min-h-screen bg-background pb-32 relative overflow-x-hidden">
-      <header className="px-[var(--gutter,24px)] pb-10 pt-[var(--header-pt,16px)] relative">
-        <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
-          <Globe className="w-60 h-60 rotate-45" />
-        </div>
-        
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="relative z-10"
-        >
-          <span className="text-[10px] font-bold text-primary uppercase tracking-[0.4em] mb-1 block">ROUTEMATE</span>
-          <h1 className="text-[clamp(1.5rem,5vw,2.25rem)] font-black text-white tracking-tighter leading-none mb-3">Explore</h1>
-          <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
-            Curated escapes for the modern nomad.
-          </p>
-        </motion.div>
-      </header>
+    <main className="min-h-screen bg-background pb-32 relative overflow-x-hidden w-full max-w-[500px] mx-auto flex flex-col">
+      <Header />
 
-      <section className="px-[var(--gutter,16px)] space-y-8">
+      <section className="px-[var(--gutter,24px)] pt-6 space-y-8">
         {destinations.map((dest, i) => (
           <motion.div
             key={dest.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="group relative h-96 rounded-[40px] overflow-hidden border border-white/5"
+            className="group relative h-96 rounded-[32px] overflow-hidden border border-white/5"
           >
             <img 
               src={dest.image} 
