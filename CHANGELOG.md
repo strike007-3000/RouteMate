@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.15.0](https://github.com/strike007-3000/RouteMate/compare/v3.14.0...v3.15.0) (2026-05-31)
+
+
+### Features
+
+* **account:** fix bottom sheet containment and add prebaked avatars … ([3379b63](https://github.com/strike007-3000/RouteMate/commit/3379b6387056137a8736ec2598f683b575264736))
+* **account:** fix bottom sheet containment and add prebaked avatars selection grid ([dd9b8ce](https://github.com/strike007-3000/RouteMate/commit/dd9b8cefb7e2ca8a420bbae9e4870a483d7f3493))
+
+
+### Bug Fixes
+
+* **account:** change bottom sheets to fixed viewport bottom and center-constrain to 500px width ([64dbc9e](https://github.com/strike007-3000/RouteMate/commit/64dbc9e17a2c115ff4fd98ab3631dad494ca9557))
+
 ## [3.14.1](https://github.com/strike007-3000/RouteMate/compare/v3.14.0...v3.14.1) (2026-05-31)
 
 ### Features
