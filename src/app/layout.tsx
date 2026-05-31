@@ -36,7 +36,7 @@ export default function RootLayout({
         className="min-h-full bg-black antialiased flex flex-col"
         suppressHydrationWarning
       >
-        <ClerkProvider>
+        <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
           <GeolocationProvider>
             <AuthProvider>
               <div className="flex-1 w-full max-w-[500px] mx-auto bg-black relative flex flex-col min-h-screen">

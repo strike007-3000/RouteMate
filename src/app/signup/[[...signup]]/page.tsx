@@ -25,6 +25,7 @@ export default function SignUpPage() {
 
   React.useEffect(() => {
     setMounted(true);
+    console.log("Clerk Pub Key present:", !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   }, []);
 
   if (!mounted || !signUpHook || !signUpHook.isLoaded) {

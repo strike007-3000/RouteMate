@@ -23,6 +23,7 @@ export default function LoginPage() {
 
   React.useEffect(() => {
     setMounted(true);
+    console.log("Clerk Pub Key present:", !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   }, []);
 
   if (!mounted || !signInHook || !signInHook.isLoaded) {
