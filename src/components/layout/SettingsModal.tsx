@@ -1,5 +1,7 @@
 'use client';
 
+// @deprecated — SettingsModal retired. App Preferences now live in Account Hub. API keys are Infisical-managed.
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Key, X, Check, ExternalLink, Eye, EyeOff } from 'lucide-react';
