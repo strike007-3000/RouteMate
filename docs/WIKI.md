@@ -26,6 +26,11 @@ RouteMate is built on a hybrid architecture that balances local-first performanc
 | **WeatherStack** | Real-time Weather | `WEATHERSTACK_API_KEY` |
 | **AviationStack** | Live Flight Tracking | `AVIATIONSTACK_API_KEY` |
 
+> [!NOTE]
+> **Secret Management**:
+> - **Production**: Secrets are stored and managed directly in the Vercel project environment settings.
+> - **Local Development**: Secrets are managed dynamically using the Infisical secret management vault (run using the `infisical run --` wrapper on dev/build scripts). Placeholders are provided in `.env.example`.
+
 ### 0.3 Authentication Design & Identity (Custom Hook-Driven Flow)
 To enforce the application's premium dark mode aesthetics, RouteMate completely avoids the hosted Clerk Account Portal as well as pre-built Clerk card containers. Instead, the authentication screens use custom React state machines driven by Clerk's `useSignIn()` and `useSignUp()` hooks (imported from `@clerk/nextjs/legacy` to retain support for `isLoaded` and `setActive` under the new Signal-based SDK version contract).
 
