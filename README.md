@@ -97,7 +97,7 @@ graph TD
    ```
 2. **Environment Variables**:
    * **Production (Vercel)**: Environment variables are securely managed in the Vercel Dashboard under Project Settings.
-   * **Local Development (Infisical)**: Local secrets are dynamically injected from Infisical on startup. Ensure you have the Infisical CLI installed and configured. The `npm run dev` and `npm run build` commands are already pre-wrapped with the `infisical run --` parser.
+   * **Local Development (Infisical)**: The `npm run dev` and `npm run build` scripts automatically detect if the Infisical CLI is installed; if it is, they run with the `infisical run --` wrapper. If not, they fallback to standard Next.js execution.
    * **Alternative Local Config**: If you prefer not to use Infisical locally, you can create a local `.env` file using the keys outlined in `.env.example`.
 
    *Note: `PRIMARY_AI_PROVIDER` controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default.*
