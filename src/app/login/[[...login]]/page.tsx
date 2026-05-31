@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useSignIn } from '@clerk/nextjs';
+import { useSignIn } from '@clerk/nextjs/legacy';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Eye, EyeOff, Loader2 } from 'lucide-react';
@@ -10,7 +10,6 @@ import { OtpForm } from '@/components/auth/OtpForm';
 
 export default function LoginPage() {
   const signInHook = useSignIn() as any;
-  console.log("signInHook object:", signInHook);
   const router = useRouter();
   const [step, setStep] = useState<'form' | 'otp'>('form');
   const [mounted, setMounted] = useState(false);
@@ -24,7 +23,6 @@ export default function LoginPage() {
 
   React.useEffect(() => {
     setMounted(true);
-    console.log("Clerk Pub Key present:", !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   }, []);
 
   if (!mounted || !signInHook || !signInHook.isLoaded) {

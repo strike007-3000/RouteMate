@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useSignUp } from '@clerk/nextjs';
+import { useSignUp } from '@clerk/nextjs/legacy';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Eye, EyeOff, Loader2 } from 'lucide-react';
@@ -25,7 +25,6 @@ export default function SignUpPage() {
 
   React.useEffect(() => {
     setMounted(true);
-    console.log("Clerk Pub Key present:", !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   }, []);
 
   if (!mounted || !signUpHook || !signUpHook.isLoaded) {
