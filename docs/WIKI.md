@@ -253,7 +253,7 @@ RouteMate v3.14.0 introduces the comprehensive **Account Hub**, providing unifie
 - **Unified Settings Navigation**: Clean list items styled with `.glass-card` containing unique semantic color-coded circular backdrops and action triggers.
 
 ### 10.2 Settings Control Panels (Slide-in Sheets)
-- **Personal Info**: Standard name input fields, profile photo URL configuration, and database synchronization.
+- **Personal Info**: Standard name input fields, profile photo upload configuration, a grid of 6 premium prebaked avatar assets (`/public/avatars/avatar-X.png`), and Clerk database synchronization. When a prebaked avatar is selected, the application fetches the static asset, converts it to a Blob, constructs a File object, and calls `clerkUser.setProfileImage({ file })` to upload and sync the selection to the user's Clerk account profile.
 - **App Preferences**: AI model provider configuration (OpenRouter vs Groq), dark mode toggle, system notification controls, and `Mock AI Extraction Mode` trigger for developer dry runs.
 - **Currency & Units**: Option to select global currency format (`USD`, `EUR`, `GBP`) and preferred unit of length (`KM`, `Miles`) which immediately hydrates transit calculations.
 - **Privacy & Security**: Secure option to clear IndexedDB tables (Dexie local reset), log out of all active user sessions, or delete the account.

@@ -82,7 +82,7 @@ export default function AccountPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto overflow-x-hidden relative flex flex-col page-glow">
+    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto [overflow:clip] relative flex flex-col page-glow">
       <Header />
       
       <div className="px-[var(--gutter,24px)] pt-8 space-y-10">
@@ -439,6 +439,8 @@ export default function AccountPage() {
             clerkUser={clerkUser} 
           />
         )}
+      </AnimatePresence>
+      <AnimatePresence>
         {activePanel === 'appPreferences' && (
           <AppPreferencesPanel 
             isOpen={true} 
@@ -446,6 +448,8 @@ export default function AccountPage() {
             settings={settings} 
           />
         )}
+      </AnimatePresence>
+      <AnimatePresence>
         {activePanel === 'currencyUnits' && (
           <CurrencyUnitsPanel 
             isOpen={true} 
@@ -453,6 +457,8 @@ export default function AccountPage() {
             settings={settings} 
           />
         )}
+      </AnimatePresence>
+      <AnimatePresence>
         {activePanel === 'privacySecurity' && (
           <PrivacySecurityPanel 
             isOpen={true} 
@@ -461,6 +467,8 @@ export default function AccountPage() {
             clerkUser={clerkUser}
           />
         )}
+      </AnimatePresence>
+      <AnimatePresence>
         {activePanel === 'logout' && (
           <LogoutConfirmSheet 
             isOpen={true} 
@@ -504,20 +512,22 @@ const BottomSheet = ({
     <motion.div 
       initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="fixed inset-x-0 bottom-0 rounded-t-[32px] glass-card z-[101] p-8 max-h-[85vh] overflow-y-auto"
+      className="absolute inset-x-0 bottom-0 rounded-t-[32px] bg-zinc-950 border-t border-x border-white/[0.08] z-[101] max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col"
     >
-      <div className="flex items-center justify-between mb-8">
+      <div className="sticky top-0 bg-zinc-950/95 backdrop-blur-md z-10 flex items-center justify-between px-6 py-5 border-b border-white/5">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
             <Icon className="w-5 h-5" />
           </div>
-          <h2 className="text-xl font-black">{title}</h2>
+          <h2 className="text-xl font-black text-white">{title}</h2>
         </div>
         <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-zinc-500 hover:text-white transition-colors">
           <ChevronRight className="w-5 h-5 rotate-90" />
         </button>
       </div>
-      {children}
+      <div className="p-6 pb-8">
+        {children}
+      </div>
     </motion.div>
   </>
 );
@@ -527,14 +537,47 @@ const PersonalInfoPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
   const [name, setName] = React.useState(user?.name || '');
   const [isSaving, setIsSaving] = React.useState(false);
 
+  const prebakedAvatars = [
+    '/avatars/avatar-1.png',
+    '/avatars/avatar-2.png',
+    '/avatars/avatar-3.png',
+    '/avatars/avatar-4.png',
+    '/avatars/avatar-5.png',
+    '/avatars/avatar-6.png',
+  ];
+
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !clerkUser) return;
+    setIsSaving(true);
     try {
       await clerkUser.setProfileImage({ file });
     } catch (err) {
       console.error('Failed to update image', err);
+    } finally {
+      setIsSaving(false);
     }
+  };
+
+  const handleSelectPrebakedAvatar = async (avatarPath: string) => {
+    if (!clerkUser) return;
+    setIsSaving(true);
+    try {
+      const response = await fetch(avatarPath);
+      const blob = await response.blob();
+      const filename = avatarPath.split('/').pop() || 'avatar.png';
+      const file = new File([blob], filename, { type: blob.type });
+      await clerkUser.setProfileImage({ file });
+    } catch (err) {
+      console.error('Failed to set prebaked avatar', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const isSelected = (avatarPath: string) => {
+    const filename = avatarPath.split('/').pop();
+    return filename ? user?.image?.includes(filename) : false;
   };
 
   const handleSave = async () => {
@@ -570,7 +613,8 @@ const PersonalInfoPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
           />
           <button 
             onClick={() => fileInputRef.current?.click()}
-            className="w-24 h-24 rounded-full bg-zinc-900 border border-white/5 relative group overflow-hidden mb-4 ring-2 ring-primary/40"
+            disabled={isSaving}
+            className="w-24 h-24 rounded-full bg-zinc-900 border border-white/5 relative group overflow-hidden mb-4 ring-2 ring-primary/40 disabled:opacity-50"
           >
             {user?.image ? (
               <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
@@ -581,7 +625,31 @@ const PersonalInfoPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
               <Camera className="w-6 h-6 text-white" />
             </div>
           </button>
-          <p className="text-xs text-zinc-500">Tap to change photo</p>
+          <p className="text-xs text-zinc-500">Tap to upload photo</p>
+        </div>
+
+        {/* Prebaked Avatars Grid */}
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Prebaked Avatars</label>
+          <div className="grid grid-cols-6 gap-2 bg-black/40 p-3 rounded-2xl border border-white/5">
+            {prebakedAvatars.map((path, idx) => {
+              const active = isSelected(path);
+              return (
+                <button
+                  key={path}
+                  onClick={() => handleSelectPrebakedAvatar(path)}
+                  disabled={isSaving}
+                  className={cn(
+                    "w-full aspect-square rounded-xl overflow-hidden border-2 bg-zinc-900 relative transition-all active:scale-95 disabled:opacity-50",
+                    active ? "border-primary shadow-lg shadow-primary/20 scale-105" : "border-white/10 hover:border-white/30"
+                  )}
+                  title={`Avatar option ${idx + 1}`}
+                >
+                  <img src={path} alt={`Avatar option ${idx + 1}`} className="w-full h-full object-cover" />
+                </button>
+              );
+            })}
+          </div>
         </div>
         
         <div className="space-y-4">
@@ -631,7 +699,7 @@ const AppPreferencesPanel = ({ isOpen, onClose, settings }: any) => {
                 key={mode}
                 onClick={() => settings.setDefaultViewMode(mode)}
                 className={cn(
-                  "flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                  "w-full min-w-0 flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
                   settings.defaultViewMode === mode ? "bg-zinc-800 text-white shadow-lg" : "text-zinc-500 hover:text-zinc-300"
                 )}
               >
@@ -649,7 +717,7 @@ const AppPreferencesPanel = ({ isOpen, onClose, settings }: any) => {
                 key={format}
                 onClick={() => settings.setTimeFormat(format)}
                 className={cn(
-                  "flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                  "w-full min-w-0 flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
                   settings.timeFormat === format ? "bg-zinc-800 text-white shadow-lg" : "text-zinc-500 hover:text-zinc-300"
                 )}
               >

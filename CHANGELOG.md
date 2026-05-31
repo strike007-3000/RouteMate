@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.1](https://github.com/strike007-3000/RouteMate/compare/v3.14.0...v3.14.1) (2026-05-31)
+
+### Features
+
+* **account:** add prebaked avatar grid to Personal Info settings panel to allow users to choose from static minimalist design assets.
+* **account:** fix bottom sheet stretching by using absolute positioning inside the constrained page container.
+
 ## [3.14.0](https://github.com/strike007-3000/RouteMate/compare/v3.13.2...v3.14.0) (2026-05-31)
 
 ### Features
