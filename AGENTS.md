@@ -14,6 +14,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 * **Deterministic IDs:** Always generate unique database keys using standard native browser `crypto.randomUUID()`. Do not use `Math.random()`.
 * **Security:** Keep sensitive API keys in request headers, never append them directly as plain-text query strings in server/fetch calls.
 * **Fallback Date Safeguards:** Always wrap date formatting in validation blocks. If a date is malformed or missing, fallback to rendering `'TBD'` rather than allowing the application UI to throw a fatal exception.
+* **Clerk Hook Exports:** When writing custom authentication pages, always import `useSignIn` and `useSignUp` from `@clerk/nextjs/legacy` instead of the root `@clerk/nextjs` package to ensure `isLoaded` and `setActive` are available.
+
 
 ## 3. Workflow & Documentation Rules
 * **Pull Requests (PRs):** Always create a new feature branch and open a Pull Request (PR) for your changes. Avoid pushing directly to the `main` branch unless explicitly authorized.
