@@ -24,7 +24,7 @@ const categoryConfig: Record<string, CategoryStyle> = {
   Lodging: { icon: Hotel, color: 'text-emerald-400', glow: 'shadow-emerald-500/10', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10' },
   Hotel: { icon: Hotel, color: 'text-emerald-400', glow: 'shadow-emerald-500/10', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10' },
   Stay: { icon: Hotel, color: 'text-emerald-400', glow: 'shadow-emerald-500/10', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10' },
-  Food: { icon: Utensils, color: 'text-amber-400', glow: 'shadow-amber-500/10', border: 'border-emerald-500/20', bg: 'bg-amber-500/10' },
+  Food: { icon: Utensils, color: 'text-amber-400', glow: 'shadow-amber-500/10', border: 'border-amber-500/20', bg: 'bg-amber-500/10' },
   Activity: { icon: MapPin, color: 'text-purple-400', glow: 'shadow-purple-500/10', border: 'border-purple-500/20', bg: 'bg-purple-500/10' },
   Train: { icon: Train, color: 'text-orange-400', glow: 'shadow-orange-500/10', border: 'border-orange-500/20', bg: 'bg-orange-500/10' },
   Rental: { icon: Car, color: 'text-cyan-400', glow: 'shadow-cyan-500/10', border: 'border-cyan-500/20', bg: 'bg-cyan-500/10' },

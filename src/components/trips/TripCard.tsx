@@ -160,7 +160,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
             </div>
             
             {/* Minimal Arrow on hover */}
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
+            <div className="w-10 h-10 rounded-full bg-transparent border-2 border-primary flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
               <ArrowRight className="w-5 h-5" />
             </div>
           </div>

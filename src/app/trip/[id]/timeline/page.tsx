@@ -125,7 +125,7 @@ export default function TimelinePage() {
   if (!trip) return null;
 
   return (
-    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto relative overflow-x-hidden flex flex-col font-sans">
+    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto relative overflow-x-hidden flex flex-col font-sans page-glow">
       <Header />
       
       <TripHero 

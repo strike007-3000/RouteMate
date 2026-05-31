@@ -66,7 +66,7 @@ export default function Dashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto overflow-x-hidden relative flex flex-col">
+    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto overflow-x-hidden relative flex flex-col page-glow">
       <Header />
       
       <div className="px-[var(--gutter,24px)] pt-6 pb-4">
@@ -114,8 +114,16 @@ export default function Dashboard() {
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-20 px-8 text-center"
           >
-            <div className="w-20 h-20 rounded-full bg-zinc-900 flex items-center justify-center mb-6">
-               <Plane className="w-8 h-8 text-zinc-700" />
+            <div className="relative w-24 h-24 flex items-center justify-center mb-8">
+              {/* Sonar Pulsing Rings */}
+              <div className="absolute inset-0 rounded-full bg-primary/5 border border-primary/20 animate-ping" style={{ animationDuration: '3s' }} />
+              <div className="absolute inset-2 rounded-full bg-primary/10 border border-primary/15 animate-ping" style={{ animationDuration: '3s', animationDelay: '1s' }} />
+              <div className="absolute inset-4 rounded-full bg-primary/15 border border-primary/10 animate-ping" style={{ animationDuration: '3s', animationDelay: '2s' }} />
+              
+              {/* Core Circle */}
+              <div className="relative w-16 h-16 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center shadow-lg shadow-primary/10">
+                <Plane className="w-6 h-6 text-primary animate-bounce" style={{ animationDuration: '2s' }} />
+              </div>
             </div>
             <h3 className="text-lg font-black text-white mb-2">Ready for a new adventure?</h3>
             <p className="text-xs text-zinc-500 font-bold mb-8">Start by creating your first itinerary. We&apos;ll handle the logistics.</p>

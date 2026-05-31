@@ -20,6 +20,7 @@ import { db, Destination } from '@/lib/db';
 import { seedDestinations } from '@/lib/seedDestinations';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { Header } from '@/components/layout/Header';
+import { Toast } from '@/components/layout/Toast';
 import { useRouter } from 'next/navigation';
 import { useTripStore } from '@/stores/useTripStore';
 import { useSettingsStore } from '@/stores/useSettingsStore';
@@ -48,6 +49,8 @@ export default function ExplorePage() {
   const [generationStatus, setGenerationStatus] = useState('');
   const [isExploring, setIsExploring] = useState(false);
   const [exploringStatus, setExploringStatus] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   // Local DB Queries
   const exploredDestinations = useLiveQuery(() => db.destinations.toArray(), []);
@@ -163,7 +166,8 @@ export default function ExplorePage() {
     } catch (err) {
       console.error(err);
       const msg = err instanceof Error ? err.message : 'Failed to explore city. Please check settings keys.';
-      alert(msg);
+      setToastMessage(msg);
+      setShowToast(true);
       setIsExploring(false);
     }
   };
@@ -301,7 +305,7 @@ Please output this in chronological order.`;
   const vibeOptions = ['Chill', 'Adventure', 'Foodie', 'Culture & History'];
 
   return (
-    <main className="min-h-screen bg-background pb-36 relative overflow-x-hidden w-full max-w-[500px] mx-auto flex flex-col">
+    <main className="min-h-screen bg-background pb-36 relative overflow-x-hidden w-full max-w-[500px] mx-auto flex flex-col page-glow">
       <Header />
 
       {/* Search Input Section */}
@@ -313,7 +317,7 @@ Please output this in chronological order.`;
             placeholder="Search by city, country, or vibe..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-16 bg-zinc-950/80 border border-white/5 rounded-[24px] pl-16 pr-6 text-sm font-bold placeholder:text-zinc-700 focus:outline-none focus:border-primary/30 transition-all focus:bg-zinc-900 shadow-xl"
+            className="w-full h-[72px] bg-zinc-950/80 border border-white/5 rounded-[24px] pl-16 pr-6 text-sm font-bold placeholder:text-zinc-700 focus:outline-none focus:border-primary/30 transition-all focus:bg-zinc-900 shadow-xl"
           />
         </div>
       </section>
@@ -726,6 +730,11 @@ Please output this in chronological order.`;
         )}
       </AnimatePresence>
 
+      <Toast 
+        message={toastMessage} 
+        isOpen={showToast} 
+        onClose={() => setShowToast(false)} 
+      />
       <BottomNav />
     </main>
   );

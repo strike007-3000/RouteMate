@@ -79,7 +79,7 @@ export default function AccountPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto overflow-x-hidden relative flex flex-col">
+    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto overflow-x-hidden relative flex flex-col page-glow">
       <Header />
       
       <div className="px-[var(--gutter,24px)] pt-8 space-y-10">
@@ -277,33 +277,45 @@ export default function AccountPage() {
           <div className="flex items-center gap-3 px-2 mb-4">
             <h2 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em]">PREFERENCES</h2>
           </div>
-          {settingsItems.map((item, index) => (
-            <motion.button
-              key={item.label}
-              onClick={item.onClick}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 + index * 0.05 }}
-              className={cn(
-                "w-full min-h-[64px] py-4 px-6 rounded-[24px] bg-zinc-900/30 border border-white/5 flex items-center gap-4 active:scale-[0.98] transition-all hover:bg-zinc-900/50",
-                item.isLast && "mt-4"
-              )}
-            >
-              <div className={cn("w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 flex-shrink-0")}>
-                <item.icon className={cn("w-5 h-5 text-primary")} />
-              </div>
-              <span className={cn(
-                "text-sm font-bold text-left flex-1",
-                item.isLast ? "text-red-500/80" : "text-white/80"
-              )}>
-                {item.label}
-              </span>
-              {item.detail && (
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mr-2">{item.detail}</span>
-              )}
-              {!item.isLast && <ChevronRight className="w-5 h-5 text-zinc-600 flex-shrink-0 self-center" />}
-            </motion.button>
-          ))}
+          {settingsItems.map((item, index) => {
+            const colorMaps: Record<string, { bg: string, border: string }> = {
+              'text-blue-400': { bg: 'bg-blue-400/10', border: 'border-blue-400/20' },
+              'text-zinc-400': { bg: 'bg-zinc-400/10', border: 'border-zinc-700/30' },
+              'text-emerald-400': { bg: 'bg-emerald-400/10', border: 'border-emerald-400/20' },
+              'text-amber-400': { bg: 'bg-amber-400/10', border: 'border-amber-400/20' },
+              'text-purple-400': { bg: 'bg-purple-400/10', border: 'border-purple-400/20' },
+              'text-red-500/80': { bg: 'bg-red-500/10', border: 'border-red-500/20' },
+            };
+            const style = colorMaps[item.color] || { bg: 'bg-primary/10', border: 'border-primary/20' };
+
+            return (
+              <motion.button
+                key={item.label}
+                onClick={item.onClick}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + index * 0.05 }}
+                className={cn(
+                  "w-full min-h-[64px] py-4 px-6 rounded-[24px] bg-zinc-900/30 border border-white/5 flex items-center gap-4 active:scale-[0.98] transition-all hover:bg-zinc-900/50",
+                  item.isLast && "mt-4"
+                )}
+              >
+                <div className={cn("w-10 h-10 rounded-2xl flex items-center justify-center border flex-shrink-0", style.bg, style.border)}>
+                  <item.icon className={cn("w-5 h-5", item.color)} />
+                </div>
+                <span className={cn(
+                  "text-sm font-bold text-left flex-1",
+                  item.isLast ? "text-red-500/80" : "text-white/80"
+                )}>
+                  {item.label}
+                </span>
+                {item.detail && (
+                  <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mr-2">{item.detail}</span>
+                )}
+                {!item.isLast && <ChevronRight className="w-5 h-5 text-zinc-600 flex-shrink-0 self-center" />}
+              </motion.button>
+            );
+          })}
         </div>
       </div>
 

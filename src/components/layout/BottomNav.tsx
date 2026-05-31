@@ -49,7 +49,7 @@ export const BottomNav = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 max-w-[500px] mx-auto z-50 glass border-t-0 rounded-t-[32px] pt-4 pb-[var(--safe-bottom,16px)] shadow-2xl">
+    <div className="fixed bottom-0 left-0 right-0 max-w-[500px] mx-auto z-50 bg-zinc-950/95 backdrop-blur-2xl border-t border-white/[0.06] rounded-t-[32px] pt-4 pb-[var(--safe-bottom,16px)] shadow-2xl">
       <div className="flex items-center justify-around px-4 h-14">
         {navItems.map((item) => (
           <button
@@ -70,20 +70,21 @@ export const BottomNav = () => {
               }
             }}
             className={cn(
-              "flex flex-col items-center gap-1.5 transition-all duration-300 relative px-2",
-              item.active ? "opacity-100 scale-105" : "opacity-30 hover:opacity-50"
+              "flex flex-col items-center gap-1.5 transition-all duration-300 relative px-4 py-1.5 rounded-[16px] cursor-pointer",
+              item.active ? "scale-105" : "hover:text-zinc-400"
             )}
           >
             {item.active && (
               <motion.div 
-                layoutId="active-nav-dot"
-                className="absolute -top-3 w-1 h-1 rounded-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.8)]"
+                layoutId="nav-pill"
+                className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-[16px] -z-10"
+                transition={{ type: "spring", stiffness: 380, damping: 30 }}
               />
             )}
-            <item.icon className={cn("w-[18px] h-[18px] transition-transform", item.active ? "text-primary" : "text-white")} />
+            <item.icon className={cn("w-[18px] h-[18px] transition-transform", item.active ? "text-primary" : "text-zinc-600")} />
             <span className={cn(
               "text-[8px] font-black uppercase tracking-[0.3em] text-center",
-              item.active ? "text-primary" : "text-white"
+              item.active ? "text-primary" : "text-zinc-600"
             )}>
               {item.label}
             </span>
