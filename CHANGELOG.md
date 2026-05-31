@@ -9,6 +9,29 @@ All notable changes to this project will be documented in this file.
 * **account:** implement the comprehensive Account Hub screen with expandable Travel Identity stats, custom control sheets (Personal Info, Preferences, Currency, Security), and Local Developer settings override dashboard.
 * **scripts:** forward trailing CLI flags (e.g. port, hostname) through the Infisical / Next wrapper scripts.
 
+## [3.13.1](https://github.com/strike007-3000/RouteMate/compare/v3.11.0...v3.12.0) (2026-05-31)
+
+
+### Features
+
+* add automatic fallback wrapper for infisical cli on dev/build ([119ef84](https://github.com/strike007-3000/RouteMate/commit/119ef846a9cb46812dab1b41dda2317531865882))
+* **auth:** custom step-based sign-in and sign-up with email OTP validation ([ce53023](https://github.com/strike007-3000/RouteMate/commit/ce5302307b67f948a7f223a71e2439e88ec79983))
+* **auth:** redesign login and signup screens with custom step-based OTP flow ([249a8a3](https://github.com/strike007-3000/RouteMate/commit/249a8a39774b4947d699cc9201477a42c123cbb5))
+* wrap next dev and build scripts with infisical run ([cc44a07](https://github.com/strike007-3000/RouteMate/commit/cc44a0709c13ddd2577fd2ecec50113b5467a3f8))
+
+
+### Bug Fixes
+
+* **auth:** add client-side hydration guards for custom hooks ([cabf8f0](https://github.com/strike007-3000/RouteMate/commit/cabf8f0f3a6f83e34e81747e4cd2c73c4ea537f1))
+* **auth:** add client-side hydration guards for custom hooks ([a46abb3](https://github.com/strike007-3000/RouteMate/commit/a46abb335ab64ea4d1d25dbc7ecd5ee9c3841a5a))
+* **auth:** add sso-callback route to handle Google OAuth callback redirects ([20c214a](https://github.com/strike007-3000/RouteMate/commit/20c214a5028b096b4d4f7e6eb0bbb92d2612f162))
+* **auth:** add sso-callback route to handle Google OAuth redirection ([4f08cf9](https://github.com/strike007-3000/RouteMate/commit/4f08cf98e3d1dcf5e94479cd6413c813631719e6))
+* **auth:** explicitly pass publishableKey to ClerkProvider and add diagnostic console logs ([f4942f4](https://github.com/strike007-3000/RouteMate/commit/f4942f4b635c18aac155910f19c0333b4a3cd63f))
+* **auth:** explicitly pass publishableKey to ClerkProvider and add diagnostic console logs ([c7c7625](https://github.com/strike007-3000/RouteMate/commit/c7c76252ad6249f67de706c5cb77311a6961758b))
+* **auth:** import hooks from @clerk/nextjs/legacy and remove console logs ([a8b1434](https://github.com/strike007-3000/RouteMate/commit/a8b143450f02174e2584ea0590e0cc8fd84ff5bc))
+* **auth:** render loading spinner instead of null while Clerk initializes ([188ad56](https://github.com/strike007-3000/RouteMate/commit/188ad566972a2da906078f7a9d429897a1f5bce4))
+* **auth:** render loading spinner instead of null while Clerk initializes ([05ce06c](https://github.com/strike007-3000/RouteMate/commit/05ce06c9f0d2013f1ce4f997e228045f05a0cef4))
+
 ## [3.11.0](https://github.com/strike007-3000/RouteMate/compare/v3.10.0...v3.11.0) (2026-05-31)
 
 
