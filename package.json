@@ -1,10 +1,10 @@
 {
   "name": "routemate",
-  "version": "3.12.5",
+  "version": "3.13.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "infisical run -- next dev",
+    "build": "infisical run -- next build",
     "start": "next start",
     "lint": "eslint src",
     "test:integrity": "node scripts/integrity-check.js"
