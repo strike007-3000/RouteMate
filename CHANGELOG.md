@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.12.0](https://github.com/strike007-3000/RouteMate/compare/v3.11.0...v3.12.0) (2026-05-31)
+## [3.13.1](https://github.com/strike007-3000/RouteMate/compare/v3.11.0...v3.12.0) (2026-05-31)
 
 
 ### Features
