@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.11.0](https://github.com/strike007-3000/RouteMate/compare/v3.10.0...v3.11.0) (2026-05-31)
+
+
+### Features
+
+* **design:** implement design review and Nocturnal Velocity design system integration ([83eefac](https://github.com/strike007-3000/RouteMate/commit/83eefac))
+
 ## [3.10.0](https://github.com/strike007-3000/RouteMate/compare/v3.9.1...v3.10.0) (2026-05-31)
 
 
