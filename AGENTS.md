@@ -1,10 +1,7 @@
-<!-- BEGIN:nextjs-agent-rules -->
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
 
-<!-- BEGIN:routemate-agent-rules -->
 # RouteMate Architectural & Workflow Rules
 
 ## 1. UI & Styling Rules
@@ -25,20 +22,32 @@ This version has breaking changes — APIs, conventions, and file structure may 
 * **Versioning & Releases:** Ensure proper versioning and changelog entries are maintained correctly according to semantic release guidelines.
 
 ## 4. Core Intelligence & Logistics Rules
-* **Two-Pass Sorting System:** When sorting timeline/itinerary events, use the two-pass architecture. Run a single $O(N)$ pre-calculation pass to resolve temporal metadata, followed by sorting on those keys.
-* **Sorting Sequence Hierarchy:** 
-  1. Rank 1: Check-out
+* **Two-Pass Sorting System:** When sorting timeline/itinerary events, use the two-pass architecture. Run a single $O(N)$ pre‑calculation pass to resolve temporal metadata, followed by sorting on those keys.
+* **Sorting Sequence Hierarchy:**
+  1. Rank 1: Check‑out
   2. Rank 2: Departure
   3. Rank 3: Arrival
-  4. Rank 4: Check-in
+  4. Rank 4: Check‑in
   5. Rank 5: Activities & Leisure
   6. Rank 2000: Return Flight Anchor (forced to bottom of trip)
-* **Date Adjustments & Day 1 overrides:**
-  * Flight departures on Day 1 receive rank `-100` to sit at the absolute top of the itinerary. Origin check-out events from the home city on Day 1 are suppressed.
-  * If lodging check-in is missing a time (hallucinated as `00:00`), override it to the evening rank (18:00) to prevent morning overlaps.
+* **Date Adjustments & Day 1 overrides:**
+  * Flight departures on Day 1 receive rank `-100` to sit at the absolute top of the itinerary. Origin check‑out events from the home city on Day 1 are suppressed.
+  * If lodging check‑in is missing a time (hallucinated as `00:00`), override it to the evening rank (18:00) to prevent morning overlaps.
 * **Transit Suggestions (50km Rule):** If the Haversine distance between two consecutive stops is greater than 50km, default suggestions to **Driving Directions**; otherwise, default to **Transit**. Always calculate directions contextually from the previous stop (`prevPoint`).
 * **Weather & Flight Triggers:**
-  * **Next-Day Weather Rule:** Only fetch weather forecasts for the current day and the next day of the trip. Suppress future dates to minimize API load.
+  * **Next‑Day Weather Rule:** Only fetch weather forecasts for the current day and the next day of the trip. Suppress future dates to minimize API load.
   * **24h Flight Rule:** Fetch live status details (gates, delays) only when the flight departure is within 24 hours.
 * **AI Core Provider Load Balancing:** Direct all Smart Paste extractions to the **Groq** provider, and all dynamic Explore/City Discovery queries to **OpenRouter** to manage API quotas.
-<!-- END:routemate-agent-rules -->
+
+## 5. Stitch MCP Integration Guidelines
+* The project uses the **StitchMCP** server for design‑system generation, screen creation, and design‑system application.
+* Available lazy‑loaded tools (invoke via `call_mcp_tool` after reading their JSON schema):
+  - `create_project`, `get_project`, `list_projects`
+  - `list_screens`, `get_screen`, `generate_screen_from_text`, `edit_screens`, `generate_variants`
+  - `upload_design_md`, `create_design_system`, `create_design_system_from_design_md`, `update_design_system`, `list_design_systems`, `apply_design_system`
+* When invoking a Stitch MCP tool, always:
+  1. Retrieve the tool’s schema (`<toolName>.json`) to understand required arguments.
+  2. Use the tool for **design‑system** creation before committing UI changes.
+  3. Run in **non‑interactive** mode; do not prompt the user for credentials.
+* Keep all design‑system assets (JSON, markdown) under `src/design/` and ensure they are version‑controlled.
+* After any Stitch operation, **verify** that generated screens adhere to the RouteMate UI guidelines (dark theme, rounded corners, `.btn-primary`).
