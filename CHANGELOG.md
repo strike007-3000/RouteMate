@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.0](https://github.com/strike007-3000/RouteMate/compare/v3.13.1...v3.14.0) (2026-05-31)
+
+
+### Features
+
+* **account:** Account Hub — full working screen ([6e710e6](https://github.com/strike007-3000/RouteMate/commit/6e710e66ba6da12a9217ef7015ceefccaa91cff2))
+* **account:** implement Account Hub — full working screen ([506c2d1](https://github.com/strike007-3000/RouteMate/commit/506c2d1decc98d54f6cd6b16d45749ee063e1678))
+* wrap start script with run-with-infisical.js wrapper ([208f353](https://github.com/strike007-3000/RouteMate/commit/208f35360166977d3267bcbdbe284595f2e7307c))
+
+
+### Bug Fixes
+
+* **account:** preserve lastName on save & apply defaultViewMode on timeline init ([34069b3](https://github.com/strike007-3000/RouteMate/commit/34069b34de6716136a00b13d5acfdd8421f9592c))
+* **scripts:** forward extra CLI args through infisical wrapper ([80c38cb](https://github.com/strike007-3000/RouteMate/commit/80c38cb655480fbc596f111e9126e5546edb0c38))
+
 ## [3.14.0](https://github.com/strike007-3000/RouteMate/compare/v3.13.2...v3.14.0) (2026-05-31)
 
 ### Features
