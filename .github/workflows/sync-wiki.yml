@@ -1,0 +1,37 @@
+name: Sync Wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/WIKI.md'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Sync to GitHub Wiki
+        run: |
+          # Configure Git
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Clone the wiki repository using the GITHUB_TOKEN
+          git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git" wiki-repo
+          
+          # Copy WIKI.md as Home.md in the wiki repo
+          cp docs/WIKI.md wiki-repo/Home.md
+          
+          # Commit and Push if there are changes
+          cd wiki-repo
+          if [ -n "$(git status --porcelain)" ]; then
+            git add Home.md
+            git commit -m "docs: sync wiki from main repo"
+            git push
+          else
+            echo "No changes to sync."
+          fi
