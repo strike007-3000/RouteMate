@@ -27,7 +27,7 @@ RouteMate is built on a hybrid architecture that balances local-first performanc
 | **AviationStack** | Live Flight Tracking | `AVIATIONSTACK_API_KEY` |
 
 ### 0.3 Authentication Design & Identity (Custom Hook-Driven Flow)
-To enforce the application's premium dark mode aesthetics, RouteMate completely avoids the hosted Clerk Account Portal as well as pre-built Clerk card containers. Instead, the authentication screens use custom React state machines driven by Clerk's `useSignIn()` and `useSignUp()` hooks. This keeps users completely on the primary domain and ensures 100% pixel-perfect compliance with the visual style of the application.
+To enforce the application's premium dark mode aesthetics, RouteMate completely avoids the hosted Clerk Account Portal as well as pre-built Clerk card containers. Instead, the authentication screens use custom React state machines driven by Clerk's `useSignIn()` and `useSignUp()` hooks (imported from `@clerk/nextjs/legacy` to retain support for `isLoaded` and `setActive` under the new Signal-based SDK version contract).
 
 - **Embedded Routes**:
   - **Login Route**: `/login` (renders custom step-based email/password & Google OAuth components)
