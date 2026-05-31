@@ -7,6 +7,9 @@ on:
     paths:
       - 'docs/WIKI.md'
 
+permissions:
+  contents: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
