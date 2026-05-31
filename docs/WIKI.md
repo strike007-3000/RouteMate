@@ -26,21 +26,22 @@ RouteMate is built on a hybrid architecture that balances local-first performanc
 | **WeatherStack** | Real-time Weather | `WEATHERSTACK_API_KEY` |
 | **AviationStack** | Live Flight Tracking | `AVIATIONSTACK_API_KEY` |
 
-### 0.3 Authentication Design & Identity (Embedded Flow)
-To enforce the application's premium dark mode aesthetics, RouteMate uses embedded, custom-styled Clerk components rather than the hosted Clerk Account Portal. This keeps users completely on the primary domain (`routemate.top`) and maintains the bespoke look and feel.
+### 0.3 Authentication Design & Identity (Custom Hook-Driven Flow)
+To enforce the application's premium dark mode aesthetics, RouteMate completely avoids the hosted Clerk Account Portal as well as pre-built Clerk card containers. Instead, the authentication screens use custom React state machines driven by Clerk's `useSignIn()` and `useSignUp()` hooks. This keeps users completely on the primary domain and ensures 100% pixel-perfect compliance with the visual style of the application.
 
 - **Embedded Routes**:
-  - **Login Route**: `/login` (renders `<SignIn />` component)
-  - **Signup Route**: `/signup` (renders `<SignUp />` component)
-- **Visual Overrides**: Both pages share custom layout styling wrapped in a dark container with background ambient radial glows (`bg-primary/20` and `blue-500/10`) and micro-animations (Framer Motion).
-- **Component Styling**: Styled using Clerk's appearance configuration (aligned with the Stitch Design System):
-  - **Card Container**: Glassmorphic styling (`!bg-zinc-950/60`, `backdrop-blur-xl`, `border-white/5`, `rounded-[24px]` radius, `!shadow-none`).
-  - **Primary Buttons**: Custom `.btn-primary` overrides, presenting a sleek, borders-only button styling.
-  - **Social Providers**: Configured for Google Sign-In with customized dark buttons.
-- **Routing Configuration**: The login and signup redirects are configured both code-side (in `.env`) and in the Clerk Dashboard under **Component paths** to point to:
+  - **Login Route**: `/login` (renders custom step-based email/password & Google OAuth components)
+  - **Signup Route**: `/signup` (renders custom side-by-side First/Last Name, Email, & Password input components)
+- **Visual Specifications**:
+  - **Glow Pattern**: Uses a top-center radial glow overlay (`bg-primary/15 blur-[120px]`) centered on the layout, consistent with the trips, explore, and account pages.
+  - **Inputs & Inputs Layout**: Every text field input uses the `.auth-input` styling (`rounded-[24px]`, `h-14`, `bg-zinc-950`, `border-white/[0.08]`, `focus:border-primary/40`). Signup forms render First Name and Last Name side-by-side inside a `grid grid-cols-2` structure.
+  - **Primary buttons**: Uses the standard `.btn-primary` utility class (`rounded-[24px]`, `h-14`).
+  - **Social Button**: Google button uses `.auth-google-btn` with inline SVG logo styling and matches the `rounded-[24px]` and `h-14` height of inputs.
+- **Two-Step Verification Step**:
+  - Both flows transition using Framer Motion animations to the **Step 2 (OTP code verification)** screen. This includes a custom 6-box input layout (`.auth-otp-box`) with auto-advance and backspace focus tracking, a resend code 60-second countdown timer, and field-level inline error validation messages.
+- **Routing Configuration**:
   - `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login`
   - `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/signup`
-  - `Unauthorized sign-in redirect`: `https://routemate.top/login`
 
 ### 0.4 Dependency & Security Overrides
 To resolve vulnerabilities in transitive dependencies (e.g. security warnings inside `uuid` imported by Clerk UI's Solana wallet adapters) and clean up deprecation warnings in builds, RouteMate enforces package-level overrides in `package.json`:
