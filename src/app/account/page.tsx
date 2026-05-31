@@ -512,7 +512,7 @@ const BottomSheet = ({
     <motion.div 
       initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="absolute inset-x-0 bottom-0 rounded-t-[32px] bg-zinc-950 border-t border-x border-white/[0.08] z-[101] max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col"
+      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[500px] rounded-t-[32px] bg-zinc-950 border-t border-x border-white/[0.08] z-[101] max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col"
     >
       <div className="sticky top-0 bg-zinc-950/95 backdrop-blur-md z-10 flex items-center justify-between px-6 py-5 border-b border-white/5">
         <div className="flex items-center gap-3">
