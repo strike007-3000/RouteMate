@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.1](https://github.com/strike007-3000/RouteMate/compare/v3.14.0...v3.14.1) (2026-05-31)
+
+### Features
+
+* **account:** add prebaked avatar grid to Personal Info settings panel to allow users to choose from static minimalist design assets.
+* **account:** fix bottom sheet stretching by using absolute positioning inside the constrained page container.
+
 ## [3.14.0](https://github.com/strike007-3000/RouteMate/compare/v3.13.1...v3.14.0) (2026-05-31)
 
 
@@ -16,13 +23,6 @@ All notable changes to this project will be documented in this file.
 
 * **account:** preserve lastName on save & apply defaultViewMode on timeline init ([34069b3](https://github.com/strike007-3000/RouteMate/commit/34069b34de6716136a00b13d5acfdd8421f9592c))
 * **scripts:** forward extra CLI args through infisical wrapper ([80c38cb](https://github.com/strike007-3000/RouteMate/commit/80c38cb655480fbc596f111e9126e5546edb0c38))
-
-## [3.14.0](https://github.com/strike007-3000/RouteMate/compare/v3.13.2...v3.14.0) (2026-05-31)
-
-### Features
-
-* **account:** implement the comprehensive Account Hub screen with expandable Travel Identity stats, custom control sheets (Personal Info, Preferences, Currency, Security), and Local Developer settings override dashboard.
-* **scripts:** forward trailing CLI flags (e.g. port, hostname) through the Infisical / Next wrapper scripts.
 
 ## [3.13.1](https://github.com/strike007-3000/RouteMate/compare/v3.11.0...v3.12.0) (2026-05-31)
 
