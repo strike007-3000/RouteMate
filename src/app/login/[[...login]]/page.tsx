@@ -12,6 +12,7 @@ export default function LoginPage() {
   const signInHook = useSignIn() as any;
   const router = useRouter();
   const [step, setStep] = useState<'form' | 'otp'>('form');
+  const [mounted, setMounted] = useState(false);
   
   // Fields state
   const [email, setEmail] = useState('');
@@ -20,7 +21,11 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  if (!signInHook || !signInHook.isLoaded) {
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || !signInHook || !signInHook.isLoaded) {
     return (
       <main className="min-h-screen bg-black flex items-center justify-center font-sans">
         <Loader2 className="w-8 h-8 text-primary animate-spin" />

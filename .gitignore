@@ -44,3 +44,6 @@ next-env.d.ts
 CLAUDE.md
 litellm_config.yaml
 Modelfile
+
+# clerk configuration (can include secrets)
+/.clerk/
