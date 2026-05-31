@@ -204,11 +204,32 @@
     animation-range: 0px 100px;
   }
 
-  .shrinking-header .header-title {
+.shrinking-header .header-title {
     animation: scale-header-title auto linear both;
     animation-timeline: scroll(block root);
     animation-range: 0px 100px;
     transform-origin: left center;
   }
 }
+
+@layer utilities {
+  .auth-input {
+    @apply h-14 rounded-[24px] bg-zinc-950 border border-white/[0.08] px-5 text-sm font-semibold text-white placeholder:text-zinc-600 focus:outline-none focus:border-primary/40 transition-all w-full;
+  }
+  .auth-google-btn {
+    @apply h-14 rounded-[24px] bg-zinc-950 border border-white/[0.08] flex items-center justify-center gap-3 w-full text-[11px] font-black uppercase tracking-[0.2em] text-white hover:bg-zinc-900 hover:border-white/[0.15] transition-all;
+  }
+  .auth-otp-box {
+    @apply h-14 w-12 rounded-[16px] bg-zinc-950 border border-white/[0.08] text-center text-xl font-black text-white focus:outline-none focus:border-primary/50 transition-all;
+  }
+  .auth-divider {
+    @apply flex items-center gap-3 text-[9px] font-black text-zinc-600 uppercase tracking-[0.4em] my-6;
+  }
+  .auth-divider::before,
+  .auth-divider::after {
+    content: '';
+    @apply flex-1 h-[1px] bg-white/[0.08];
+  }
+}
+
 
