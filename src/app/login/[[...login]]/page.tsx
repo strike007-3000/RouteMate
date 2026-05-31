@@ -10,6 +10,7 @@ import { OtpForm } from '@/components/auth/OtpForm';
 
 export default function LoginPage() {
   const signInHook = useSignIn() as any;
+  console.log("signInHook object:", signInHook);
   const router = useRouter();
   const [step, setStep] = useState<'form' | 'otp'>('form');
   const [mounted, setMounted] = useState(false);
