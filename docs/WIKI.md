@@ -237,4 +237,31 @@ A wizard component parses user-selected dates and vibe tags (e.g. `Chill`, `Adve
 - **Prompt Translation**: Builds a text prompt embedding selected dates and destination highlights. It maps this text request to `/api/parse-itinerary`.
 - **Database Entry**: Inserts the new trip and generated itinerary activities into IndexedDB, then navigates the user to their new itinerary.
 
+---
+
+## 10. Account Hub & Profile Settings (v3.14.0)
+
+RouteMate v3.14.0 introduces the comprehensive **Account Hub**, providing unified controls over personal information, preferences, units, security, and developer keys.
+
+### 10.1 Main Account Screen Layout
+- **Identity Profile Header**: Displays user profile avatar centered in a premium primary-to-purple gradient border. An interactive camera overlay enables profile image updates. Displays user name, travel statistics (number of trips), and a member status badge (e.g., `Elite Traveler`).
+- **Travel Identity Accordion**: An expandable grid displaying travel preferences and statistics cached locally or from Clerk, including:
+  - **Home Base**: The traveler's default home city/airport.
+  - **Favorite Mode**: The most common transportation method.
+  - **Preferred AI**: The default reasoning provider (OpenRouter or Groq).
+  - **Travel Stats**: Total saved trips and destinations.
+- **Unified Settings Navigation**: Clean list items styled with `.glass-card` containing unique semantic color-coded circular backdrops and action triggers.
+
+### 10.2 Settings Control Panels (Slide-in Sheets)
+- **Personal Info**: Standard name input fields, profile photo URL configuration, and database synchronization.
+- **App Preferences**: AI model provider configuration (OpenRouter vs Groq), dark mode toggle, system notification controls, and `Mock AI Extraction Mode` trigger for developer dry runs.
+- **Currency & Units**: Option to select global currency format (`USD`, `EUR`, `GBP`) and preferred unit of length (`KM`, `Miles`) which immediately hydrates transit calculations.
+- **Privacy & Security**: Secure option to clear IndexedDB tables (Dexie local reset), log out of all active user sessions, or delete the account.
+- **Logout Confirm Sheet**: A high-fidelity bottom-sheet drawer with custom confirm/cancel options.
+
+### 10.3 Local Developer Settings
+In local development environments (`NODE_ENV === 'development'`), a developer settings block is rendered at the bottom of the page. This allows overriding local keys directly in `localStorage` to test third-party integrations:
+- **API Key Fields**: Keys for OpenRouter, Groq, Unsplash, OpenRouteService, WeatherStack, and AviationStack.
+- **AI Core Override**: Instantly forces all Smart Paste/Explore requests to use the chosen local provider.
+
 

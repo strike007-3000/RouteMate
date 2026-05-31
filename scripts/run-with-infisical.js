@@ -22,11 +22,11 @@ let spawnArgs;
 if (useInfisical) {
   console.log('[RouteMate] Infisical CLI detected. Running with Infisical...');
   spawnCmd = 'infisical';
-  spawnArgs = ['run', '--', 'next', command];
+  spawnArgs = ['run', '--', 'next', command, ...args.slice(1)];
 } else {
   console.log('[RouteMate] Infisical CLI not found. Falling back to direct next command...');
   spawnCmd = 'next';
-  spawnArgs = [command];
+  spawnArgs = [command, ...args.slice(1)];
 }
 
 const child = spawn(spawnCmd, spawnArgs, { stdio: 'inherit', shell: true });
