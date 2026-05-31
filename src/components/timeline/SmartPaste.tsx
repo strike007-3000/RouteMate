@@ -197,7 +197,7 @@ export const SmartPaste = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
                 <button
                   key={t.label}
                   onClick={() => handleTemplateClick(t.text)}
-                  className="group flex items-center gap-2.5 px-5 py-3 rounded-[24px] bg-white/5 border border-white/10 hover:bg-white/10 transition-all active:scale-95 whitespace-nowrap"
+                  className="group flex items-center gap-2.5 px-5 py-3 rounded-[24px] bg-zinc-900 border border-zinc-700/50 hover:bg-zinc-800 hover:border-primary/30 transition-all active:scale-95 whitespace-nowrap cursor-pointer"
                 >
                   <t.icon className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
                   <span className="text-[10px] font-black text-zinc-400 group-hover:text-white uppercase tracking-wider">{t.label}</span>

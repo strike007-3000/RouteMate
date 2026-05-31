@@ -7,6 +7,18 @@
   --primary: #3b82f6;
   --primary-foreground: #ffffff;
   --border: rgba(255, 255, 255, 0.08);
+
+  --secondary: #18181b;
+  --secondary-foreground: #ffffff;
+  --muted: #18181b;
+  --muted-foreground: #71717a;
+  --accent: #27272a;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --surface-raised: rgba(24, 24, 27, 0.6);
+  --surface-overlay: rgba(9, 9, 11, 0.8);
   
   /* The "Laws" of Rhythm */
   --gutter: 24px;
@@ -43,6 +55,9 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
 }
 
 @layer base {
@@ -51,6 +66,7 @@
   }
   body {
     @apply bg-background text-foreground selection:bg-primary/30 antialiased;
+    font-family: var(--font-sans);
   }
 }
 
@@ -67,10 +83,29 @@
     height: var(--btn-h);
     border-radius: var(--radius-card);
     @apply border-2 border-primary text-primary bg-transparent font-bold uppercase tracking-[0.2em] text-[11px] flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg shadow-primary/10 hover:shadow-primary/20 hover:bg-primary/5 cursor-pointer;
+    will-change: transform;
   }
   .timeline-dot {
     @apply w-2.5 h-2.5 rounded-full z-10;
     box-shadow: 0 0 15px currentColor;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+  .page-glow {
+    position: relative;
+  }
+  .page-glow::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
   }
 }
 

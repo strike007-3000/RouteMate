@@ -85,14 +85,45 @@ AI-extracted itinerary entries can occasionally contain missing, malformed, or i
 
 ---
 
-## 2. Design System & Geometry
+## 2. Design System & Geometry (Nocturnal Velocity)
 
-RouteMate follows a strict "Minimalist Premium" design system to ensure zero visual cognitive load.
+RouteMate follows a strict "Minimalist Premium" design system (named **Nocturnal Velocity**) to ensure zero visual cognitive load and a luxury feel.
 
-- **The Sole Button Standard**: All primary actions must use the `.btn-primary` utility: `h-14`, `rounded-[24px]`, `border-2 border-primary`, and `tracking-[0.2em]`.
-- **Zero-Jump Header Rhythm**: All global navigation routes share a synchronized header layout. The header implements a **Scroll-Driven Animation** using native CSS scroll timelines (with a React-driven `scrollY` custom property fallback for unsupported browsers) that dynamically shrinks padding, transitions background blur opacity, and scales down the page title to maximize screen real estate when scrolling.
-- **The 24px Rule**: All interactive containers, cards, and bento cards must use a standardized `rounded-[24px]` radius.
-- **Intrinsic Sizing**: List items (e.g., in Account Hub) use `min-h-[64px]` and `py-4` instead of fixed heights to accommodate dynamic typography clamping.
+### 2.1 CSS Theme Variables & Primitives
+The application defines a dark-theme foundation in `src/app/globals.css` with the following variables:
+- **Core Variables:**
+  - `--background`: `#000000` (pitch black background)
+  - `--foreground`: `#ffffff` (white high-contrast text)
+  - `--primary`: `#3b82f6` (vibrant blue-500 action color)
+  - `--border`: `rgba(255, 255, 255, 0.08)`
+  - `--secondary`, `--muted`: `#18181b` (zinc-900 surface panels)
+  - `--muted-foreground`: `#71717a` (zinc-500 text)
+  - `--accent`: `#27272a` (zinc-800)
+  - `--destructive`: `#ef4444` (red-500)
+- **Glass Surfaces:**
+  - `.glass`: `backdrop-blur-2xl border border-white/10 bg-zinc-950/60`
+  - `.glass-card`: `backdrop-blur-xl border border-white/5 bg-zinc-900/40`
+- **Atmospheric Glow:**
+  - `.page-glow`: Injects a fixed, hardware-accelerated radial gradient (`rgba(59,130,246,0.08)`) at the top center of core views to add depth.
+- **Scrollbar Control:**
+  - `.no-scrollbar`: Hides scrollbars cross-browser while retaining scroll mechanics.
+
+### 2.2 Visual Components
+- **The Sole Button Standard (`.btn-primary`):** All primary actions must use the `.btn-primary` utility: `h-14`, `rounded-[24px]`, `border-2 border-primary`, and `tracking-[0.2em]`.
+- **BottomNav Active Pill:** A sliding container background pill (`bg-primary/10 border border-primary/20 rounded-[16px]`) shifts behind the active menu tab. Inactive tabs use `text-zinc-600` instead of harsh opacities to ensure legibility.
+- **Sonar Empty State:** The empty trips dashboard features 3 concentric rings pulsing at staggered intervals (`bg-primary/5`, `bg-primary/10`, `bg-primary/15`) centered around a bouncing white plane icon.
+- **Semantic Settings Icons:** Settings items in the Account Hub render customized colored circular backdrops (10% background opacity, 20% border opacity) tailored to each item:
+  - Personal: Blue-400 theme
+  - Settings: Zinc-400 theme
+  - Currency: Emerald-400 theme
+  - Notifications: Amber-400 theme
+  - Security: Purple-400 theme
+  - Logout: Red-500 theme
+
+### 2.3 Geometry & Layout Structure
+- **The 24px Rule:** All interactive containers, cards, and bento cards must use a standardized `rounded-[24px]` radius.
+- **Zero-Jump Header Rhythm:** All global navigation routes share a synchronized header layout. The header implements a **Scroll-Driven Animation** using native CSS scroll timelines (with a React-driven `scrollY` custom property fallback for unsupported browsers) that dynamically shrinks padding, transitions background blur opacity, and scales down the page title to maximize screen real estate when scrolling.
+- **Intrinsic Sizing:** List items (e.g., in Account Hub) use `min-h-[64px]` and `py-4` instead of fixed heights to accommodate dynamic typography clamping.
 
 ### 2.1 Premium Mobile Gestures (Swipe-to-Delete)
 Itinerary stops in the timeline support horizontal swiping for quick management:
