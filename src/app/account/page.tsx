@@ -540,7 +540,15 @@ const PersonalInfoPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await clerkUser?.update({ firstName: name });
+      const trimmed = name.trim();
+      const firstSpaceIndex = trimmed.indexOf(' ');
+      let firstName = trimmed;
+      let lastName = '';
+      if (firstSpaceIndex !== -1) {
+        firstName = trimmed.substring(0, firstSpaceIndex).trim();
+        lastName = trimmed.substring(firstSpaceIndex + 1).trim();
+      }
+      await clerkUser?.update({ firstName, lastName });
       onClose();
     } catch (err) {
       console.error('Failed to update name', err);

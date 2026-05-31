@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { useTripStore } from '@/stores/useTripStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, ItineraryItem } from '@/lib/db';
 import { Header } from '@/components/layout/Header';
@@ -56,6 +57,18 @@ export default function TimelinePage() {
       setActiveTrip(tripId);
     }
   }, [tripId, setActiveTrip]);
+
+  const defaultViewMode = useSettingsStore((state) => state.defaultViewMode);
+  const viewModeInitializedRef = React.useRef(false);
+
+  // Apply defaultViewMode on mount
+  useEffect(() => {
+    if (defaultViewMode && !viewModeInitializedRef.current) {
+      const mappedMode = defaultViewMode === 'summary' ? 'itinerary' : 'timeline';
+      setViewMode(mappedMode);
+      viewModeInitializedRef.current = true;
+    }
+  }, [defaultViewMode, setViewMode]);
 
   const trip = useLiveQuery(() => db.trips.get(tripId), [tripId]);
   const livePoints = useLiveQuery(
