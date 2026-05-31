@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.10.0](https://github.com/strike007-3000/RouteMate/compare/v3.9.1...v3.10.0) (2026-05-31)
+
+
+### Features
+
+* add Google Login OAuth verification details and routes ([f46853b](https://github.com/strike007-3000/RouteMate/commit/f46853bea84e188ff006fefca3500ce1a3b64cd2))
+* add Google OAuth verification files and routes ([e863ec9](https://github.com/strike007-3000/RouteMate/commit/e863ec93fa6852963c60d56f77a8e628d105466a))
+* add interactive developer script to fetch and update landmark images from unsplash ([d3c274f](https://github.com/strike007-3000/RouteMate/commit/d3c274fc5045bd8c63c7d40df98f6bbee107b5e3))
+
+
+### Bug Fixes
+
+* align seeder script query filters with UnsplashService and commit first-run image updates ([6b98a66](https://github.com/strike007-3000/RouteMate/commit/6b98a66a7e550586d009f985a2f80bf2e31deb25))
+* construct unsplash URLs from raw base URL instead of photo.id only ([235d3b1](https://github.com/strike007-3000/RouteMate/commit/235d3b1b6ba6e287f72e75bf691a54c81c21a3ce))
+* remove featured filter and target city+country landmark for precise unsplash searches ([dff0f8a](https://github.com/strike007-3000/RouteMate/commit/dff0f8af1f7a4ded8f2325d13008a4479ae2b883))
+* restore 7 broken seed city images due to Unsplash rate limit ([5432915](https://github.com/strike007-3000/RouteMate/commit/54329156dbd68114e509190fd8b60c1c095e2cd7))
+* restore seed destinations with correct timestamp-prefixed Unsplash URLs ([8e9078d](https://github.com/strike007-3000/RouteMate/commit/8e9078d864a2b88f9e3864e2637bc88b75a0c900))
+* update all city seed images to high quality verified URLs ([0115c94](https://github.com/strike007-3000/RouteMate/commit/0115c942bc38ae619f20eade4919b5cd45831591))
+* update seed destinations with high-fidelity landmark images from updated script ([854c0ed](https://github.com/strike007-3000/RouteMate/commit/854c0edc7e5ce8d043638d231e64edc267c7494d))
+
 ## [3.9.1](https://github.com/strike007-3000/RouteMate/compare/v3.9.0...v3.9.1) (2026-05-30)
 
 
