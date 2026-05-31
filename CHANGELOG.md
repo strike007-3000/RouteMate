@@ -7,6 +7,14 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
+* design review and nocturnal velocity design system integration ([58c9de1](https://github.com/strike007-3000/RouteMate/commit/58c9de1d16aaeea0ca23fc988a6461a2872c857f))
+* design review and nocturnal velocity design system integration ([83eefac](https://github.com/strike007-3000/RouteMate/commit/83eefac55b6d8ecc72337aa4049af986b3d66bf0))
+
+## [3.11.0](https://github.com/strike007-3000/RouteMate/compare/v3.10.0...v3.11.0) (2026-05-31)
+
+
+### Features
+
 * **design:** implement design review and Nocturnal Velocity design system integration ([83eefac](https://github.com/strike007-3000/RouteMate/commit/83eefac))
 
 ## [3.10.0](https://github.com/strike007-3000/RouteMate/compare/v3.9.1...v3.10.0) (2026-05-31)
