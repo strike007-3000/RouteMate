@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useSignUp } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Eye, EyeOff } from 'lucide-react';
+import { Sparkles, Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { OtpForm } from '@/components/auth/OtpForm';
 
@@ -23,7 +23,11 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   if (!signUpHook || !signUpHook.isLoaded) {
-    return null;
+    return (
+      <main className="min-h-screen bg-black flex items-center justify-center font-sans">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </main>
+    );
   }
 
   const { signUp, setActive } = signUpHook;
