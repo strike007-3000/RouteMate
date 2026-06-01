@@ -278,6 +278,6 @@ To comply with Google OAuth consent screen brand verification, RouteMate impleme
 - Both the login page (`/login`) and the signup page (`/signup`) include secondary text links to `/privacy` and `/terms` in their form footers to comply with in-product transparency guidelines.
 
 ### 11.3 Middleware Bootstrap
-- Next.js requires the standard `src/middleware.ts` entrypoint file to build and execute the Clerk middleware context correctly. It exports configurations directly from `src/proxy.ts` to coordinate routing parameters.
+- Next.js 16 renames the standard `middleware.ts` convention to `proxy.ts`. RouteMate utilizes `src/proxy.ts` as the primary configuration entrypoint to coordinate Clerk routing parameters. Creating a redundant `src/middleware.ts` alongside `src/proxy.ts` is rejected by the Next compiler and has been cleaned up.
 
 

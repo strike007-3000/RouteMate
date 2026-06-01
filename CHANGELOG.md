@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 
 * **brand:** replace default root route redirect with a premium, brand-compliant homepage listing app functionality.
 * **brand:** add easily accessible privacy policy and terms links footer to the landing page, login page, and signup page.
-* **middleware:** add standard src/middleware.ts entrypoint to resolve Next.js runtime warning and enable Clerk middleware checks.
+* **middleware:** resolve Next.js 16 double-resolution warnings by ensuring `src/proxy.ts` is the single, primary middleware config entrypoint.
 
 ## [3.15.0](https://github.com/strike007-3000/RouteMate/compare/v3.14.0...v3.15.0) (2026-05-31)
 
