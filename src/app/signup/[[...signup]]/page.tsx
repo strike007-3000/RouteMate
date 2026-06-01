@@ -269,6 +269,12 @@ export default function SignUpPage() {
                     Sign in
                   </Link>
                 </p>
+
+                <div className="flex items-center justify-center gap-4 mt-8 text-[9px] font-black uppercase tracking-widest text-zinc-650">
+                  <Link href="/privacy" className="hover:text-zinc-400 transition-colors" id="signup-privacy-link">Privacy Policy</Link>
+                  <span>•</span>
+                  <Link href="/terms" className="hover:text-zinc-400 transition-colors" id="signup-terms-link">Terms of Service</Link>
+                </div>
               </motion.div>
             ) : (
               <motion.div
