@@ -1,0 +1,149 @@
+'use client';
+
+import React, { useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Plus, Plane } from 'lucide-react';
+import { useTripStore } from '@/stores/useTripStore';
+import { TripCard } from '@/components/trips/TripCard';
+import { useRouter } from 'next/navigation';
+
+import { Header } from '@/components/layout/Header';
+import { BottomNav } from '@/components/layout/BottomNav';
+import { NewTripModal } from '@/components/trips/NewTripModal';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '@/lib/db';
+import { UnsplashService } from '@/services/images/UnsplashService';
+import { useSettingsStore } from '@/stores/useSettingsStore';
+
+export function TripsClient() {
+  const { createTrip } = useTripStore();
+  const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const liveTrips = useLiveQuery(() => db.trips.toArray(), []);
+  const trips = useMemo(() => liveTrips || [], [liveTrips]);
+  const { unsplashAccessKey } = useSettingsStore();
+  
+  // Dashboard Fetcher: Background fetch images for trips missing them
+  useEffect(() => {
+    if (trips.length > 0) {
+      trips.forEach(trip => {
+        if (!trip.coverImage && trip.id) {
+          UnsplashService.getTripImage(trip.id, trip.destination, unsplashAccessKey);
+        }
+      });
+    }
+  }, [trips, unsplashAccessKey]);
+
+  const upcomingTrips = trips.filter(t => t.status === 'upcoming');
+  const draftTrips = trips.filter(t => t.status === 'draft');
+
+  const handleSelect = (id: number) => {
+    const navigate = () => router.push(`/trip/${id}/timeline`);
+    if (document.startViewTransition) {
+      document.startViewTransition(navigate);
+    } else {
+      navigate();
+    }
+  };
+
+  const handleCreateNew = async (data: { destination: string, startDate: string, endDate: string }) => {
+    const id = await createTrip({
+      name: `Trip to ${data.destination}`,
+      destination: data.destination,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      status: 'upcoming'
+    });
+    
+    // Trigger Unsplash fetch immediately
+    if (id) {
+      UnsplashService.getTripImage(id, data.destination, unsplashAccessKey);
+    }
+
+    setIsModalOpen(false);
+    handleSelect(id);
+  };
+
+  return (
+    <main className="min-h-screen bg-black pb-32 w-full max-w-[500px] mx-auto overflow-x-hidden relative flex flex-col page-glow">
+      <Header />
+      
+      <div className="px-[var(--gutter,24px)] pt-6 pb-4">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="btn-primary w-full"
+        >
+          <Plus className="w-5 h-5" />
+          <span>Create New Trip</span>
+        </button>
+      </div>
+
+      <section className="px-[var(--gutter,24px)] space-y-12 pb-10">
+        {upcomingTrips.length > 0 && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 mb-6 px-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <h2 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">UPCOMING</h2>
+            </div>
+            <div className="space-y-6">
+              {upcomingTrips.map(trip => (
+                <TripCard key={trip.id} trip={trip} onSelect={handleSelect} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {draftTrips.length > 0 && (
+          <div>
+            <div className="flex items-center gap-3 mb-6 px-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <h2 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">DRAFTS</h2>
+            </div>
+            <div className="space-y-6">
+              {draftTrips.map(trip => (
+                <TripCard key={trip.id} trip={trip} onSelect={handleSelect} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {trips.length === 0 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-20 px-8 text-center"
+          >
+            <div className="relative w-24 h-24 flex items-center justify-center mb-8">
+              {/* Sonar Pulsing Rings */}
+              <div className="absolute inset-0 rounded-full bg-primary/5 border border-primary/20 animate-ping" style={{ animationDuration: '3s' }} />
+              <div className="absolute inset-2 rounded-full bg-primary/10 border border-primary/15 animate-ping" style={{ animationDuration: '3s', animationDelay: '1s' }} />
+              <div className="absolute inset-4 rounded-full bg-primary/15 border border-primary/10 animate-ping" style={{ animationDuration: '3s', animationDelay: '2s' }} />
+              
+              {/* Core Circle */}
+              <div className="relative w-16 h-16 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center shadow-lg shadow-primary/10">
+                <Plane className="w-6 h-6 text-primary animate-bounce" style={{ animationDuration: '2s' }} />
+              </div>
+            </div>
+            <h3 className="text-lg font-black text-white mb-2">Ready for a new adventure?</h3>
+            <p className="text-xs text-zinc-500 font-bold mb-8">Start by creating your first itinerary. We&apos;ll handle the logistics.</p>
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="btn-primary px-8"
+            >
+              Plan first trip
+            </button>
+          </motion.div>
+        )}
+      </section>
+
+      <NewTripModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onCreate={handleCreateNew} 
+      />
+
+      <BottomNav />
+    </main>
+  );
+}

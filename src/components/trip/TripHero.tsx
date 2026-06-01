@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { format, parseISO, differenceInDays, startOfDay, isToday, isBefore, isAfter } from 'date-fns';
 import { Trip } from '@/lib/db';
@@ -62,10 +62,13 @@ export const TripHero = ({ trip }: TripHeroProps) => {
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 z-[1]" />
         {trip.coverImage ? (
-          <img 
+          <Image 
             src={trip.coverImage} 
             alt={trip.destination} 
-            className="w-full h-full object-cover aspect-video transition-all duration-1000 group-hover/hero:scale-105"
+            fill
+            priority
+            sizes="500px"
+            className="object-cover transition-all duration-1000 group-hover/hero:scale-105"
             style={{ viewTransitionName: `trip-image-${trip.id}` } as React.CSSProperties}
           />
         ) : (
