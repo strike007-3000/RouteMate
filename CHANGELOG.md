@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.16.0](https://github.com/strike007-3000/RouteMate/compare/v3.15.1...v3.16.0) (2026-06-01)
+
+### Features
+
+* **rsc:** refactor page routes (`/trips`, `/radar`, `/trip/[id]`, `/trip/[id]/timeline`, `/explore`, `/account`) into lightweight React Server Component shells with co-located Client Component implementations.
+* **images:** upgrade raw `<img>` tags to Next.js `<Image>` components with automatic formatting, optimized remote pattern domains, and experimental package imports in `next.config.ts`.
+* **images:** implement secure backend image retrieval route `/api/unsplash-image` to fetch scenic imagery via Unsplash proxy without exposing keys to browser static bundles.
+* **ai:** enforce zero temperature for OpenRouter and Groq city discovery and itinerary parsing calls to lock output schema structures.
+* **id:** replace random ID generations in parsing routes with native `crypto.randomUUID()` to harden IndexedDB local record creation.
+* **store:** optimize timeline reorder hooks by destructuring and wrapping actions cleanly at the page level.
+
 ## [3.15.1](https://github.com/strike007-3000/RouteMate/compare/v3.15.0...v3.15.1) (2026-06-01)
 
 ### Features

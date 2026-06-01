@@ -215,6 +215,13 @@ Environment variables follow the `NEXT_PUBLIC_` prefix convention where client-s
 ### 8.4 Deterministic ID Generation
 All transient itinerary items and transit suggestions use `crypto.randomUUID()` for ID generation. This ensures enterprise-grade collision resistance compared to `Math.random()`, which is critical for local IndexedDB stability.
 
+### 8.5 React Server Components (RSC) Split
+RouteMate refactors its core routes (`/trips`, `/radar`, `/trip/[id]`, `/trip/[id]/timeline`, `/explore`, `/account`) to use a clean RSC shell pattern. Since the app is offline-first (Dexie IndexedDB), pages cannot render data server-side. However, by loading the heavy interactive code inside co-located Client Components (`*Client.tsx`), we reduce the parsing footprint on initial loads and allow Next.js to stream layouts efficiently.
+
+### 8.6 Image Proxy & Optimization
+- **API Image Proxy**: The Unsplash image retrieval logic is routed through a secure backend route `/api/unsplash-image` which uses `UNSPLASH_ACCESS_KEY` to query Unsplash. This ensures keys are never exposed in browser static bundles.
+- **Next Image Upgrade**: Raw `<img>` tags are replaced with `<Image>` components featuring proper remote pattern configurations in `next.config.ts` and experimental package import optimizations to avoid layout shifts.
+
 ---
 
 ## 9. Explore Screen & Hybrid AI Discovery Engine (v3.9.1)
@@ -265,7 +272,7 @@ In local development environments (`NODE_ENV === 'development'`), a developer se
 - **AI Core Override**: Instantly forces all Smart Paste/Explore requests to use the chosen local provider.
 
 
-## 11. Google Brand Verification & Landing Page (v3.15.1)
+## 11. Google Brand Verification & Landing Page (v3.16.0)
 
 To comply with Google OAuth consent screen brand verification, RouteMate implements a static landing page at `/` (the root route) and accessible links to the privacy policy and terms across all entry screens.
 

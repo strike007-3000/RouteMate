@@ -109,7 +109,7 @@ export async function POST(req: Request) {
             model: targetModel,
             response_format: { type: 'json_object' },
             messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: `Explore city: ${city}` }],
-            temperature: 0.2,
+            temperature: 0,
           }),
         });
       } catch { return null; }
@@ -128,7 +128,7 @@ export async function POST(req: Request) {
             model: targetModel,
             response_format: { type: 'json_object' },
             messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: `Explore city: ${city}` }],
-            temperature: 0.2,
+            temperature: 0,
           }),
         });
       } catch { return null; }

@@ -98,7 +98,7 @@ export async function POST(req: Request) {
             model: targetModel,
             response_format: { type: 'json_object' },
             messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: text }],
-            temperature: 0.1,
+            temperature: 0,
           }),
         });
       } catch { return null; }
@@ -117,7 +117,7 @@ export async function POST(req: Request) {
             model: targetModel,
             response_format: { type: 'json_object' },
             messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: text }],
-            temperature: 0.1,
+            temperature: 0,
           }),
         });
       } catch { return null; }
@@ -239,7 +239,7 @@ export async function POST(req: Request) {
           category: cat,
           startTime,
           endTime,
-          id: Math.random().toString(36).substr(2, 9)
+          id: crypto.randomUUID()
         };
       });
       
