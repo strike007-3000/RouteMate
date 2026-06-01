@@ -265,3 +265,19 @@ In local development environments (`NODE_ENV === 'development'`), a developer se
 - **AI Core Override**: Instantly forces all Smart Paste/Explore requests to use the chosen local provider.
 
 
+## 11. Google Brand Verification & Landing Page (v3.15.1)
+
+To comply with Google OAuth consent screen brand verification, RouteMate implements a static landing page at `/` (the root route) and accessible links to the privacy policy and terms across all entry screens.
+
+### 11.1 Brand Landing Page
+- **Functional Description**: The landing page introduces the application's core capabilities (AI smart paste, contextual transit routing, IndexedDB local offline storage) and offers clear CTAs to either launch the app (linking to `/trips` which triggers authentication) or sign in/register directly.
+- **Privacy Disclosure Footer**: A dedicated footer includes direct, easily accessible links to `/privacy` (Privacy Policy) and `/terms` (Terms of Service) matching the OAuth consent screen configurations exactly.
+- **Limited Use Policy**: Displays the required Google API Services User Data Policy disclosure in the footer.
+
+### 11.2 Authentication Footers
+- Both the login page (`/login`) and the signup page (`/signup`) include secondary text links to `/privacy` and `/terms` in their form footers to comply with in-product transparency guidelines.
+
+### 11.3 Middleware Bootstrap
+- Next.js 16 renames the standard `middleware.ts` convention to `proxy.ts`. RouteMate utilizes `src/proxy.ts` as the primary configuration entrypoint to coordinate Clerk routing parameters. Creating a redundant `src/middleware.ts` alongside `src/proxy.ts` is rejected by the Next compiler and has been cleaned up.
+
+

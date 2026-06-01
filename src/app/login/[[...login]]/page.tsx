@@ -162,7 +162,7 @@ export default function LoginPage() {
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path
-                      fill="currentColor"
+                      fill="#4285F4"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                     />
                     <path
@@ -244,6 +244,12 @@ export default function LoginPage() {
                     Sign up
                   </Link>
                 </p>
+
+                <div className="flex items-center justify-center gap-4 mt-8 text-[9px] font-black uppercase tracking-widest text-zinc-650">
+                  <Link href="/privacy" className="hover:text-zinc-400 transition-colors" id="login-privacy-link">Privacy Policy</Link>
+                  <span>•</span>
+                  <Link href="/terms" className="hover:text-zinc-400 transition-colors" id="login-terms-link">Terms of Service</Link>
+                </div>
               </motion.div>
             ) : (
               <motion.div
