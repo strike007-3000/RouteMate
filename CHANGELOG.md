@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.16.0](https://github.com/strike007-3000/RouteMate/compare/v3.15.0...v3.16.0) (2026-06-02)
+
+
+### Features
+
+* **brand:** create brand landing page and add policy links to auth p… ([4e34522](https://github.com/strike007-3000/RouteMate/commit/4e34522b5c68cbc9ad79f20d907ba25e62e35ff1))
+* **brand:** create brand landing page and add policy links to auth page footers ([fb0b133](https://github.com/strike007-3000/RouteMate/commit/fb0b133d65a15f563ecd36f28845da5b88a2dfb7))
+* integrate global brand differentiation and compliance updates ([bd35992](https://github.com/strike007-3000/RouteMate/commit/bd359922203b0fb3784aedfa469e571f7f1cd8f1))
+
+
+### Bug Fixes
+
+* **brand:** correct Google logo SVG brand colors for login and signup buttons ([db10192](https://github.com/strike007-3000/RouteMate/commit/db10192ba1a228f036f315016dccd54d1899e595))
+* **brand:** sync package-lock.json and correct proxy.ts middleware convention docs ([4d3c228](https://github.com/strike007-3000/RouteMate/commit/4d3c22830f4c779f7eb1ad31d1e40a95a32cf08c))
+* **compliance:** exhaustive brand sweep to routemate.top ([#64](https://github.com/strike007-3000/RouteMate/issues/64)) ([b964917](https://github.com/strike007-3000/RouteMate/commit/b964917792a04ca75ec016aea9cf937fbcbf2786))
+
 ## [3.16.0](https://github.com/strike007-3000/RouteMate/compare/v3.15.1...v3.16.0) (2026-06-01)
 
 ### Features
