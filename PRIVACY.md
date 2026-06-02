@@ -1,8 +1,8 @@
-# Privacy Policy for RouteMate
+# Privacy Policy for routemate.top
 
-**Last Updated: May 31, 2026**
+**Last Updated: June 2, 2026**
 
-Welcome to **RouteMate** (accessible via our custom domain at [routemate.top](https://routemate.top) and our repository at [github.com/strike007-3000/RouteMate](https://github.com/strike007-3000/RouteMate)). We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our application.
+Welcome to **routemate.top** (accessible via our custom domain at [routemate.top](https://routemate.top) and our repository at [github.com/strike007-3000/RouteMate](https://github.com/strike007-3000/RouteMate)), an independent, consumer-facing leisure travel itinerary utility. We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our application.
 
 ---
 
@@ -53,3 +53,12 @@ RouteMate's use and transfer of information received from Google APIs to any oth
 If you have any questions or feedback about this Privacy Policy, please contact us at:
 *   **Email:** itstestacc3000@gmail.com
 *   **GitHub Repository:** [github.com/strike007-3000/RouteMate](https://github.com/strike007-3000/RouteMate)
+
+---
+
+## 6. Legal Disclaimer & Non-Affiliation
+**routemate.top** is an independent, open-source personal travel planning utility developed for individual leisure travelers and the developer community.
+
+This application has **no affiliation, partnership, endorsement, connection, or association** of any kind with any commercial B2B fleet management platforms, enterprise logistics routing software, freight manifest systems, or professional courier tracking services.
+
+Any similarity in name to commercial logistics or routing products is purely coincidental. This utility is not a competitor to, nor a substitute for, any enterprise logistics solution. It is designed exclusively for consumer leisure travel itinerary planning.

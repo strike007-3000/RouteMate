@@ -116,3 +116,13 @@ graph TD
 
 ---
 Built with ❤️ for travelers who value intelligence, design, and precision.
+
+---
+
+## ⚖️ Legal & Non-Affiliation Notice
+
+**routemate.top** is a free, open-source personal travel planning utility built for individual developers and leisure travelers.
+
+This project has **no affiliation, connection, partnership, or association** of any kind with any commercial fleet tracking platforms, B2B logistics routing software, enterprise courier services, or freight management systems.
+
+Any similarity in name to commercial logistics products is entirely coincidental. This tool is designed exclusively for consumer leisure travel itinerary planning and is provided at no cost, with no commercial paywalls or subscription fees.
