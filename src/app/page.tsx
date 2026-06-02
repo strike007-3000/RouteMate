@@ -17,7 +17,12 @@ export default function RootPage() {
             <Sparkles className="w-3 h-3 text-primary" />
             <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Next-Generation Travel</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tighter uppercase">RouteMate</h1>
+          <h1 className="text-5xl font-normal tracking-tighter flex items-center justify-center">
+            routemate
+            <span className="ml-2.5 text-2xl font-black text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-[8px] tracking-normal normal-case">
+              .top
+            </span>
+          </h1>
           <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
             Pocket Intelligence for the Modern Nomad.
           </p>
