@@ -224,9 +224,9 @@ routemate.top refactors its core routes (`/trips`, `/radar`, `/trip/[id]`, `/tri
 
 ---
 
-## 9. Explore Screen & Fallback AI Curation Engine (v3.17.0)
+## 9. Explore Screen & Fallback AI Curation Engine (v3.18.0)
 
-routemate.top v3.17.0 introduces a fallback AI curation pipeline for missing destinations with interactive intent collection, progressive loading, and preview cards.
+routemate.top v3.18.0 introduces a fallback AI curation pipeline for missing destinations with interactive intent collection, progressive loading, and preview cards.
 
 ### 9.1 Database Store Migration (v7)
 To support caching AI-discovered destinations locally, the database schema (Dexie.js) is migrated to version `7`. It defines the `destinations` table:
@@ -247,7 +247,8 @@ The POST endpoint `/api/explore-city` handles dynamic AI curations of un-seeded 
 
 ### 9.4 Custom Itinerary Generation (Date & Vibe Wizard)
 A wizard component parses user-selected dates and vibe tags (e.g. `Chill`, `Adventure`, `Foodie`, `Culture & History`) to automatically generate a trip outline.
-- **Prompt Translation**: Builds a text prompt embedding selected dates and destination highlights. It maps this text request to `/api/parse-itinerary`.
+- **Dynamic Prompt Translation**: Builds an API payload containing the selected dates, vibe, and destination highlights. It maps this data to the `/api/parse-itinerary` backend where the system prompt is dynamically constructed to enforce strict thematic alignment with the chosen trip vibe.
+- **Strict Calendar Constraints**: The backend applies rigorous timeline math, ensuring all parsed activities fall mathematically between the requested `startDate` and `endDate`.
 - **Database Entry**: Inserts the new trip and generated itinerary activities into IndexedDB, then navigates the user to their new itinerary.
 
 ---

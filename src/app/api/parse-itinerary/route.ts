@@ -3,14 +3,30 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { text } = body;
-    let { rootYear = "2026" } = body;
-    if (!/^\d{4}$/.test(String(rootYear))) {
-      rootYear = new Date().getFullYear().toString();
+    const { text, city, startDate, endDate, tripVibe, highlights } = body;
+    let rootYear = "2026";
+    
+    if (startDate) {
+      rootYear = startDate.split('-')[0];
+    } else if (body.rootYear) {
+      rootYear = body.rootYear;
     }
 
-    if (!text) {
-      return NextResponse.json({ error: 'No text provided' }, { status: 400 });
+    let userMessage = text || '';
+    if (city && startDate && endDate && tripVibe) {
+      const totalDays = Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (86400000)) + 1;
+      userMessage = `I am planning a ${tripVibe} trip to ${city} from ${startDate} to ${endDate} (${totalDays} days).
+Please plan a high-fidelity itinerary exactly spanning these ${totalDays} days.
+Make sure to visit these famous landmarks if applicable:
+${highlights?.map((h: any) => `- ${h.title}: ${h.description}`).join('\n') || ''}
+
+Tailor the daily schedule blocks (activities, morning/afternoon/evening slots) to strictly align with the chosen tripVibe: ${tripVibe}.
+Generate a perfectly structured timeline mapping exactly to the duration between ${startDate} and ${endDate}.
+Please output this in chronological order.`;
+    }
+
+    if (!userMessage) {
+      return NextResponse.json({ error: 'No text or trip parameters provided' }, { status: 400 });
     }
 
     const serverKey = process.env.OPENROUTER_API_KEY;
@@ -26,7 +42,7 @@ export async function POST(req: Request) {
       console.log('--- MOCK AI Extraction Active ---');
       // ... (mock implementation remains same)
       const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-      const foundMonth = months.findIndex(m => text.toLowerCase().includes(m.toLowerCase()));
+      const foundMonth = months.findIndex(m => userMessage.toLowerCase().includes(m.toLowerCase()));
       const monthIdx = foundMonth !== -1 ? foundMonth : new Date().getMonth();
       const monthStr = (monthIdx + 1).toString().padStart(2, '0');
 
@@ -34,7 +50,7 @@ export async function POST(req: Request) {
         {
           id: 'mock-1',
           category: 'Flight',
-          title: 'Flight to ' + (text.match(/to ([A-Z][a-z]+)/)?.[1] || 'London'),
+          title: 'Flight to ' + (userMessage.match(/to ([A-Z][a-z]+)/)?.[1] || 'London'),
           address: 'International Airport',
           startTime: `${rootYear}-${monthStr}-23T10:00:00Z`,
           endTime: `${rootYear}-${monthStr}-23T14:30:00Z`,
@@ -44,7 +60,7 @@ export async function POST(req: Request) {
         {
           id: 'mock-2',
           category: 'Lodging',
-          title: 'Stay at ' + (text.match(/Stay at ([A-Z][a-z]+ [A-Z][a-z]+)/)?.[1] || 'Grand Plaza Hotel'),
+          title: 'Stay at ' + (userMessage.match(/Stay at ([A-Z][a-z]+ [A-Z][a-z]+)/)?.[1] || 'Grand Plaza Hotel'),
           address: 'City Center',
           startTime: `${rootYear}-${monthStr}-23T16:00:00Z`,
           endTime: `${rootYear}-${monthStr}-26T11:00:00Z`,
@@ -54,7 +70,7 @@ export async function POST(req: Request) {
         {
           id: 'mock-3',
           category: 'Activity',
-          title: (text.match(/visit ([A-Z][a-z]+ [A-Z][a-z]+)/i)?.[1] || 'City Sightseeing'),
+          title: (userMessage.match(/visit ([A-Z][a-z]+ [A-Z][a-z]+)/i)?.[1] || 'City Sightseeing'),
           address: 'Central District',
           startTime: `${rootYear}-${monthStr}-24T11:00:00Z`,
           endTime: `${rootYear}-${monthStr}-24T13:00:00Z`,
@@ -97,7 +113,7 @@ export async function POST(req: Request) {
           body: JSON.stringify({
             model: targetModel,
             response_format: { type: 'json_object' },
-            messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: text }],
+            messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
             temperature: 0,
           }),
         });
@@ -116,7 +132,7 @@ export async function POST(req: Request) {
           body: JSON.stringify({
             model: targetModel,
             response_format: { type: 'json_object' },
-            messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: text }],
+            messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
             temperature: 0,
           }),
         });
@@ -219,15 +235,31 @@ export async function POST(req: Request) {
         let startD = new Date(startTime);
         if (isNaN(startD.getTime())) {
           const fallbackYear = /^\d{4}$/.test(String(rootYear)) ? rootYear : new Date().getFullYear();
-          startTime = `${fallbackYear}-01-01T12:00:00Z`;
+          startTime = startDate ? `${startDate}T10:00:00Z` : `${fallbackYear}-01-01T12:00:00Z`;
           startD = new Date(startTime);
         }
+
+        // Strict mapping against calendar bounds if provided
+        if (startDate && endDate) {
+          const tripStart = new Date(`${startDate}T00:00:00Z`);
+          const tripEnd = new Date(`${endDate}T23:59:59Z`);
+          
+          if (startD < tripStart) startD = tripStart;
+          if (startD > tripEnd) startD = tripEnd;
+        }
+
         startTime = isNaN(startD.getTime()) ? new Date().toISOString() : startD.toISOString();
 
         const endD = new Date(endTime);
         if (isNaN(endD.getTime())) {
           endTime = startTime;
         } else {
+          if (startDate && endDate) {
+            const tripStart = new Date(`${startDate}T00:00:00Z`);
+            const tripEnd = new Date(`${endDate}T23:59:59Z`);
+            if (endD < tripStart) endD.setTime(tripStart.getTime());
+            if (endD > tripEnd) endD.setTime(tripEnd.getTime());
+          }
           endTime = endD.toISOString();
           if (isNaN(new Date(endTime).getTime())) {
             endTime = startTime;

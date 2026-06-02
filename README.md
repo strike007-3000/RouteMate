@@ -43,13 +43,13 @@ Advanced navigation logic that understands the context of your journey.
 - **Multi-Tier Failover**: Implemented a hardened resilience layer. If the preferred provider fails or is rate-limited, the engine automatically traverses the queue to the next provider/model (e.g., failing over from OpenRouter Free to Groq Llama 3.3).
 - **JSON Object Enforcement**: Native `json_object` mode eliminates markdown artifacts and parsing failures.
 
-### 🗺️ Explore Screen & Fallback AI Curation Engine (v3.17.0)
+### 🗺️ Explore Screen & Fallback AI Curation Engine (v3.18.0)
 A dual-mode discovery dashboard that blends pre-curated locations with dynamic, real-time AI mapping:
 - **Curated Global Catalog**: Prepopulated with 20 world-class travel destinations, each featuring detailed descriptions, tags, and 5 curated highlight attractions.
 - **On-Demand Fallback AI Curation**: When searching for a destination not in the database, users can trigger an interactive configuration modal to specify custom planning intents and vibe modifier chips (e.g. Food & Dining, Hidden Gems) before requesting curation.
 - **Progressive Loading**: Provides a multi-stage loading tracker status representing coordinates mapping, landmark synthesis, image sourcing, and database commit stages in real-time.
 - **Preview & Caching Guardrails**: Synced curations are held strictly in transient memory. Database storage into IndexedDB only occurs when the user explicitly clicks "Confirm & Save". Clicking "Cancel/Re-roll" discards transient states and re-opens intent configurations.
-- **Spark Itinerary Builder**: Generate custom day-by-day itineraries directly from any explored location by choosing dates and a travel style/vibe, then routing straight into the timeline.
+- **Spark Itinerary Builder**: Generate custom day-by-day itineraries directly from any explored location by choosing dates and a travel style/vibe, then routing straight into the timeline. Features strict calendar enforcement to guarantee timeline math alignment.
 - **Balanced API Load Sharing**: Split provider default routes, directing Smart Paste extractions to Groq and Explore Discovery to OpenRouter to balance API limits.
 - **Favorites Integration**: Easily toggle places to a Saved page, synchronizing to local IndexedDB.
 
