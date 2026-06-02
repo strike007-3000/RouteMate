@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { city } = await req.json();
+    const { city, intent, moodModifiers } = await req.json();
 
     if (!city) {
       return NextResponse.json({ error: 'No city provided' }, { status: 400 });
@@ -28,8 +28,10 @@ export async function POST(req: Request) {
         name: capitalizedCity,
         country: 'Global Destination',
         image: '', // Will be updated on client via Unsplash
-        description: `Experience the breathtaking atmosphere of ${capitalizedCity}. A unique destination filled with historic architecture, vibrant neighborhoods, and unforgettable local culture.`,
-        tags: ['CULTURE', 'EXPLORE', 'LOCAL'],
+        description: `Experience the breathtaking atmosphere of ${capitalizedCity}${intent ? ` for ${intent}` : ''}. A unique destination filled with historic architecture, vibrant neighborhoods, and unforgettable local culture.`,
+        tags: (moodModifiers && moodModifiers.length > 0) 
+          ? moodModifiers.map((m: string) => m.toUpperCase().replace(/[^A-Z]/g, '')) 
+          : ['CULTURE', 'EXPLORE', 'LOCAL'],
         category: 'Cities',
         highlights: [
           {
@@ -70,9 +72,21 @@ export async function POST(req: Request) {
       }, { status: 401 });
     }
 
-    const systemPrompt = `You are a professional travel curator and local guide.
-    TASK: Generate a high-quality tourist overview and curated list of top 4 highlights for the requested city.
-    STRICT OUTPUT RULES:
+    let systemPrompt = `You are a professional travel curator and local guide.
+    TASK: Generate a high-quality tourist overview and curated list of top 4 highlights for the requested city.`;
+
+    if (intent || (moodModifiers && moodModifiers.length > 0)) {
+      systemPrompt += `\n    PERSONALIZATION RULE: The user has specified the following travel preferences:`;
+      if (intent) {
+        systemPrompt += `\n    - Travel Intent (What they want to do): "${intent}"`;
+      }
+      if (moodModifiers && moodModifiers.length > 0) {
+        systemPrompt += `\n    - Mood / Vibe Modifiers: ${moodModifiers.join(', ')}`;
+      }
+      systemPrompt += `\n    You MUST dynamically shape the destination description, tags, and all 4 curated highlights around this exact user focus, ensuring the content is deeply personalized rather than generic.`;
+    }
+
+    systemPrompt += `\n    STRICT OUTPUT RULES:
     - Output MUST be a valid JSON object matching the Destination interface.
     - NO markdown formatting (no \`\`\`json blocks), NO preamble, NO extra characters. Output only raw JSON.
     - SCHEMA:

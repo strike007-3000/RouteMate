@@ -224,9 +224,9 @@ routemate.top refactors its core routes (`/trips`, `/radar`, `/trip/[id]`, `/tri
 
 ---
 
-## 9. Explore Screen & Hybrid AI Discovery Engine (v3.9.1)
+## 9. Explore Screen & Fallback AI Curation Engine (v3.17.0)
 
-routemate.top v3.9.1 introduces a hybrid travel discovery and itinerary builder interface.
+routemate.top v3.17.0 introduces a fallback AI curation pipeline for missing destinations with interactive intent collection, progressive loading, and preview cards.
 
 ### 9.1 Database Store Migration (v7)
 To support caching AI-discovered destinations locally, the database schema (Dexie.js) is migrated to version `7`. It defines the `destinations` table:
@@ -235,11 +235,17 @@ To support caching AI-discovered destinations locally, the database schema (Dexi
 
 ### 9.2 API Discovery Endpoint
 The POST endpoint `/api/explore-city` handles dynamic AI curations of un-seeded locations:
-- **Load Balancing**: The execution queue prioritize **OpenRouter** models (`openrouter/free`, `meta-llama/llama-3.3-70b-instruct:free`, `google/gemma-3-27b-it:free`) to balance the developer keys, while the **Smart Paste** (`/api/parse-itinerary`) endpoint defaults to **Groq** models.
-- **Structured System Prompt**: Commands the model to strictly generate a valid JSON matching the client's `Destination` interface.
+- **Payload Parameters**: Accepts `city`, `intent` (custom user planning intent), and `moodModifiers` (selected vibe modifiers).
+- **Prompt Injection & Personalization**: The LLM prompt dynamically shapes the destination description, tags, and highlights around the user's custom `intent` and `moodModifiers` focus.
+- **Load Balancing**: The execution queue prioritizes **OpenRouter** models (`openrouter/free`, `meta-llama/llama-3.3-70b-instruct:free`, `google/gemma-3-27b-it:free`) to balance the developer keys, while the **Smart Paste** (`/api/parse-itinerary`) endpoint defaults to **Groq** models.
 - **Resilient Fallback**: Gracefully parses and defaults fields like `tags` and `category` to prevent UI parsing crashes. It also includes support for `MOCK_MODE` to allow full testing without live network calls.
 
-### 9.3 Custom Itinerary Generation (Date & Vibe Wizard)
+### 9.3 Interactive Curation Step & Database Guardrails
+- **Intent Collection**: Opens an inline configuration card/modal capturing traveler planning details and vibe modifiers (e.g. Food & Dining, Hidden Gems) before executing the query.
+- **Progressive Loading**: Displays a multi-stage loading tracker status representing coordinates mapping, landmark synthesis, image sourcing, and database commit stages in real-time.
+- **Review Card & Caching Guardrails**: Rendered destination curations are held strictly in transient memory. Database storage into IndexedDB only occurs when the user explicitly clicks "Confirm & Save". Clicking "Cancel/Re-roll" discards transient states and re-opens intent configurations.
+
+### 9.4 Custom Itinerary Generation (Date & Vibe Wizard)
 A wizard component parses user-selected dates and vibe tags (e.g. `Chill`, `Adventure`, `Foodie`, `Culture & History`) to automatically generate a trip outline.
 - **Prompt Translation**: Builds a text prompt embedding selected dates and destination highlights. It maps this text request to `/api/parse-itinerary`.
 - **Database Entry**: Inserts the new trip and generated itinerary activities into IndexedDB, then navigates the user to their new itinerary.
