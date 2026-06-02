@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [3.17.0](https://github.com/strike007-3000/RouteMate/compare/v3.16.0...v3.17.0) (2026-06-02)
 
+
+### Features
+
+* **explore:** enhance fallback city curation with interactive settings, progressive loading, and db guardrails ([#65](https://github.com/strike007-3000/RouteMate/issues/65)) ([b4445ed](https://github.com/strike007-3000/RouteMate/commit/b4445edf2b2413575b2c35257e019b1ce6ec69b1))
+
+## [3.17.0](https://github.com/strike007-3000/RouteMate/compare/v3.16.0...v3.17.0) (2026-06-02)
+
 ### Features
 
 * **explore:** Enhance fallback AI city exploration pipeline with interactive travel intent collection, selectable vibe/mood modifier chips, and database commit guardrails.
