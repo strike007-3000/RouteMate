@@ -132,7 +132,12 @@ export default function SignUpPage() {
             <Sparkles className="w-3 h-3 text-primary" />
             <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Ready for Takeoff</span>
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tighter mb-3">RouteMate</h1>
+          <h1 className="text-4xl font-normal text-white tracking-tighter mb-3 flex items-center justify-center">
+            routemate
+            <span className="ml-2.5 text-xl font-black text-primary bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded-[6px] tracking-normal normal-case">
+              .top
+            </span>
+          </h1>
           <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
             Pocket Intelligence for the Modern Nomad.
           </p>
