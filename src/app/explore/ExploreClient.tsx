@@ -53,6 +53,14 @@ export function ExploreClient() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
+  // AI Curation & Progressive Loading States
+  const [showIntentModal, setShowIntentModal] = useState(false);
+  const [travelIntent, setTravelIntent] = useState('');
+  const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
+  const [progressiveStage, setProgressiveStage] = useState(1);
+  const [transientDestination, setTransientDestination] = useState<Destination | null>(null);
+  const [showReviewCard, setShowReviewCard] = useState(false);
+
   // Local DB Queries
   const exploredDestinations = useLiveQuery(() => db.destinations.toArray(), []);
   const favorites = useLiveQuery(() => db.favorites.toArray(), []);
@@ -122,8 +130,13 @@ export function ExploreClient() {
   // AI Discover City Trigger (Option B)
   const handleAiExplore = async () => {
     if (!searchQuery.trim()) return;
+    
+    // Close intent modal if open
+    setShowIntentModal(false);
+    
     setIsExploring(true);
-    setExploringStatus(`Consulting intelligence engine for ${searchQuery}...`);
+    setProgressiveStage(1);
+    setExploringStatus('🤖 Mapping geographical coordinates and vibes...');
     
     try {
       const { apiOpenRouterKey, apiGroqKey, finalPreferredAi } = getApiKeys();
@@ -137,31 +150,37 @@ export function ExploreClient() {
         headers['x-preferred-ai'] = finalPreferredAi;
       }
 
+      // Small delay to allow reading the first stage
+      await new Promise(r => setTimeout(r, 600));
+
       const response = await fetch('/api/explore-city', {
         method: 'POST',
         headers,
-        body: JSON.stringify({ city: searchQuery.trim() })
+        body: JSON.stringify({ 
+          city: searchQuery.trim(),
+          intent: travelIntent.trim(),
+          moodModifiers: selectedMoods
+        })
       });
 
       const data = await response.json();
 
       if (response.ok && data.id) {
-        setExploringStatus(`Scouting high-res aesthetics of ${data.name}...`);
+        setProgressiveStage(2);
+        setExploringStatus('🏛️ Synthesizing local landmarks and hidden spots...');
+        await new Promise(r => setTimeout(r, 800));
+        
+        setProgressiveStage(3);
+        setExploringStatus('📸 Curation complete! Sourcing high-fidelity imagery...');
         
         // Dynamic image fetch from Unsplash
         const imageUrl = await UnsplashService.getCityImage(data.name, unsplashAccessKey);
         const finalDest = { ...data, image: imageUrl };
         
-        // Cache in IndexedDB destinations table
-        await db.destinations.put(finalDest);
-        
-        setExploringStatus('Discover successful! Opening guide...');
-        
-        setTimeout(() => {
-          setIsExploring(false);
-          setSearchQuery('');
-          setSelectedDestination(finalDest);
-        }, 800);
+        // Hold strictly in transient state variable (Database Guardrail Rule)
+        setTransientDestination(finalDest);
+        setIsExploring(false);
+        setShowReviewCard(true);
       } else {
         throw new Error(data.details || data.error || 'Failed to discover city');
       }
@@ -172,6 +191,43 @@ export function ExploreClient() {
       setShowToast(true);
       setIsExploring(false);
     }
+  };
+
+  // Commit destination payload to database
+  const handleConfirmSave = async () => {
+    if (!transientDestination) return;
+
+    setIsExploring(true);
+    setProgressiveStage(4);
+    setExploringStatus('💾 Committing destination payload to local vault...');
+
+    try {
+      await new Promise(r => setTimeout(r, 800));
+      
+      // Cache in IndexedDB destinations table
+      await db.destinations.put(transientDestination);
+      
+      setShowReviewCard(false);
+      setIsExploring(false);
+      setSearchQuery('');
+      setTravelIntent('');
+      setSelectedMoods([]);
+      setSelectedDestination(transientDestination);
+      setTransientDestination(null);
+    } catch (err) {
+      console.error(err);
+      setToastMessage('Failed to save destination to local vault.');
+      setShowToast(true);
+      setIsExploring(false);
+    }
+  };
+
+  // Discard transient state cleanly
+  const handleCancelReRoll = () => {
+    setTransientDestination(null);
+    setShowReviewCard(false);
+    // Reopen intent configuration
+    setShowIntentModal(true);
   };
 
   // Spark AI Planner Generation Trigger
@@ -443,7 +499,7 @@ Please output this in chronological order.`;
             </p>
             {searchQuery && (
               <button 
-                onClick={handleAiExplore}
+                onClick={() => setShowIntentModal(true)}
                 className="btn-primary px-8"
               >
                 <Sparkles className="w-4 h-4" />
@@ -458,7 +514,7 @@ Please output this in chronological order.`;
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center py-20 px-8 text-center"
+            className="flex flex-col items-center justify-center py-20 px-8 text-center bg-zinc-950/20 border border-white/5 rounded-[32px] mt-6 w-full"
           >
             <div className="relative w-28 h-28 mb-8">
               <div className="absolute inset-0 rounded-full border border-primary/20 animate-ping" />
@@ -467,10 +523,46 @@ Please output this in chronological order.`;
                 <Loader2 className="w-8 h-8 text-primary animate-spin" />
               </div>
             </div>
-            <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2">Cartography Engine Active</h3>
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest animate-pulse max-w-[280px] leading-relaxed">
-              {exploringStatus}
-            </p>
+            <h3 className="text-sm font-black text-white uppercase tracking-widest mb-4">Cartography Engine Active</h3>
+            
+            {/* Step Indicators */}
+            <div className="w-full max-w-[320px] space-y-3 text-left bg-zinc-900/40 p-5 rounded-[24px] border border-white/5">
+              {[
+                { stage: 1, text: 'Mapping geographical coordinates & vibes...' },
+                { stage: 2, text: 'Synthesizing local landmarks & hidden spots...' },
+                { stage: 3, text: 'Curation complete! Sourcing high-fidelity imagery...' },
+                { stage: 4, text: 'Committing destination payload to local vault...' }
+              ].map(step => {
+                const isActive = progressiveStage === step.stage;
+                const isCompleted = progressiveStage > step.stage;
+                return (
+                  <div 
+                    key={step.stage}
+                    className={cn(
+                      "flex items-center gap-3 transition-opacity duration-300",
+                      isActive ? "opacity-100" : isCompleted ? "opacity-60" : "opacity-30"
+                    )}
+                  >
+                    <div className={cn(
+                      "w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black border transition-colors",
+                      isActive 
+                        ? "bg-primary/20 border-primary text-primary animate-pulse"
+                        : isCompleted
+                          ? "bg-green-500/10 border-green-500/30 text-green-500"
+                          : "bg-zinc-900 border-white/5 text-zinc-600"
+                    )}>
+                      {isCompleted ? '✓' : step.stage}
+                    </div>
+                    <span className={cn(
+                      "text-[10px] font-bold uppercase tracking-wider",
+                      isActive ? "text-white" : isCompleted ? "text-zinc-400" : "text-zinc-600"
+                    )}>
+                      {step.text}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </motion.div>
         )}
       </section>
@@ -717,6 +809,227 @@ Please output this in chronological order.`;
                     </p>
                   </div>
                 )}
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Intent Collection Modal */}
+      <AnimatePresence>
+        {showIntentModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[102] max-w-[500px] mx-auto"
+              onClick={() => setShowIntentModal(false)}
+            />
+
+            {/* Modal Dialog */}
+            <div className="fixed inset-0 z-[103] flex items-end sm:items-center justify-center p-0 sm:p-4 pointer-events-none max-w-[500px] mx-auto">
+              <motion.div 
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="w-full bg-zinc-950 border-t sm:border border-white/10 rounded-t-[40px] sm:rounded-[40px] shadow-2xl p-8 pb-12 pointer-events-auto h-[85vh] sm:h-auto overflow-y-auto no-scrollbar relative page-glow"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-[24px] bg-primary/10 border border-primary/20 flex items-center justify-center">
+                      <Sparkles className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1 block leading-none font-black">AI CURATION</span>
+                      <h2 className="text-xl font-black text-white tracking-tighter leading-none">Explore with AI</h2>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setShowIntentModal(false)}
+                    className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-500 hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Confirmed Search Query */}
+                  <div className="p-4 rounded-[24px] bg-zinc-900/50 border border-white/5">
+                    <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-[0.2em] block mb-1">Destination Query</span>
+                    <p className="text-sm font-black text-white">{searchQuery}</p>
+                  </div>
+
+                  {/* Intent Text Input */}
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] ml-1 block leading-none font-black">What are you planning to do there?</label>
+                    <textarea 
+                      placeholder="e.g. Find cozy coffee shops, visit art museums, explore local hiking trails..."
+                      value={travelIntent}
+                      onChange={(e) => setTravelIntent(e.target.value)}
+                      className="w-full h-24 bg-zinc-900/30 border border-white/5 rounded-[24px] p-4 text-xs font-bold focus:outline-none focus:border-primary/20 transition-all placeholder:text-zinc-600 resize-none"
+                    />
+                  </div>
+
+                  {/* Mood Selector Chips */}
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] ml-1 block leading-none font-black">Vibe Modifiers</label>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        'Food & Dining',
+                        'Architecture & Culture',
+                        'Hidden Gems',
+                        'Budget-Friendly',
+                        'Outdoor Adventure'
+                      ].map(mood => {
+                        const isSelected = selectedMoods.includes(mood);
+                        return (
+                          <button
+                            key={mood}
+                            type="button"
+                            onClick={() => {
+                              if (isSelected) {
+                                setSelectedMoods(selectedMoods.filter(m => m !== mood));
+                              } else {
+                                setSelectedMoods([...selectedMoods, mood]);
+                              }
+                            }}
+                            className={cn(
+                              "px-4 py-2.5 rounded-full text-[9px] font-black uppercase tracking-wider border transition-all active:scale-95",
+                              isSelected
+                                ? "bg-primary/10 border-primary/40 text-primary shadow-[0_0_12px_rgba(59,130,246,0.15)]"
+                                : "bg-zinc-900/30 border-white/5 text-zinc-500 hover:text-white"
+                            )}
+                          >
+                            {mood}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Submit CTA */}
+                  <button 
+                    onClick={handleAiExplore}
+                    className="btn-primary w-full h-16 mt-8"
+                  >
+                    <span>Generate Custom Spot</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Review & Refine Card Modal */}
+      <AnimatePresence>
+        {showReviewCard && transientDestination && (
+          <>
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/95 backdrop-blur-xl z-[104] max-w-[500px] mx-auto"
+            />
+
+            {/* Modal Dialog */}
+            <div className="fixed inset-0 z-[105] flex items-end sm:items-center justify-center p-0 sm:p-4 pointer-events-none max-w-[500px] mx-auto">
+              <motion.div 
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="w-full bg-zinc-950 border-t sm:border border-white/10 rounded-t-[40px] sm:rounded-[40px] shadow-2xl p-8 pb-12 pointer-events-auto h-[85vh] sm:h-auto overflow-y-auto no-scrollbar relative page-glow"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-[24px] bg-primary/10 border border-primary/20 flex items-center justify-center">
+                      <Compass className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1 block leading-none font-black">PREVIEW SPOT</span>
+                      <h2 className="text-xl font-black text-white tracking-tighter leading-none">Review & Refine</h2>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Destination Info Card */}
+                  <div className="rounded-[24px] overflow-hidden border border-white/5 bg-zinc-900/20 shadow-xl p-5 space-y-4">
+                    {transientDestination.image && (
+                      <div className="relative h-40 rounded-[18px] overflow-hidden border border-white/5 shadow-md">
+                        <Image
+                          src={transientDestination.image}
+                          alt={transientDestination.name}
+                          fill
+                          sizes="(max-width: 500px) 460px, 460px"
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    <div>
+                      <h3 className="text-2xl font-black text-white tracking-tighter mb-1 leading-none">{transientDestination.name}</h3>
+                      <p className="text-[10px] text-zinc-400 font-black uppercase tracking-widest flex items-center gap-1.5 mb-3">
+                        <MapPin className="w-3 h-3 text-primary" />
+                        {transientDestination.country}
+                      </p>
+                      <p className="text-xs text-zinc-400 font-medium leading-relaxed">
+                        {transientDestination.description}
+                      </p>
+                    </div>
+
+                    {/* Metadata tags */}
+                    <div className="flex flex-wrap gap-1.5">
+                      {transientDestination.tags.map(tag => (
+                        <span key={tag} className="text-[8px] font-black text-white/70 uppercase tracking-widest bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/5">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Highlights Summary */}
+                  <div className="space-y-3">
+                    <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-[0.2em] ml-1 block leading-none font-black">Curated Highlights</span>
+                    <div className="grid grid-cols-1 gap-2">
+                      {transientDestination.highlights.map((poi, idx) => (
+                        <div key={idx} className="p-3.5 rounded-[18px] bg-zinc-900/40 border border-white/5 flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0">
+                            {poi.category === 'Food' ? <Utensils className="w-4 h-4" /> : <Compass className="w-4 h-4" />}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h5 className="text-xs font-black text-white truncate">{poi.title}</h5>
+                            <p className="text-[10px] text-zinc-500 font-bold truncate">{poi.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Dual Action Buttons */}
+                  <div className="grid grid-cols-2 gap-4 pt-4">
+                    <button
+                      onClick={handleCancelReRoll}
+                      className="h-14 rounded-[24px] border border-white/10 text-xs font-black uppercase tracking-[0.2em] bg-zinc-900 text-zinc-400 hover:text-white transition-all active:scale-95"
+                    >
+                      Re-roll
+                    </button>
+                    <button
+                      onClick={handleConfirmSave}
+                      className="btn-primary w-full"
+                    >
+                      Confirm & Save
+                    </button>
+                  </div>
+                </div>
               </motion.div>
             </div>
           </>
