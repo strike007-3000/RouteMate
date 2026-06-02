@@ -239,49 +239,6 @@ export function ExploreClient() {
     try {
       const dest = selectedDestination;
       const totalDays = Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (86400000)) + 1;
-      let dayOutline = '';
-      for (let day = 1; day <= totalDays; day++) {
-        dayOutline += `Day ${day}: `;
-        if (day === 1) {
-          dayOutline += `Arrive, check into hotel. `;
-          if (dest.highlights[0]) {
-            dayOutline += `Visit ${dest.highlights[0].title} at 14:00. `;
-          }
-          dayOutline += `Dinner at 19:00. `;
-        }
-        
-        // If it's the last day (and not the only day), add checkout details
-        if (day === totalDays && totalDays > 1) {
-          const lastHighlightIndex = Math.min(totalDays - 1, dest.highlights.length - 1);
-          if (dest.highlights[lastHighlightIndex] && lastHighlightIndex > 0) {
-             dayOutline += `Visit ${dest.highlights[lastHighlightIndex].title} in the morning. `;
-          }
-          dayOutline += `Check out of hotel, head to airport/station for departure. `;
-        } else if (day > 1 && day < totalDays) {
-          // Intermediate days
-          const morningHighlight = dest.highlights[((day - 2) * 2 + 1) % dest.highlights.length];
-          const afternoonHighlight = dest.highlights[((day - 2) * 2 + 2) % dest.highlights.length];
-          
-          if (morningHighlight) {
-            dayOutline += `Morning activity at 10:00 visiting ${morningHighlight.title}. `;
-          }
-          dayOutline += `Lunch. `;
-          if (afternoonHighlight && afternoonHighlight !== morningHighlight) {
-            dayOutline += `Visit ${afternoonHighlight.title} at 15:00. `;
-          }
-          dayOutline += `Evening leisure. `;
-        }
-        dayOutline += '\n';
-      }
-
-      const textPrompt = `I am planning a ${selectedVibe} trip to ${dest.name}, ${dest.country} from ${startDate} to ${endDate} (${totalDays} days).
-Please plan a high-fidelity itinerary. Make sure to visit these famous landmarks:
-${dest.highlights.map(h => `- ${h.title}: ${h.description} (located at ${h.address})`).join('\n')}
-
-We want an amazing travel plan covering these days. For each day, include a couple of activities or food spots.
-Here is the plan outline:
-${dayOutline}
-Please output this in chronological order.`;
 
       const { apiOpenRouterKey, apiGroqKey, finalPreferredAi } = getApiKeys();
 
@@ -300,8 +257,12 @@ Please output this in chronological order.`;
         method: 'POST',
         headers,
         body: JSON.stringify({ 
-          text: textPrompt,
-          rootYear: startDate.split('-')[0]
+          city: dest.name,
+          destinationId: dest.id,
+          startDate,
+          endDate,
+          tripVibe: selectedVibe,
+          highlights: dest.highlights
         }),
       });
 
