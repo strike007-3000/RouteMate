@@ -1,12 +1,12 @@
-# RouteMate Engineering Wiki 🛠️
+# routemate.top Engineering Wiki 🛠️
 
-Deep-dive documentation for RouteMate Architecture.
+Deep-dive documentation for routemate.top Architecture.
 
 ---
 
 ## 0. Tech Stack & API Surface
 
-RouteMate is built on a hybrid architecture that balances local-first performance with live cloud intelligence.
+routemate.top is built on a hybrid architecture that balances local-first performance with live cloud intelligence.
 
 ### 0.1 Core Stack
 - **Framework**: Next.js 14+ (App Router, Server Actions)
@@ -32,7 +32,7 @@ RouteMate is built on a hybrid architecture that balances local-first performanc
 > - **Local Development**: Secrets are managed dynamically using the Infisical secret management vault. The `npm run dev` and `npm run build` commands automatically detect and use Infisical if installed, falling back to direct Next.js execution with standard `.env` configuration if not present. Placeholders are provided in `.env.example`.
 
 ### 0.3 Authentication Design & Identity (Custom Hook-Driven Flow)
-To enforce the application's premium dark mode aesthetics, RouteMate completely avoids the hosted Clerk Account Portal as well as pre-built Clerk card containers. Instead, the authentication screens use custom React state machines driven by Clerk's `useSignIn()` and `useSignUp()` hooks (imported from `@clerk/nextjs/legacy` to retain support for `isLoaded` and `setActive` under the new Signal-based SDK version contract).
+To enforce the application's premium dark mode aesthetics, routemate.top completely avoids the hosted Clerk Account Portal as well as pre-built Clerk card containers. Instead, the authentication screens use custom React state machines driven by Clerk's `useSignIn()` and `useSignUp()` hooks (imported from `@clerk/nextjs/legacy` to retain support for `isLoaded` and `setActive` under the new Signal-based SDK version contract).
 
 - **Embedded Routes**:
   - **Login Route**: `/login` (renders custom step-based email/password & Google OAuth components)
@@ -49,7 +49,7 @@ To enforce the application's premium dark mode aesthetics, RouteMate completely 
   - `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/signup`
 
 ### 0.4 Dependency & Security Overrides
-To resolve vulnerabilities in transitive dependencies (e.g. security warnings inside `uuid` imported by Clerk UI's Solana wallet adapters) and clean up deprecation warnings in builds, RouteMate enforces package-level overrides in `package.json`:
+To resolve vulnerabilities in transitive dependencies (e.g. security warnings inside `uuid` imported by Clerk UI's Solana wallet adapters) and clean up deprecation warnings in builds, routemate.top enforces package-level overrides in `package.json`:
 - **`uuid`**: Overridden to `^11.1.1` to patch moderate-severity bounds checks and deprecations.
 - **`postcss`**: Overridden to `^8.5.10`.
 
@@ -93,7 +93,7 @@ AI-extracted itinerary entries can occasionally contain missing, malformed, or i
 
 ## 2. Design System & Geometry (Nocturnal Velocity)
 
-RouteMate follows a strict "Minimalist Premium" design system (named **Nocturnal Velocity**) to ensure zero visual cognitive load and a luxury feel.
+routemate.top follows a strict "Minimalist Premium" design system (named **Nocturnal Velocity**) to ensure zero visual cognitive load and a luxury feel.
 
 ### 2.1 CSS Theme Variables & Primitives
 The application defines a dark-theme foundation in `src/app/globals.css` with the following variables:
@@ -156,7 +156,7 @@ The logistics engine calculates distance thresholds using the **Haversine Formul
 
 ## 4. UI State & View Modes
 
-RouteMate utilizes a global `viewMode` state (`summary` | `logistics`) to manage cognitive load:
+routemate.top utilizes a global `viewMode` state (`summary` | `logistics`) to manage cognitive load:
 - **Summary Mode**: High-level itinerary focus. Uses full-bleed imagery Day Cards with `rounded-[32px]` containers and suppresses the vertical journey thread. The `TransitCard` widget is intelligently hidden to prioritize scannability; only native circular map pins are shown.
 - **Logistics Mode**: Technical travel focus. Enables the **1px Continuous Thread** and surfaces transitHubs, logistical markers, and full `TransitCard` routing widgets (with Google Maps handoff, times, and distances).
 
@@ -216,7 +216,7 @@ Environment variables follow the `NEXT_PUBLIC_` prefix convention where client-s
 All transient itinerary items and transit suggestions use `crypto.randomUUID()` for ID generation. This ensures enterprise-grade collision resistance compared to `Math.random()`, which is critical for local IndexedDB stability.
 
 ### 8.5 React Server Components (RSC) Split
-RouteMate refactors its core routes (`/trips`, `/radar`, `/trip/[id]`, `/trip/[id]/timeline`, `/explore`, `/account`) to use a clean RSC shell pattern. Since the app is offline-first (Dexie IndexedDB), pages cannot render data server-side. However, by loading the heavy interactive code inside co-located Client Components (`*Client.tsx`), we reduce the parsing footprint on initial loads and allow Next.js to stream layouts efficiently.
+routemate.top refactors its core routes (`/trips`, `/radar`, `/trip/[id]`, `/trip/[id]/timeline`, `/explore`, `/account`) to use a clean RSC shell pattern. Since the app is offline-first (Dexie IndexedDB), pages cannot render data server-side. However, by loading the heavy interactive code inside co-located Client Components (`*Client.tsx`), we reduce the parsing footprint on initial loads and allow Next.js to stream layouts efficiently.
 
 ### 8.6 Image Proxy & Optimization
 - **API Image Proxy**: The Unsplash image retrieval logic is routed through a secure backend route `/api/unsplash-image` which uses `UNSPLASH_ACCESS_KEY` to query Unsplash. This ensures keys are never exposed in browser static bundles.
@@ -226,7 +226,7 @@ RouteMate refactors its core routes (`/trips`, `/radar`, `/trip/[id]`, `/trip/[i
 
 ## 9. Explore Screen & Hybrid AI Discovery Engine (v3.9.1)
 
-RouteMate v3.9.1 introduces a hybrid travel discovery and itinerary builder interface.
+routemate.top v3.9.1 introduces a hybrid travel discovery and itinerary builder interface.
 
 ### 9.1 Database Store Migration (v7)
 To support caching AI-discovered destinations locally, the database schema (Dexie.js) is migrated to version `7`. It defines the `destinations` table:
@@ -248,7 +248,7 @@ A wizard component parses user-selected dates and vibe tags (e.g. `Chill`, `Adve
 
 ## 10. Account Hub & Profile Settings (v3.14.0)
 
-RouteMate v3.14.0 introduces the comprehensive **Account Hub**, providing unified controls over personal information, preferences, units, security, and developer keys.
+routemate.top v3.14.0 introduces the comprehensive **Account Hub**, providing unified controls over personal information, preferences, units, security, and developer keys.
 
 ### 10.1 Main Account Screen Layout
 - **Identity Profile Header**: Displays user profile avatar centered in a premium primary-to-purple gradient border. An interactive camera overlay enables profile image updates. Displays user name, travel statistics (number of trips), and a member status badge (e.g., `Elite Traveler`).
@@ -274,7 +274,7 @@ In local development environments (`NODE_ENV === 'development'`), a developer se
 
 ## 11. Google Brand Verification & Landing Page (v3.16.0)
 
-To comply with Google OAuth consent screen brand verification, RouteMate implements a static landing page at `/` (the root route) and accessible links to the privacy policy and terms across all entry screens.
+To comply with Google OAuth consent screen brand verification, routemate.top implements a static landing page at `/` (the root route) and accessible links to the privacy policy and terms across all entry screens.
 
 ### 11.1 Brand Landing Page
 - **Functional Description**: The landing page introduces the application's core capabilities (AI smart paste, contextual transit routing, IndexedDB local offline storage) and offers clear CTAs to either launch the app (linking to `/trips` which triggers authentication) or sign in/register directly.

@@ -244,7 +244,7 @@ export default function LoginPage() {
                 </form>
 
                 <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest text-center mt-8">
-                  New to RouteMate?{' '}
+                  New to routemate.top?{' '}
                   <Link href="/signup" className="text-primary hover:text-primary-focus transition-colors">
                     Sign up
                   </Link>

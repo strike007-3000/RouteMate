@@ -2,15 +2,15 @@
 
 ## Supported Versions
 
-We actively support the latest version of RouteMate.
+We actively support the latest version of routemate.top.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.0.x   | :white_check_mark: |
+| 3.16.x  | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within RouteMate, please do not disclose it publicly. We want to keep traveler data safe.
+If you discover a security vulnerability within routemate.top, please do not disclose it publicly. We want to keep traveler data safe.
 
 1. **Email us**: Send a detailed report to hello@routemate.top.
 2. **Details**: Include the nature of the vulnerability, steps to reproduce, and possible impact.
@@ -18,7 +18,7 @@ If you discover a security vulnerability within RouteMate, please do not disclos
 
 ## Our Approach to Secrets
 
-RouteMate uses a **Hybrid Secret Management** system:
+routemate.top uses a **Hybrid Secret Management** system:
 - **Server-side**: API keys are stored in environment variables (Vercel).
 - **Client-side**: Users can input their own keys in the **Settings** UI, which are stored in the browser's `localStorage`.
 

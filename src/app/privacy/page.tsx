@@ -5,8 +5,8 @@ import { PolicyLayout } from '@/components/layout/PolicyLayout';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - RouteMate',
-  description: 'RouteMate Privacy Policy regarding Google login and local storage user data.',
+  title: 'Privacy Policy - routemate.top',
+  description: 'routemate.top Privacy Policy regarding Google login and local storage user data.',
 };
 
 export default function PrivacyPage() {

@@ -32,7 +32,7 @@ You agree not to:
 
 ## 4. Intellectual Property & Third-Party APIs
 *   **App Code:** The codebase is open-source and governed by the repository license.
-*   **Third-Party Services:** RouteMate connects to various third-party services including Clerk, Google Maps, OpenRouteService, WeatherStack, and AviationStack. Your use of these integrated features is subject to the terms and privacy policies of those respective third-party providers.
+*   **Third-Party Services:** routemate.top connects to various third-party services including Clerk, Google Maps, OpenRouteService, WeatherStack, and AviationStack. Your use of these integrated features is subject to the terms and privacy policies of those respective third-party providers.
 
 ---
 
@@ -45,14 +45,14 @@ routemate.top is an independent personal holiday planning utility. It has no aff
 ---
 
 ## 5. Disclaimer of Warranties
-RouteMate is provided "AS IS" and "AS AVAILABLE" without any warranties of any kind, express or implied. We do not warrant that:
+routemate.top is provided "AS IS" and "AS AVAILABLE" without any warranties of any kind, express or implied. We do not warrant that:
 *   The App will be uninterrupted, timely, secure, or error-free.
 *   The flight tracking, weather, or routing intelligence will be 100% accurate, complete, or up-to-date.
 
 ---
 
 ## 6. Limitation of Liability
-In no event shall the authors or copyright holders of RouteMate be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in connection with the use or inability to use the App.
+In no event shall the authors or copyright holders of routemate.top be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in connection with the use or inability to use the App.
 
 ---
 

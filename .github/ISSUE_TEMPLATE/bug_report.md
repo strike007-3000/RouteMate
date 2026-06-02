@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Create a report to help us improve the RouteMate experience
+about: Create a report to help us improve the routemate.top experience
 title: '[BUG] '
 labels: bug
 assignees: ''

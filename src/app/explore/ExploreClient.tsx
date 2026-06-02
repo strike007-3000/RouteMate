@@ -711,7 +711,7 @@ Please output this in chronological order.`;
                         <Loader2 className="w-8 h-8 text-primary animate-spin" />
                       </div>
                     </div>
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2">RouteMate AI Brain</h3>
+                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2">routemate.top AI Brain</h3>
                     <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest animate-pulse max-w-[280px] leading-relaxed">
                       {generationStatus}
                     </p>
