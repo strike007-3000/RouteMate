@@ -921,7 +921,7 @@ const PrivacySecurityPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
               {deleteStep > 0 && (
                 <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
                   <div className="p-4 pt-0 space-y-3">
-                    <p className="text-xs text-red-400/80 font-bold">This permanently deletes your RouteMate account and all local data.</p>
+                    <p className="text-xs text-red-400/80 font-bold">This permanently deletes your routemate.top account and all local data.</p>
                     <input 
                       type="text" 
                       placeholder="Type DELETE to confirm" 

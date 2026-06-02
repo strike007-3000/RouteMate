@@ -5,8 +5,8 @@ import { PolicyLayout } from '@/components/layout/PolicyLayout';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service - RouteMate',
-  description: 'RouteMate Terms of Service and user agreement.',
+  title: 'Terms of Service - routemate.top',
+  description: 'routemate.top Terms of Service and user agreement.',
 };
 
 export default function TermsPage() {

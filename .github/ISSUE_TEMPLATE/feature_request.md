@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for RouteMate
+about: Suggest an idea for routemate.top
 title: '[FEAT] '
 labels: enhancement
 assignees: ''

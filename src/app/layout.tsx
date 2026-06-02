@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RouteMate - Your Smart Travel Planner",
+  title: "routemate.top - Your Smart Travel Planner",
   description: "Offline-capable travel itinerary with automatic logistics.",
 };
 

@@ -140,7 +140,7 @@ export function PolicyLayout({ title, markdownContent }: PolicyLayoutProps) {
 
       {/* Footer */}
       <footer className="w-full z-10 text-center py-8 text-[10px] font-black text-zinc-600 uppercase tracking-widest">
-        RouteMate &copy; {new Date().getFullYear()} &bull; All Rights Reserved
+        routemate.top &copy; {new Date().getFullYear()} &bull; All Rights Reserved
       </footer>
     </main>
   );

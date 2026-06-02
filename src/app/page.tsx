@@ -37,7 +37,7 @@ export default function RootPage() {
             <div>
               <h3 className="text-xs font-black uppercase tracking-widest text-zinc-300 mb-1">AI Smart Paste</h3>
               <p className="text-xs text-zinc-500 font-bold leading-relaxed">
-                Copy-paste flight confirmations, lodging receipts, or text itineraries. RouteMate parses them instantly.
+                Copy-paste flight confirmations, lodging receipts, or text itineraries. routemate.top parses them instantly.
               </p>
             </div>
           </div>
@@ -105,7 +105,7 @@ export default function RootPage() {
           <Link href="/terms" className="hover:text-white transition-colors" id="footer-terms-link">Terms of Service</Link>
         </div>
         <p className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest leading-relaxed px-4">
-          RouteMate's use and transfer of information received from Google APIs to any other app will adhere to{' '}
+          routemate.top's use and transfer of information received from Google APIs to any other app will adhere to{' '}
           <a 
             href="https://developers.google.com/terms/api-services-user-data-policy" 
             target="_blank" 
