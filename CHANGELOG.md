@@ -1,6 +1,16 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## [3.18.3](https://github.com/strike007-3000/RouteMate/compare/v3.17.0...v3.18.3) (2026-07-03)
+
+### Features
+* **design-audit:** Align root homepage CTA with standard `.btn-primary` utility components.
+* **design-audit:** Enforce `rounded-[var(--radius-container,32px)]` geometry for all trip summary cards to comply with branding geometry constraints.
+* **design-audit:** Add conditional rendering to the vertical timeline journey thread to ensure it is hidden in Itinerary (Summary) mode and visible in Timeline (Logistics) mode.
+* **design-critique:** Add micro-interactive hover border transitions and scale-down actions to BentoBox modules and secondary landing page login buttons.
+
+### Bug Fixes
+* **explore:** Preserve destination country names in AI itinerary builder request payloads to resolve ambiguous city names.
+* **explore:** Serialize landmark addresses into AI prompts to prevent vague or hallucinated address generations.
 
 ## [3.17.0](https://github.com/strike007-3000/RouteMate/compare/v3.16.0...v3.17.0) (2026-06-02)
 
