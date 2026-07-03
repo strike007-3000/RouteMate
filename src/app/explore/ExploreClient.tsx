@@ -257,7 +257,7 @@ export function ExploreClient() {
         method: 'POST',
         headers,
         body: JSON.stringify({ 
-          city: dest.name,
+          city: dest.country ? `${dest.name}, ${dest.country}` : dest.name,
           destinationId: dest.id,
           startDate,
           endDate,
