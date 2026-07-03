@@ -127,7 +127,7 @@ The application defines a dark-theme foundation in `src/app/globals.css` with th
   - Logout: Red-500 theme
 
 ### 2.3 Geometry & Layout Structure
-- **The 24px Rule:** All interactive containers, cards, and bento cards must use a standardized `rounded-[24px]` radius.
+- **Geometry Rules:** Standard containers, control modules, and inner cards must use a standardized `rounded-[24px]` radius. Trip summary cards must enforce a `rounded-[32px]` (`var(--radius-container,32px)`) radius.
 - **Zero-Jump Header Rhythm:** All global navigation routes share a synchronized header layout. The header implements a **Scroll-Driven Animation** using native CSS scroll timelines (with a React-driven `scrollY` custom property fallback for unsupported browsers) that dynamically shrinks padding, transitions background blur opacity, and scales down the page title to maximize screen real estate when scrolling.
 - **Intrinsic Sizing:** List items (e.g., in Account Hub) use `min-h-[64px]` and `py-4` instead of fixed heights to accommodate dynamic typography clamping.
 
@@ -157,7 +157,7 @@ The logistics engine calculates distance thresholds using the **Haversine Formul
 ## 4. UI State & View Modes
 
 routemate.top utilizes a global `viewMode` state (`summary` | `logistics`) to manage cognitive load:
-- **Summary Mode**: High-level itinerary focus. Uses full-bleed imagery Day Cards with `rounded-[32px]` containers and suppresses the vertical journey thread. The `TransitCard` widget is intelligently hidden to prioritize scannability; only native circular map pins are shown.
+- **Summary Mode**: High-level itinerary focus. Uses full-bleed imagery Day Cards with `rounded-[32px]` containers and suppresses the vertical journey thread (the dashed 1px thread in `TimelineItem` is hidden). The `TransitCard` widget is intelligently hidden to prioritize scannability; only native circular map pins are shown.
 - **Logistics Mode**: Technical travel focus. Enables the **1px Continuous Thread** and surfaces transitHubs, logistical markers, and full `TransitCard` routing widgets (with Google Maps handoff, times, and distances).
 
 ---
@@ -179,6 +179,7 @@ The extraction prompt in `/api/parse-itinerary` handles logistical hardening via
     - `x-preferred-ai`: Injected per request based on user's Dev Settings or Settings Modal.
 - **User Keys**: Stored locally in the `routemate-settings` IndexedDB store (Zustand `persist`) or `localStorage` for Dev Settings, and injected per request.
 - **Settings Store Schema Migration**: In version 1 of `routemate-settings`, any legacy default state that persisted `preferredAiProvider: 'OpenRouter'` (version 0) is dynamically migrated to an empty string `""` on rehydration. This permits the API gateway to correctly route to server-side preferences unless the user has explicitly selected a custom provider.
+- **Address & Destination Preservation**: Enforces high geocoding fidelity by preserving destination countries in builder request payloads (`city: dest.country ? \`\${dest.name}, \${dest.country}\` : dest.name`) and serializing discovered landmark addresses in parse prompts to prevent vague or hallucinated address generations.
 
 ---
 

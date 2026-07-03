@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       userMessage = `I am planning a ${tripVibe} trip to ${city} from ${startDate} to ${endDate} (${totalDays} days).
 Please plan a high-fidelity itinerary exactly spanning these ${totalDays} days.
 Make sure to visit these famous landmarks if applicable:
-${highlights?.map((h: any) => `- ${h.title}: ${h.description}`).join('\n') || ''}
+${highlights?.map((h: any) => `- ${h.title}: ${h.description}${h.address ? ` (Address: ${h.address})` : ''}`).join('\n') || ''}
 
 Tailor the daily schedule blocks (activities, morning/afternoon/evening slots) to strictly align with the chosen tripVibe: ${tripVibe}.
 Generate a perfectly structured timeline mapping exactly to the duration between ${startDate} and ${endDate}.
