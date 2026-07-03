@@ -80,14 +80,14 @@ export default function RootPage() {
           <div className="grid grid-cols-2 gap-4">
             <Link 
               href="/login" 
-              className="h-14 rounded-[24px] bg-zinc-900/50 border border-white/5 text-white font-black uppercase tracking-widest text-xs flex items-center justify-center hover:bg-zinc-800 transition-all"
+              className="h-14 rounded-[24px] bg-zinc-900/50 border border-white/5 hover:border-primary/30 text-white font-black uppercase tracking-widest text-xs flex items-center justify-center hover:bg-zinc-900 active:scale-95 transition-all"
               id="cta-sign-in"
             >
               Sign In
             </Link>
             <Link 
               href="/signup" 
-              className="h-14 rounded-[24px] bg-zinc-900/50 border border-white/5 text-white font-black uppercase tracking-widest text-xs flex items-center justify-center hover:bg-zinc-800 transition-all"
+              className="h-14 rounded-[24px] bg-zinc-900/50 border border-white/5 hover:border-primary/30 text-white font-black uppercase tracking-widest text-xs flex items-center justify-center hover:bg-zinc-900 active:scale-95 transition-all"
               id="cta-sign-up"
             >
               Register

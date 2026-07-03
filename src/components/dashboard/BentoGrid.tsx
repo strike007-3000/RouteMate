@@ -27,7 +27,7 @@ const BentoBox = ({ title, value, icon, className, delay = 0, subValue, onClick 
     whileHover={{ y: -2 }}
     onClick={onClick}
     className={cn(
-      "bg-black/40 backdrop-blur-xl p-4 rounded-[24px] flex flex-col justify-center overflow-hidden relative group border border-white/5 min-w-[130px] h-24",
+      "bg-black/40 backdrop-blur-xl p-4 rounded-[24px] flex flex-col justify-center overflow-hidden relative group border border-white/5 min-w-[130px] h-24 hover:border-primary/20 transition-all duration-300",
       onClick && "cursor-pointer active:scale-95",
       className
     )}
