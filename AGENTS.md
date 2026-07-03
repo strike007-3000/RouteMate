@@ -16,7 +16,6 @@ This version has breaking changes — APIs, conventions, and file structure may 
 * **Fallback Date Safeguards:** Always wrap date formatting in validation blocks. If a date is malformed or missing, fallback to rendering `'TBD'` rather than allowing the application UI to throw a fatal exception.
 * **Clerk Hook Exports:** When writing custom authentication pages, always import `useSignIn` and `useSignUp` from `@clerk/nextjs/legacy` instead of the root `@clerk/nextjs` package to ensure `isLoaded` and `setActive` are available.
 
-
 ## 3. Workflow & Documentation Rules
 * **Pull Requests (PRs):** Always create a new feature branch and open a Pull Request (PR) for your changes. Avoid pushing directly to the `main` branch unless explicitly authorized.
 * **Issue Tracking:** If you encounter bugs, regressions, or type errors during development or testing, log them clearly and verify their resolution before completing tasks.
@@ -53,21 +52,21 @@ This version has breaking changes — APIs, conventions, and file structure may 
   3. Run in **non‑interactive** mode; do not prompt the user for credentials.
 * Keep all design‑system assets (JSON, markdown) under `src/design/` and ensure they are version‑controlled.
 * After any Stitch operation, **verify** that generated screens adhere to the RouteMate UI guidelines (dark theme, rounded corners, `.btn-primary`).
-Ponytail-style development rules
-When modifying this repository, follow these rules:
-Prefer deleting code over adding code.
-Before writing custom code, check whether the same result can be achieved with:
-standard library features,
-native framework/platform APIs,
-existing project utilities,
-existing dependencies.
-Do not introduce new abstractions unless they remove real duplication or isolate real complexity.
-Avoid unnecessary managers, factories, wrappers, registries, adapters, and helper layers.
-Keep diffs small and behavior-preserving.
-Do not add dependencies unless there is a clear maintenance or security benefit.
-Do not remove security checks, validation at trust boundaries, accessibility behavior, audit logging, data-loss protection, or error handling required for correctness.
-For every change, explain:
-what was deleted or simplified,
-why the simpler version is safe,
-what tests should be run.
-For every change, update all documentation, bump versioning, and always create a new PR. Make sure to create tests for the changes and run the tests before creating the PR.
+
+## 6. Ponytail-Style Development Rules
+When modifying this repository, follow these rules strictly:
+* **Code Deletion First:** Prefer deleting code over adding code.
+* **Use Existing Abstractions:** Before writing custom code, check whether the same result can be achieved with:
+  - Standard library features.
+  - Native framework/platform APIs.
+  - Existing project utilities.
+  - Existing dependencies.
+* **No Extra Layers:** Do not introduce new abstractions unless they remove real duplication or isolate real complexity. Avoid unnecessary managers, factories, wrappers, registries, adapters, and helper layers.
+* **Surgical Diffs:** Keep diffs small and behavior-preserving.
+* **No Unnecessary Dependencies:** Do not add dependencies unless there is a clear maintenance or security benefit.
+* **Maintain Safety:** Do not remove security checks, validation at trust boundaries, accessibility behavior, audit logging, data-loss protection, or error handling required for correctness.
+* **Explanations:** For every change, explain:
+  - What was deleted or simplified.
+  - Why the simpler version is safe.
+  - What tests should be run.
+* **Full Process Integration:** For every change, update all documentation, bump versioning, and always create a new PR. Make sure to create tests for the changes and run the tests before creating the PR.
