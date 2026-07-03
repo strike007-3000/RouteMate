@@ -42,6 +42,10 @@ This document outlines the visual design system, tokens, utilities, and componen
 - **Style:** Outlined primary color with active scaling and glow shadow.
 - **Classes:** `h-14 rounded-[24px] border-2 border-primary text-primary bg-transparent font-bold uppercase tracking-[0.2em] text-[11px] flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg shadow-primary/10 hover:shadow-primary/20 hover:bg-primary/5`
 
+### `.btn-secondary` (Secondary Actions)
+- **Style:** Flat dark background button with active scaling and hover border transitions.
+- **Classes:** `h-14 rounded-[24px] bg-zinc-900/50 border border-white/5 hover:border-primary/30 text-white font-black uppercase tracking-widest text-xs flex items-center justify-center hover:bg-zinc-900 active:scale-95 transition-all`
+
 ### `.page-glow`
 - **Style:** Subtle radial background overlay at the top center of the page.
 - **Background:** `radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59,130,246,0.08) 0%, transparent 70%)`
@@ -63,6 +67,9 @@ This document outlines the visual design system, tokens, utilities, and componen
 ### Animated Sonar Empty State
 - **Center Icon:** A pulsing plane (`animate-bounce`) inside a raised circular container (`bg-zinc-900 border border-white/10 shadow-primary/10`).
 - **Ping Rings:** 3 concentric circles using staggered scale and opacity `animate-ping` transitions (`bg-primary/5`, `bg-primary/10`, `bg-primary/15`).
+
+### Bento Grid Modules
+- **Tiles:** Rounded containers (`rounded-[24px]`) with transparent backing (`bg-black/40 backdrop-blur-xl border border-white/5`) and micro-interactive highlights (`hover:border-primary/20 transition-all duration-300`).
 
 ### Account Settings Semantic Icons
 - **Personal Info (User):** `text-blue-400` icon, `bg-blue-400/10` background, `border-blue-400/20` border.
