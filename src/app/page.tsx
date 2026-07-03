@@ -71,7 +71,7 @@ export default function RootPage() {
         <div className="space-y-4 pt-4">
           <Link 
             href="/trips" 
-            className="w-full h-14 rounded-[24px] border-2 border-primary text-primary font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-primary hover:text-black transition-all"
+            className="btn-primary w-full"
             id="cta-launch-app"
           >
             Launch App <ArrowRight className="w-4 h-4" />

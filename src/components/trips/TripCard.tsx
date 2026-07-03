@@ -53,7 +53,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
       viewport={{ once: true }}
       onClick={() => onSelect(trip.id!)}
       className={cn(
-        "group relative w-full h-[280px] rounded-[var(--radius-card,24px)] overflow-hidden border border-white/10 hover:border-primary/50 transition-all duration-700 cursor-pointer shadow-2xl shadow-black",
+        "group relative w-full h-[280px] rounded-[var(--radius-container,32px)] overflow-hidden border border-white/10 hover:border-primary/50 transition-all duration-700 cursor-pointer shadow-2xl shadow-black",
         isDeleting && "opacity-50"
       )}
     >

@@ -86,9 +86,13 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
   // Extract "HH:mm" safely regardless of local timezone
   const displayTime = point.startTime?.includes('T') ? point.startTime.slice(11, 16) : '00:00';
 
+  const viewMode = useTripStore((state) => state.viewMode);
+
   return (
     <div className="relative pb-8 last:pb-0 pl-[var(--gutter,24px)] overflow-hidden">
-      <div className="absolute left-[calc(var(--gutter,24px)/2)] top-0 bottom-0 w-[1px] bg-primary/20 border-l border-dashed z-0" />
+      {viewMode === 'timeline' && (
+        <div className="absolute left-[calc(var(--gutter,24px)/2)] top-0 bottom-0 w-[1px] bg-primary/20 border-l border-dashed z-0" />
+      )}
       <div className="absolute left-0 top-0 w-[var(--gutter,24px)] h-full flex justify-center pt-3 z-10">
         <div className={cn("timeline-dot", config.color.replace('text-', 'bg-'), config.color)} />
       </div>
