@@ -12,6 +12,13 @@
 * **explore:** Preserve destination country names in AI itinerary builder request payloads to resolve ambiguous city names.
 * **explore:** Serialize landmark addresses into AI prompts to prevent vague or hallucinated address generations.
 
+## [3.18.0](https://github.com/strike007-3000/RouteMate/compare/v3.17.0...v3.18.0) (2026-07-03)
+
+
+### Features
+
+* align itinerary generation with AI Builder inputs & fix images ([#67](https://github.com/strike007-3000/RouteMate/issues/67)) ([e0f523f](https://github.com/strike007-3000/RouteMate/commit/e0f523f0c546424f9c74c6775651fd10ef7db82f))
+
 ## [3.17.0](https://github.com/strike007-3000/RouteMate/compare/v3.16.0...v3.17.0) (2026-06-02)
 
 
