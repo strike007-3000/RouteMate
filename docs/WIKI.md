@@ -51,7 +51,8 @@ To enforce the application's premium dark mode aesthetics, routemate.top complet
 ### 0.4 Dependency & Security Overrides
 To resolve vulnerabilities in transitive dependencies (e.g. security warnings inside `uuid` imported by Clerk UI's Solana wallet adapters) and clean up deprecation warnings in builds, routemate.top enforces package-level overrides in `package.json`:
 - **`uuid`**: Overridden to `^11.1.1` to patch moderate-severity bounds checks and deprecations.
-- **`postcss`**: Overridden to `^8.5.10`.
+- **`postcss`**: Overridden to `^8.5.23` to prevent source-map path traversal and arbitrary file disclosure.
+- **Next.js image stack**: Next.js `16.3.0` requires patched Sharp `^0.35.3`; the lockfile also pins patched `brace-expansion` and `@babel/core` transitive releases.
 
 ---
 
@@ -294,5 +295,4 @@ To comply with Google OAuth consent screen brand verification, routemate.top imp
 
 ### 11.3 Middleware Bootstrap
 - Next.js 16 renames the standard `middleware.ts` convention to `proxy.ts`. RouteMate utilizes `src/proxy.ts` as the primary configuration entrypoint to coordinate Clerk routing parameters. Creating a redundant `src/middleware.ts` alongside `src/proxy.ts` is rejected by the Next compiler and has been cleaned up.
-
 

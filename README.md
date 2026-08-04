@@ -25,6 +25,7 @@ Enterprise-grade reliability and security pass.
 - **RSC Split Architecture**: Converted core pages into React Server Component shells to minimize client-side javascript parsing footprints.
 - **Image Optimization & Proxy**: Upgraded raw images to Next.js `<Image>` components, optimized package imports in `next.config.ts`, and implemented a secure backend API proxy route for Unsplash imagery.
 - **LLM Determinism**: Enforced zero temperature configurations for smart city discovery and itinerary parsing models.
+- **Dependency Hardening**: Updated the Next.js toolchain and pinned patched transitive PostCSS releases to resolve known package vulnerabilities.
 
 ### ⛅ Live Intelligence (Weather & Flight Logistics)
 The system now proactively fetches real-time data to help you prepare for your journey.
