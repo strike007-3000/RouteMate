@@ -12,11 +12,14 @@ interface TripHeroProps {
   trip: Trip;
 }
 
-// Check if browser supports view transitions API
-const supportsViewTransitions = typeof document !== 'undefined' && 'startViewTransition' in document;
-
 export const TripHero = ({ trip }: TripHeroProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [supportsViewTransitions, setSupportsViewTransitions] = useState(false);
+
+  // Check if browser supports view transitions API after mount
+  useEffect(() => {
+    setSupportsViewTransitions('startViewTransition' in window && typeof window !== 'undefined');
+  }, []);
   
   const metadata = useMemo(() => {
     const start = parseISO(trip.startDate);

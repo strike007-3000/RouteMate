@@ -1,15 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, MapPin, Trash2, Copy, ArrowRight, MoreHorizontal, X } from 'lucide-react';
 import { Trip } from '@/lib/db';
 import { useTripStore } from '@/stores/useTripStore';
 import { cn } from '@/lib/utils';
-
-// Check if browser supports view transitions API
-const supportsViewTransitions = typeof document !== 'undefined' && 'startViewTransition' in document;
 
 interface TripCardProps {
   trip: Trip;
@@ -21,6 +18,12 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
   const [hasError, setHasError] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [supportsViewTransitions, setSupportsViewTransitions] = useState(false);
+
+  // Check if browser supports view transitions API after mount
+  useEffect(() => {
+    setSupportsViewTransitions('startViewTransition' in window && typeof window !== 'undefined');
+  }, []);
 
   const formatDateSafe = (dateStr: string | undefined | null) => {
     if (!dateStr) return 'TBD';
