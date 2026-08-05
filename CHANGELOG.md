@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.19.0](https://github.com/strike007-3000/RouteMate/compare/v3.18.3...v3.19.0) (2026-08-05)
+
+
+### Features
+
+* **design:** implement P0 critical and P1 high-priority design fixes ([#78](https://github.com/strike007-3000/RouteMate/issues/78)) ([4a744c7](https://github.com/strike007-3000/RouteMate/commit/4a744c7ace9b5ae5b9c541cf9c0b2ab010d98107))
+
 ## [3.18.4](https://github.com/strike007-3000/RouteMate/compare/v3.18.3...v3.18.4) (2026-08-05)
 
 ### Dependencies
