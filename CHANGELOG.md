@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.18.4](https://github.com/strike007-3000/RouteMate/compare/v3.18.3...v3.18.4) (2026-08-05)
+
+### Dependencies
+* **deps**: Resolve Dependabot alerts by updating Next.js to 16.2.12 and shell-quote to 1.10.0
+
+### Documentation
+* **docs**: Update design system specifications and remove dependency hardening documentation
+
+---
+
 ## [3.18.3](https://github.com/strike007-3000/RouteMate/compare/v3.17.0...v3.18.3) (2026-07-03)
 
 ### Features
