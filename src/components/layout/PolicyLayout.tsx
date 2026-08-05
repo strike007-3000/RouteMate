@@ -134,7 +134,7 @@ export function PolicyLayout({ title, markdownContent }: PolicyLayoutProps) {
       </div>
 
       {/* Document Card */}
-      <div className="w-full z-10 bg-zinc-950/40 backdrop-blur-xl border border-white/5 rounded-3xl p-6 sm:p-8 flex-1">
+      <div className="w-full z-10 bg-zinc-950/40 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 sm:p-8 flex-1">
         {parseMarkdown(markdownContent)}
       </div>
 

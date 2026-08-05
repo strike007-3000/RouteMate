@@ -117,13 +117,13 @@ export const TransitCard = ({ from, to }: TransitCardProps) => {
                     <span className="text-xs font-bold text-primary uppercase tracking-tighter">
                       {isRoutingToFlight ? 'Route to Airport' : isRoutingFromFlight ? 'Route to Hotel/City' : isInterCity ? 'Inter-city Connection' : 'Cheap Route Suggested'}
                     </span>
-                    <p className="text-[10px] text-muted-foreground font-medium">
+                    <p className="text-[11px] text-muted-foreground font-medium">
                       {isRoutingToFlight || isRoutingFromFlight ? 'Implicit Hub detected' : isInterCity ? `${Math.round(distance || 0)}km distance` : 'Logistics detected'}
                     </p>
                   </div>
                 </div>
                 <div className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
-                   <span className="text-[10px] font-bold text-emerald-500">{suggestion.cost}</span>
+                   <span className="text-[11px] font-bold text-emerald-500">{suggestion.cost}</span>
                 </div>
               </div>
               

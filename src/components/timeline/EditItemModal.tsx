@@ -72,7 +72,7 @@ export const EditItemModal = ({ isOpen, onClose, item }: EditItemModalProps) => 
                         value={formData.flightNumber}
                         onChange={(e) => setFormData(prev => ({ ...prev, flightNumber: e.target.value.toUpperCase() }))}
                         placeholder="e.g. SN3151"
-                        className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl px-5 text-sm font-bold text-white focus:outline-none focus:border-primary/50 transition-all"
+                        className="w-full h-14 bg-white/5 border border-white/10 rounded-[24px] px-5 text-sm font-bold text-white focus:outline-none focus:border-primary/50 transition-all"
                       />
                     </div>
                     <div className="space-y-2">
@@ -84,7 +84,7 @@ export const EditItemModal = ({ isOpen, onClose, item }: EditItemModalProps) => 
                         value={formData.airline}
                         onChange={(e) => setFormData(prev => ({ ...prev, airline: e.target.value }))}
                         placeholder="e.g. Cathay Pacific"
-                        className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl px-5 text-sm font-bold text-white focus:outline-none focus:border-primary/50 transition-all"
+                        className="w-full h-14 bg-white/5 border border-white/10 rounded-[24px] px-5 text-sm font-bold text-white focus:outline-none focus:border-primary/50 transition-all"
                       />
                     </div>
                   </>
@@ -99,7 +99,7 @@ export const EditItemModal = ({ isOpen, onClose, item }: EditItemModalProps) => 
                     value={formData.confirmationNumber}
                     onChange={(e) => setFormData(prev => ({ ...prev, confirmationNumber: e.target.value }))}
                     placeholder="Enter booking reference"
-                    className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl px-5 text-sm font-bold text-white focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full h-14 bg-white/5 border border-white/10 rounded-[24px] px-5 text-sm font-bold text-white focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -110,17 +110,17 @@ export const EditItemModal = ({ isOpen, onClose, item }: EditItemModalProps) => 
                     onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                     placeholder="Add any specific details, gate info, or check-in instructions..."
                     rows={3}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm font-bold text-white focus:outline-none focus:border-primary/50 transition-all resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-[24px] p-5 text-sm font-bold text-white focus:outline-none focus:border-primary/50 transition-all resize-none"
                   />
                 </div>
               </div>
 
               <button
                 onClick={handleSave}
-                className="w-full h-16 bg-primary text-black font-black uppercase tracking-widest rounded-2xl mt-8 flex items-center justify-center gap-3 hover:opacity-90 active:scale-[0.98] transition-all shadow-xl shadow-primary/20"
+                className="btn-primary w-full"
               >
-                <Save className="w-5 h-5" />
-                Save Changes
+                <Save className="w-4 h-4" />
+                <span>Save Changes</span>
               </button>
             </div>
           </motion.div>

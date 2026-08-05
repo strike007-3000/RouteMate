@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, MapPin, Trash2, Copy, ArrowRight, MoreHorizontal, X } from 'lucide-react';
 import { Trip } from '@/lib/db';
@@ -18,6 +18,12 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
   const [hasError, setHasError] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [supportsViewTransitions, setSupportsViewTransitions] = useState(false);
+
+  // Check if browser supports view transitions API after mount
+  useEffect(() => {
+    setSupportsViewTransitions('startViewTransition' in window && typeof window !== 'undefined');
+  }, []);
 
   const formatDateSafe = (dateStr: string | undefined | null) => {
     if (!dateStr) return 'TBD';
@@ -60,13 +66,13 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
       {/* Hero Background */}
       <div className="absolute inset-0 bg-zinc-900 overflow-hidden">
         {imageUrl ? (
-          <img 
-            src={imageUrl} 
-            alt={trip.name} 
+          <img
+            src={imageUrl}
+            alt={trip.name}
             onError={handleImageError}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2000ms] select-none scale-105"
             loading="lazy"
-            style={{ viewTransitionName: `trip-image-${trip.id}` } as React.CSSProperties}
+            style={supportsViewTransitions ? { viewTransitionName: `trip-image-${trip.id}` } as React.CSSProperties : {}}
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 via-zinc-900 to-black animate-pulse" />
@@ -77,13 +83,13 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
 
       {/* Top Bar: Status & Menu button */}
       <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-20">
-        <div className={`px-4 py-1.5 rounded-full border text-[10px] font-bold uppercase tracking-[0.2em] backdrop-blur-md shadow-lg ${statusColors[trip.status]}`}>
+        <div className={`px-4 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-[0.1em] backdrop-blur-md shadow-lg ${statusColors[trip.status]}`}>
           {trip.status}
         </div>
         
         <button 
           onClick={toggleMenu}
-          className="w-10 h-10 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-black/60 transition-all active:scale-95"
+          className="w-10 h-10 rounded-[24px] bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-black/60 transition-all active:scale-95"
         >
           {showMenu ? <X className="w-5 h-5" /> : <MoreHorizontal className="w-5 h-5" />}
         </button>
@@ -105,7 +111,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
                 duplicateTrip(trip.id!);
                 setShowMenu(false);
               }}
-              className="w-full px-5 py-3 rounded-2xl hover:bg-white/5 flex items-center gap-3 transition-colors"
+              className="w-full px-5 py-3 rounded-[24px] hover:bg-white/5 flex items-center gap-3 transition-colors"
             >
               <Copy className="w-4 h-4 text-zinc-400" />
               <span className="text-[10px] font-black uppercase tracking-widest text-white/80">Duplicate</span>
@@ -123,7 +129,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
                 }
               }}
               className={cn(
-                "w-full px-5 py-3 rounded-2xl flex items-center gap-3 transition-all",
+                "w-full px-5 py-3 rounded-[24px] flex items-center gap-3 transition-all",
                 isDeleting ? "bg-red-500 text-white" : "hover:bg-red-500/10 text-red-500"
               )}
             >
@@ -146,9 +152,9 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
             <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">{trip.destination}</span>
           </div>
           
-          <h3 
+          <h3
             className="text-3xl font-black text-white tracking-tighter leading-none mb-3 drop-shadow-2xl"
-            style={{ viewTransitionName: `trip-title-${trip.id}` } as React.CSSProperties}
+            style={supportsViewTransitions ? { viewTransitionName: `trip-title-${trip.id}` } as React.CSSProperties : {}}
           >
             {trip.name}
           </h3>

@@ -70,7 +70,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
+                <div className="w-10 h-10 rounded-[24px] bg-primary/20 flex items-center justify-center text-primary">
                   <Key className="w-5 h-5" />
                 </div>
                 <h2 className="text-xl font-black">Settings</h2>
@@ -82,7 +82,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
 
             <div className="space-y-8">
               
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-center justify-between">
+              <div className="bg-white/5 border border-white/10 rounded-[24px] p-5 flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-bold text-white mb-1">Preferred AI Provider</h4>
                   <p className="text-[10px] text-zinc-400 font-medium leading-tight pr-4">
@@ -90,15 +90,15 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
                   </p>
                 </div>
                 <div className="flex bg-black/50 p-1 rounded-xl border border-white/5 shrink-0">
-                  <button 
+                  <button
                     onClick={() => setTempPreferredAi('OpenRouter')}
-                    className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${tempPreferredAi === 'OpenRouter' ? 'bg-primary text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                    className={`px-4 py-2 rounded-[24px] text-[11px] font-black uppercase tracking-[0.1em] transition-all ${tempPreferredAi === 'OpenRouter' ? 'bg-primary text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
                   >
                     OpenRouter
                   </button>
-                  <button 
+                  <button
                     onClick={() => setTempPreferredAi('Groq')}
-                    className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${tempPreferredAi === 'Groq' ? 'bg-primary text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                    className={`px-4 py-2 rounded-[24px] text-[11px] font-black uppercase tracking-[0.1em] transition-all ${tempPreferredAi === 'Groq' ? 'bg-primary text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
                   >
                     Groq
                   </button>
@@ -115,7 +115,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
                     value={tempOpenRouterKey}
                     onChange={(e) => setTempOpenRouterKey(e.target.value)}
                     placeholder="sk-or-v1-..."
-                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+                    className="w-full bg-black/40 border border-white/10 rounded-[24px] py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
                   />
                   <button 
                     onClick={() => setShowOpenRouterKey(!showOpenRouterKey)}
@@ -144,7 +144,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
                     value={tempGroqKey}
                     onChange={(e) => setTempGroqKey(e.target.value)}
                     placeholder="gsk_..."
-                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+                    className="w-full bg-black/40 border border-white/10 rounded-[24px] py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
                   />
                   <button 
                     onClick={() => setShowGroqKey(!showGroqKey)}
@@ -173,7 +173,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
                     value={tempUnsplashKey}
                     onChange={(e) => setTempUnsplashKey(e.target.value)}
                     placeholder="Access Key..."
-                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+                    className="w-full bg-black/40 border border-white/10 rounded-[24px] py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
                   />
                   <button 
                     onClick={() => setShowUnsplashKey(!showUnsplashKey)}
@@ -194,7 +194,7 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
                     value={tempOrsKey}
                     onChange={(e) => setTempOrsKey(e.target.value)}
                     placeholder="5b3ce..."
-                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+                    className="w-full bg-black/40 border border-white/10 rounded-[24px] py-4 pl-5 pr-12 text-sm focus:outline-none focus:border-primary/50 transition-colors"
                   />
                   <button 
                     onClick={() => setShowOrsKey(!showOrsKey)}
@@ -222,13 +222,13 @@ export const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
                     setTempOrsKey('');
                     setTempUnsplashKey('');
                   }}
-                  className="flex-1 py-4 rounded-2xl bg-secondary text-xs font-bold hover:bg-muted transition-colors"
+                  className="flex-1 py-4 rounded-[24px] bg-secondary text-xs font-bold hover:bg-muted transition-colors"
                 >
                   Reset
                 </button>
                 <button
                   onClick={handleSave}
-                  className="flex-[2] py-4 rounded-2xl bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
+                  className="flex-[2] py-4 rounded-[24px] bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
                 >
                   {isSaved ? (
                     <>
