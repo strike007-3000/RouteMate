@@ -97,10 +97,10 @@ export const Timeline = ({ onOpenSmartAdd, hideHeader = false }: { onOpenSmartAd
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onOpenSmartAdd}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all group"
+            className="btn-primary gap-2"
           >
             <Sparkles className="w-4 h-4 group-hover:animate-pulse" />
-            <span className="text-[11px] font-black uppercase tracking-[0.1em]">Smart Add</span>
+            <span>Smart Add</span>
           </motion.button>
         </div>
       )}

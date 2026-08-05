@@ -130,6 +130,7 @@ All P0 and P1 design fixes have been successfully implemented following RouteMat
 - Changed button from text link to full styled button
 - Added sparkle animation to CTA button
 - Improved text weight and tracking
+- **Code Review Fix:** Replaced custom button styles with `.btn-primary` utility class to ensure consistency with all other primary actions
 
 **Files Modified:**
 - `src/components/timeline/Timeline.tsx` - Empty state section
