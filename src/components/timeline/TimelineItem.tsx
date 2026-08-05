@@ -136,7 +136,7 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
           stiffness: 300,
           damping: 30
         }}
-        whileHover={{ scale: 1.01, y: -2 }}
+        whileHover={{ scale: 1.02, y: -4 }}
         className={cn(
           "p-6 bg-zinc-900/50 border border-white/5 backdrop-blur-xl transition-all duration-300 shadow-2xl shadow-black/50 overflow-hidden relative z-10",
           "rounded-[var(--radius-card,24px)]",
@@ -146,7 +146,7 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
         <div className="flex items-start justify-between mb-6">
           <div className={cn("flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-white/10", config.bg)}>
             <Icon className={cn("w-3.5 h-3.5", config.color)} />
-            <span className={cn("text-[10px] font-bold uppercase tracking-[0.2em]", config.color)}>
+            <span className={cn("text-[11px] font-bold uppercase tracking-[0.1em]", config.color)}>
               {point.category}
               {point.category === 'Flight' && !!point.metadata?.flightNumber && (
                 <span className="opacity-60 ml-1.5 border-l border-white/20 pl-1.5">
@@ -158,18 +158,18 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
           <div className="flex items-center gap-2 text-zinc-500 whitespace-nowrap">
             <Clock className="w-3.5 h-3.5" />
             {isEditingTime ? (
-              <input 
-                type="time" 
-                className="bg-zinc-800/50 border border-white/10 rounded px-2 py-0.5 text-white text-[10px] font-bold tracking-[0.2em] uppercase focus:outline-none focus:border-primary w-[75px]"
+              <input
+                type="time"
+                className="bg-zinc-800/50 border border-white/10 rounded px-2 py-0.5 text-white text-[11px] font-bold tracking-[0.1em] uppercase focus:outline-none focus:border-primary w-[75px]"
                 defaultValue={displayTime}
                 onChange={handleTimeChange}
                 onBlur={() => setIsEditingTime(false)}
                 autoFocus
               />
             ) : (
-              <button 
+              <button
                 onClick={() => setIsEditingTime(true)}
-                className="text-[10px] font-bold tracking-[0.2em] uppercase hover:text-primary transition-colors text-left"
+                className="text-[11px] font-bold tracking-[0.1em] uppercase hover:text-primary transition-colors text-left"
               >
                 {point.isTimeExplicit === false ? 'Time TBD' : displayTime}
               </button>

@@ -70,7 +70,7 @@ export const TimelineHeader = ({
           
           <motion.div
             animate={{ rotate: isExpanded ? 180 : 0 }}
-            className="w-8 h-8 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/20"
+            className="w-8 h-8 rounded-[24px] bg-primary/5 flex items-center justify-center border border-primary/20"
           >
             <ChevronDown className="w-4 h-4 text-primary" />
           </motion.div>

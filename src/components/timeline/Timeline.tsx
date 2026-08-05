@@ -82,17 +82,26 @@ export const Timeline = ({ onOpenSmartAdd, hideHeader = false }: { onOpenSmartAd
         
       {points.length === 0 && (
         <div className="flex flex-col items-center justify-center py-32 text-center">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 0.1, scale: 1 }}
             className="mb-8"
           >
              <Sparkles className="w-24 h-24 text-primary" />
           </motion.div>
-          <h3 className="text-xl font-black text-white tracking-tight mb-3">Nothing scheduled</h3>
-          <p className="text-sm text-muted-foreground px-12 leading-relaxed font-bold">
-            Use <button onClick={onOpenSmartAdd} className="text-primary hover:underline underline-offset-4 decoration-2">Smart Add</button> to fill the gap.
+          <h3 className="text-[2rem] font-black text-white tracking-tight mb-3">Nothing scheduled</h3>
+          <p className="text-base text-muted-foreground px-12 leading-relaxed font-medium mb-6">
+            Use <button onClick={onOpenSmartAdd} className="text-primary font-bold hover:underline underline-offset-4 decoration-2">Smart Add</button> to fill the gap.
           </p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onOpenSmartAdd}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all group"
+          >
+            <Sparkles className="w-4 h-4 group-hover:animate-pulse" />
+            <span className="text-[11px] font-black uppercase tracking-[0.1em]">Smart Add</span>
+          </motion.button>
         </div>
       )}
 
