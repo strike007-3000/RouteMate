@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.19.1] - 2026-08-26
+
+### Security
+
+* Remove unused `@clerk/ui` dependency and resolve remaining Dependabot alerts.
+
+### Fixed
+
+* Restore the standard 24px radius for policy document cards.
+
 ## [3.19.0](https://github.com/strike007-3000/RouteMate/compare/v3.18.3...v3.19.0) (2026-08-05)
 
 
