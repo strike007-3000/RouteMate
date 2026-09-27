@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, MapPin, Trash2, Copy, ArrowRight, MoreHorizontal, X } from 'lucide-react';
 import { Trip } from '@/lib/db';
@@ -18,12 +18,6 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
   const [hasError, setHasError] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [supportsViewTransitions, setSupportsViewTransitions] = useState(false);
-
-  // Check if browser supports view transitions API after mount
-  useEffect(() => {
-    setSupportsViewTransitions('startViewTransition' in window && typeof window !== 'undefined');
-  }, []);
 
   const formatDateSafe = (dateStr: string | undefined | null) => {
     if (!dateStr) return 'TBD';
@@ -66,13 +60,16 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
       {/* Hero Background */}
       <div className="absolute inset-0 bg-zinc-900 overflow-hidden">
         {imageUrl ? (
-          <img
+          <Image
             src={imageUrl}
             alt={trip.name}
+            width={1000}
+            height={600}
+            unoptimized
             onError={handleImageError}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2000ms] select-none scale-105"
             loading="lazy"
-            style={supportsViewTransitions ? { viewTransitionName: `trip-image-${trip.id}` } as React.CSSProperties : {}}
+            style={{ viewTransitionName: `trip-image-${trip.id}` }}
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 via-zinc-900 to-black animate-pulse" />
@@ -154,7 +151,7 @@ export const TripCard = ({ trip, onSelect }: TripCardProps) => {
           
           <h3
             className="text-3xl font-black text-white tracking-tighter leading-none mb-3 drop-shadow-2xl"
-            style={supportsViewTransitions ? { viewTransitionName: `trip-title-${trip.id}` } as React.CSSProperties : {}}
+            style={{ viewTransitionName: `trip-title-${trip.id}` }}
           >
             {trip.name}
           </h3>

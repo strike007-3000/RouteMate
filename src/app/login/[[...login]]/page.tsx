@@ -7,12 +7,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { OtpForm } from '@/components/auth/OtpForm';
+import { errorMessage } from '@/lib/utils';
 
 export default function LoginPage() {
-  const signInHook = useSignIn() as any;
+  const signInHook = useSignIn();
   const router = useRouter();
   const [step, setStep] = useState<'form' | 'otp'>('form');
-  const [mounted, setMounted] = useState(false);
+  const [emailAddressId, setEmailAddressId] = useState('');
   
   // Fields state
   const [email, setEmail] = useState('');
@@ -21,11 +22,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted || !signInHook || !signInHook.isLoaded) {
+  if (!signInHook.isLoaded) {
     return (
       <main className="min-h-screen bg-black flex items-center justify-center font-sans">
         <Loader2 className="w-8 h-8 text-primary animate-spin" />
@@ -57,11 +54,12 @@ export default function LoginPage() {
         router.push('/trips');
       } else if (result.status === 'needs_second_factor') {
         // Prepare verification code for email
-        const factor = result.supportedFirstFactors.find(
-          (f: any) => f.strategy === 'email_code'
+        const factor = result.supportedFirstFactors?.find(
+          (f) => f.strategy === 'email_code'
         );
         if (factor) {
-          await signIn.prepareFirstFactor({ strategy: 'email_code' });
+          setEmailAddressId(factor.emailAddressId);
+          await signIn.prepareFirstFactor({ strategy: 'email_code', emailAddressId: factor.emailAddressId });
           setStep('otp');
         } else {
           setError('Verification method not supported');
@@ -69,8 +67,8 @@ export default function LoginPage() {
       } else {
         setError('Verification required. Please check your account settings.');
       }
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'Sign in failed. Please try again.');
+    } catch (err: unknown) {
+      setError(errorMessage(err, 'Sign in failed. Please try again.'));
     } finally {
       setIsLoading(false);
     }
@@ -85,8 +83,8 @@ export default function LoginPage() {
         redirectUrl: '/sso-callback',
         redirectUrlComplete: '/trips',
       });
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'OAuth initialization failed');
+    } catch (err: unknown) {
+      setError(errorMessage(err, 'OAuth initialization failed'));
       setIsLoading(false);
     }
   };
@@ -107,8 +105,8 @@ export default function LoginPage() {
       } else {
         setError('Incorrect or expired verification code');
       }
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'Verification failed. Please try again.');
+    } catch (err: unknown) {
+      setError(errorMessage(err, 'Verification failed. Please try again.'));
     } finally {
       setIsLoading(false);
     }
@@ -117,8 +115,8 @@ export default function LoginPage() {
   // Handle OTP Resend
   const handleOtpResend = async () => {
     try {
-      await signIn.prepareFirstFactor({ strategy: 'email_code' });
-    } catch (err: any) {
+      if (emailAddressId) await signIn.prepareFirstFactor({ strategy: 'email_code', emailAddressId });
+    } catch {
       setError('Failed to resend code');
     }
   };

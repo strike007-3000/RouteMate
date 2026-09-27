@@ -17,7 +17,7 @@ function VerifyContent() {
     }
 
     // Redirect to the API endpoint which sets the HTTP-only cookie and redirects
-    window.location.href = `/api/auth/verify?token=${encodeURIComponent(token)}`;
+    window.location.assign(new URL(`/api/auth/verify?token=${encodeURIComponent(token)}`, window.location.origin));
   }, [token, router]);
 
   return (
