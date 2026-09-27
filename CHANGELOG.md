@@ -6,6 +6,10 @@
 
 * Update Next.js to 16.3.4, sharp to 0.35.4, and js-yaml to 4.3.2 to address Dependabot alerts.
 
+### Maintenance
+
+* Clear existing lint errors and warnings across application code.
+
 ## [3.19.1] - 2026-08-26
 
 ### Security

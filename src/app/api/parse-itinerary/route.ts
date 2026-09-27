@@ -1,9 +1,22 @@
 import { NextResponse } from 'next/server';
 
+interface Highlight {
+  title: string;
+  description: string;
+  address?: string;
+}
+
+function isHighlight(value: unknown): value is Highlight {
+  if (typeof value !== 'object' || value === null || !('title' in value) || !('description' in value)) return false;
+  return typeof value.title === 'string' && typeof value.description === 'string' &&
+    (!('address' in value) || typeof value.address === 'string');
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { text, city, startDate, endDate, tripVibe, highlights } = body;
+    const { text, city, startDate, endDate, tripVibe } = body;
+    const highlights: Highlight[] = Array.isArray(body.highlights) ? body.highlights.filter(isHighlight) : [];
     let rootYear = "2026";
     
     if (startDate) {
@@ -18,7 +31,7 @@ export async function POST(req: Request) {
       userMessage = `I am planning a ${tripVibe} trip to ${city} from ${startDate} to ${endDate} (${totalDays} days).
 Please plan a high-fidelity itinerary exactly spanning these ${totalDays} days.
 Make sure to visit these famous landmarks if applicable:
-${highlights?.map((h: any) => `- ${h.title}: ${h.description}${h.address ? ` (Address: ${h.address})` : ''}`).join('\n') || ''}
+${highlights.map((h) => `- ${h.title}: ${h.description}${h.address ? ` (Address: ${h.address})` : ''}`).join('\n')}
 
 Tailor the daily schedule blocks (activities, morning/afternoon/evening slots) to strictly align with the chosen tripVibe: ${tripVibe}.
 Generate a perfectly structured timeline mapping exactly to the duration between ${startDate} and ${endDate}.

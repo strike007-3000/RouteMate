@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { User } from 'lucide-react';
+import Image from 'next/image';
 
 export const Header = () => {
   const pathname = usePathname();
@@ -84,7 +85,7 @@ export const Header = () => {
               className="w-10 h-10 rounded-full border-2 border-primary/40 hover:border-primary/80 active:scale-95 transition-all flex items-center justify-center overflow-hidden cursor-pointer bg-zinc-950"
             >
               {user?.image ? (
-                <img src={user.image} alt={user.name || "Profile"} className="w-full h-full object-cover" />
+                <Image src={user.image} alt={user.name || "Profile"} width={40} height={40} unoptimized className="w-full h-full object-cover" />
               ) : (
                 <User className="w-5 h-5 text-primary" />
               )}

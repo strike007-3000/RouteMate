@@ -49,7 +49,6 @@ export function ExploreClient() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStatus, setGenerationStatus] = useState('');
   const [isExploring, setIsExploring] = useState(false);
-  const [exploringStatus, setExploringStatus] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
@@ -136,7 +135,6 @@ export function ExploreClient() {
     
     setIsExploring(true);
     setProgressiveStage(1);
-    setExploringStatus('🤖 Mapping geographical coordinates and vibes...');
     
     try {
       const { apiOpenRouterKey, apiGroqKey, finalPreferredAi } = getApiKeys();
@@ -167,11 +165,9 @@ export function ExploreClient() {
 
       if (response.ok && data.id) {
         setProgressiveStage(2);
-        setExploringStatus('🏛️ Synthesizing local landmarks and hidden spots...');
         await new Promise(r => setTimeout(r, 800));
         
         setProgressiveStage(3);
-        setExploringStatus('📸 Curation complete! Sourcing high-fidelity imagery...');
         
         // Dynamic image fetch from Unsplash
         const imageUrl = await UnsplashService.getCityImage(data.name, unsplashAccessKey);
@@ -199,7 +195,6 @@ export function ExploreClient() {
 
     setIsExploring(true);
     setProgressiveStage(4);
-    setExploringStatus('💾 Committing destination payload to local vault...');
 
     try {
       await new Promise(r => setTimeout(r, 800));
@@ -238,8 +233,6 @@ export function ExploreClient() {
     
     try {
       const dest = selectedDestination;
-      const totalDays = Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (86400000)) + 1;
-
       const { apiOpenRouterKey, apiGroqKey, finalPreferredAi } = getApiKeys();
 
       const headers: Record<string, string> = { 

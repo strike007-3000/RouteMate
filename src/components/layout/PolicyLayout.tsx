@@ -13,7 +13,6 @@ export function PolicyLayout({ title, markdownContent }: PolicyLayoutProps) {
     const lines = md.split('\n');
     const elements: React.ReactNode[] = [];
     let listItems: React.ReactNode[] = [];
-    let insideList = false;
 
     const flushList = (key: string | number) => {
       if (listItems.length > 0) {
@@ -23,14 +22,12 @@ export function PolicyLayout({ title, markdownContent }: PolicyLayoutProps) {
           </ul>
         );
         listItems = [];
-        insideList = false;
       }
     };
 
     const parseInline = (text: string): React.ReactNode[] => {
-      let currentText = text;
       // Split by bold (**text**)
-      const boldParts = currentText.split(/\*\*([^*]+)\*\*/g);
+      const boldParts = text.split(/\*\*([^*]+)\*\*/g);
       const elements: React.ReactNode[] = [];
 
       boldParts.forEach((part, index) => {
@@ -69,7 +66,6 @@ export function PolicyLayout({ title, markdownContent }: PolicyLayoutProps) {
       const trimmed = line.trim();
 
       if (trimmed.startsWith('*')) {
-        insideList = true;
         const content = trimmed.replace(/^\*\s*/, '');
         listItems.push(
           <li key={`li-${idx}`} className="text-sm leading-relaxed text-zinc-400 pl-1">
@@ -134,7 +130,7 @@ export function PolicyLayout({ title, markdownContent }: PolicyLayoutProps) {
       </div>
 
       {/* Document Card */}
-      <div className="w-full z-10 bg-zinc-950/40 backdrop-blur-xl border border-white/5 rounded-[24px] p-6 sm:p-8 flex-1">
+      <div role="article" aria-label={title} className="w-full z-10 bg-zinc-950/40 backdrop-blur-xl border border-white/5 rounded-[24px] p-6 sm:p-8 flex-1">
         {parseMarkdown(markdownContent)}
       </div>
 

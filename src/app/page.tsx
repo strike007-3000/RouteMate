@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Sparkles, Compass, Shield, Database, ArrowRight } from 'lucide-react';
+import { Sparkles, Compass, Database, ArrowRight } from 'lucide-react';
 
 export default function RootPage() {
   return (
@@ -105,7 +105,7 @@ export default function RootPage() {
           <Link href="/terms" className="hover:text-white transition-colors" id="footer-terms-link">Terms of Service</Link>
         </div>
         <p className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest leading-relaxed px-4">
-          routemate.top's use and transfer of information received from Google APIs to any other app will adhere to{' '}
+          routemate.top&apos;s use and transfer of information received from Google APIs to any other app will adhere to{' '}
           <a 
             href="https://developers.google.com/terms/api-services-user-data-policy" 
             target="_blank" 
