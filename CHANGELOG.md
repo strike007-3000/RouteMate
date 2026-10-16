@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.20.0](https://github.com/strike007-3000/RouteMate/compare/v3.19.0...v3.20.0) (2026-09-27)
+
+
+### Features
+
+* **design:** implement P0 and P1 UI fixes ([#82](https://github.com/strike007-3000/RouteMate/issues/82)) ([1b6ac87](https://github.com/strike007-3000/RouteMate/commit/1b6ac87cdfa3f30fe8e84c6ef5fa2f46b27efe00))
+
+
+### Bug Fixes
+
+* **deps:** patch Dependabot security alerts ([#87](https://github.com/strike007-3000/RouteMate/issues/87)) ([844ebcd](https://github.com/strike007-3000/RouteMate/commit/844ebcdc4b30fbb714c5cb6651d28d36300fd412))
+* **deps:** resolve remaining Dependabot alerts ([#81](https://github.com/strike007-3000/RouteMate/issues/81)) ([03cbe07](https://github.com/strike007-3000/RouteMate/commit/03cbe07d7ee17a1932014bc4b382bb2fc56f3b3b))
+
 ## [3.19.2] - 2026-09-27
 
 ### Security
