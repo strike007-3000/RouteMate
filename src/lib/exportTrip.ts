@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { isTripExport } from '@/lib/tripExportValidation';
+import { getPointType, isTripExport } from '@/lib/tripExportValidation';
 
 export async function exportTrip(tripId: number) {
   const trip = await db.trips.get(tripId);
@@ -11,7 +11,10 @@ export async function exportTrip(tripId: number) {
   const payload = {
     exportedAt: new Date().toISOString(),
     trip,
-    itinerary: items,
+    itinerary: items.map(item => ({
+      ...item,
+      type: item.type ?? getPointType(item.category)
+    })),
     expenses,
     lists
   };
@@ -41,7 +44,10 @@ export async function importTrip(file: File) {
       return { ...copy, tripId: newTripId };
     };
 
-    await db.itineraryItems.bulkAdd(data.itinerary.map(remap));
+    await db.itineraryItems.bulkAdd(data.itinerary.map(record => ({
+      ...remap(record),
+      type: record.type ?? getPointType(record.category)
+    })));
     await db.tripExpenses.bulkAdd(data.expenses.map(remap));
     await db.tripLists.bulkAdd(data.lists.map(remap));
 

@@ -11,6 +11,18 @@ const listTypes = new Set(['packing', 'todo', 'shopping']);
 const isoDatePattern = /^\d{4}-\d{2}-\d{2}$/;
 const isoDateTimePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})?$/;
 
+/**
+ * @param {string} category
+ * @returns {'hotel' | 'flight' | 'attraction' | 'transit' | undefined}
+ */
+function getPointType(category) {
+  if (category === 'Flight') return 'flight';
+  if (category === 'Lodging') return 'hotel';
+  if (category === 'Train' || category === 'Rental') return 'transit';
+  if (category === 'Food' || category === 'Activity') return 'attraction';
+  return undefined;
+}
+
 /** @param {unknown} value */
 const isRecord = (value) => Boolean(value) && typeof value === 'object';
 
@@ -63,10 +75,10 @@ function isItineraryItem(value) {
   return hasOptionalNumericId(item.id)
     && typeof item.tripId === 'number'
     && Number.isFinite(item.tripId)
-    && typeof item.type === 'string'
-    && pointTypes.has(item.type)
+    && (item.type === undefined || (typeof item.type === 'string' && pointTypes.has(item.type)))
     && typeof item.category === 'string'
     && categories.has(item.category)
+    && getPointType(item.category) !== undefined
     && isNonEmptyString(item.title)
     && typeof item.address === 'string'
     && isDateString(item.startTime)
@@ -143,4 +155,4 @@ function isTripExport(value) {
     && data.lists.every(list => belongsToTrip(list) && isList(list));
 }
 
-module.exports = { isTripExport };
+module.exports = { getPointType, isTripExport };

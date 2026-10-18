@@ -40,6 +40,8 @@ const valid = {
 };
 
 if (!isTripExport(valid)) throw new Error('Valid export was rejected');
+const typeOmitted = { ...valid, itinerary: [{ ...valid.itinerary[0], type: undefined }] };
+if (!isTripExport(typeOmitted)) throw new Error('Derivable itinerary type was rejected');
 if (isTripExport({ ...valid, trip: { id: 4, name: 'Incomplete' } })) throw new Error('Incomplete trip was accepted');
 if (isTripExport({ ...valid, trip: { ...valid.trip, startDate: '10/18/2026' } })) throw new Error('Non-ISO trip date was accepted');
 if (isTripExport({ ...valid, trip: { ...valid.trip, startDate: '2026-02-31' } })) throw new Error('Invalid calendar date was accepted');

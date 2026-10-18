@@ -7,6 +7,8 @@ const timeline = read('src/app/trip/[id]/timeline/TimelineClient.tsx');
 const trips = read('src/app/trips/TripsClient.tsx');
 const timelineItem = read('src/components/timeline/TimelineItem.tsx');
 const checklist = read('src/components/trip/Checklist.tsx');
+const expenseTracker = read('src/components/trip/ExpenseTracker.tsx');
+const exportTrip = read('src/lib/exportTrip.ts');
 const tripStore = read('src/stores/useTripStore.ts');
 
 if (!/<ExpenseTracker tripId={tripId} \/>/.test(timeline) || !/<Checklist tripId={tripId} \/>/.test(timeline)) {
@@ -35,6 +37,14 @@ if (!/const newExpenses = expenses\.map/.test(tripStore)
   || !/db\.tripExpenses\.bulkAdd\(newExpenses\)/.test(tripStore)
   || !/db\.tripLists\.bulkAdd\(newLists\)/.test(tripStore)) {
   throw new Error('Trip duplication omits expenses or checklists');
+}
+
+if (!/type: record\.type \?\? getPointType\(record\.category\)/.test(exportTrip)) {
+  throw new Error('Imported itinerary types are not normalized');
+}
+
+if (!/if \(participantsArr\.length === 0\) return;/.test(expenseTracker)) {
+  throw new Error('Empty parsed participant lists are persisted');
 }
 
 console.log('PASS zero-cost feature integration');

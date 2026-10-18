@@ -26,6 +26,7 @@ export const ExpenseTracker = ({ tripId }: ExpenseTrackerProps) => {
     const parsedAmount = Number(amount);
     if (!Number.isFinite(parsedAmount) || parsedAmount <= 0 || !currency.trim() || !payer.trim() || !participants.trim()) return;
     const participantsArr = participants.split(',').map(s => s.trim()).filter(Boolean);
+    if (participantsArr.length === 0) return;
     await db.tripExpenses.add({
       tripId,
       amount: parsedAmount,

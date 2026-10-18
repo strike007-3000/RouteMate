@@ -13,6 +13,7 @@
 * Expose trip tools on the navigable timeline route and allow notes to be added to empty items.
 * Preserve custom packing items and remove expense/checklist records when their trip is deleted.
 * Preserve expenses and checklists when duplicating a trip and reject non-ISO imported dates.
+* Normalize Smart Paste itinerary types and reject empty parsed participant lists.
 
 ## [3.20.0](https://github.com/strike007-3000/RouteMate/compare/v3.19.0...v3.20.0) (2026-09-27)
 
