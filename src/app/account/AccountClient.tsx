@@ -19,9 +19,19 @@ import { db } from '@/lib/db';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { Header } from '@/components/layout/Header';
 import { cn } from '@/lib/utils';
-import { useAuthStore } from '@/stores/useAuthStore';
+import { useAuthStore, type User as AccountUser } from '@/stores/useAuthStore';
 import { useClerk, useUser } from '@clerk/nextjs';
-import { useSettingsStore } from '@/stores/useSettingsStore';
+import { useSettingsStore, type SettingsState } from '@/stores/useSettingsStore';
+import Image from 'next/image';
+import { errorMessage } from '@/lib/utils';
+
+type ClerkUser = ReturnType<typeof useUser>['user'];
+type AccountSettings = SettingsState;
+type SheetProps = { onClose: () => void };
+type ProfilePanelProps = SheetProps & { user: AccountUser | null; clerkUser: ClerkUser };
+type SettingsPanelProps = SheetProps & { settings: AccountSettings };
+type SecurityPanelProps = SheetProps & { clerkUser: ClerkUser };
+type LogoutPanelProps = SheetProps & { user: AccountUser | null; onConfirm: () => void | Promise<void> };
 
 export function AccountClient() {
   const { user, logout, isLoggedIn } = useAuthStore();
@@ -100,8 +110,7 @@ export function AccountClient() {
           >
             <div className="w-full h-full rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center relative overflow-hidden group">
               {user?.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                <Image src={user.image} alt={user.name} width={128} height={128} unoptimized className="w-full h-full object-cover" />
               ) : (
                 <User className="w-1/2 h-1/2 text-zinc-700" />
               )}
@@ -433,7 +442,6 @@ export function AccountClient() {
       <AnimatePresence>
         {activePanel === 'personalInfo' && (
           <PersonalInfoPanel 
-            isOpen={true} 
             onClose={() => setActivePanel(null)} 
             user={user} 
             clerkUser={clerkUser} 
@@ -443,7 +451,6 @@ export function AccountClient() {
       <AnimatePresence>
         {activePanel === 'appPreferences' && (
           <AppPreferencesPanel 
-            isOpen={true} 
             onClose={() => setActivePanel(null)} 
             settings={settings} 
           />
@@ -452,7 +459,6 @@ export function AccountClient() {
       <AnimatePresence>
         {activePanel === 'currencyUnits' && (
           <CurrencyUnitsPanel 
-            isOpen={true} 
             onClose={() => setActivePanel(null)} 
             settings={settings} 
           />
@@ -461,9 +467,7 @@ export function AccountClient() {
       <AnimatePresence>
         {activePanel === 'privacySecurity' && (
           <PrivacySecurityPanel 
-            isOpen={true} 
             onClose={() => setActivePanel(null)} 
-            user={user}
             clerkUser={clerkUser}
           />
         )}
@@ -471,7 +475,6 @@ export function AccountClient() {
       <AnimatePresence>
         {activePanel === 'logout' && (
           <LogoutConfirmSheet 
-            isOpen={true} 
             onClose={() => setActivePanel(null)} 
             user={user}
             onConfirm={async () => {
@@ -491,13 +494,11 @@ export function AccountClient() {
 // Subcomponents
 
 const BottomSheet = ({ 
-  isOpen, 
   onClose, 
   title, 
   icon: Icon, 
   children 
 }: { 
-  isOpen: boolean; 
   onClose: () => void; 
   title: string; 
   icon: React.ElementType; 
@@ -532,7 +533,7 @@ const BottomSheet = ({
   </>
 );
 
-const PersonalInfoPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
+const PersonalInfoPanel = ({ onClose, user, clerkUser }: ProfilePanelProps) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [name, setName] = React.useState(user?.name || '');
   const [isSaving, setIsSaving] = React.useState(false);
@@ -601,7 +602,7 @@ const PersonalInfoPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
   };
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Personal Info" icon={User}>
+    <BottomSheet onClose={onClose} title="Personal Info" icon={User}>
       <div className="space-y-6">
         <div className="flex flex-col items-center">
           <input 
@@ -617,7 +618,7 @@ const PersonalInfoPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
             className="w-24 h-24 rounded-full bg-zinc-900 border border-white/5 relative group overflow-hidden mb-4 ring-2 ring-primary/40 disabled:opacity-50"
           >
             {user?.image ? (
-              <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+              <Image src={user.image} alt={user.name} width={96} height={96} unoptimized className="w-full h-full object-cover" />
             ) : (
               <User className="w-1/2 h-1/2 text-zinc-700 mx-auto mt-6" />
             )}
@@ -645,7 +646,7 @@ const PersonalInfoPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
                   )}
                   title={`Avatar option ${idx + 1}`}
                 >
-                  <img src={path} alt={`Avatar option ${idx + 1}`} className="w-full h-full object-cover" />
+                  <Image src={path} alt={`Avatar option ${idx + 1}`} width={56} height={56} className="w-full h-full object-cover" />
                 </button>
               );
             })}
@@ -687,14 +688,14 @@ const PersonalInfoPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
   );
 };
 
-const AppPreferencesPanel = ({ isOpen, onClose, settings }: any) => {
+const AppPreferencesPanel = ({ onClose, settings }: SettingsPanelProps) => {
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="App Preferences" icon={SlidersHorizontal}>
+    <BottomSheet onClose={onClose} title="App Preferences" icon={SlidersHorizontal}>
       <div className="space-y-6">
         <div className="space-y-3">
           <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Default Trip View</label>
           <div className="flex bg-black/40 p-1 rounded-2xl border border-white/5">
-            {['summary', 'logistics'].map(mode => (
+            {(['summary', 'logistics'] as const).map(mode => (
               <button
                 key={mode}
                 onClick={() => settings.setDefaultViewMode(mode)}
@@ -712,7 +713,7 @@ const AppPreferencesPanel = ({ isOpen, onClose, settings }: any) => {
         <div className="space-y-3">
           <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Time Format</label>
           <div className="flex bg-black/40 p-1 rounded-2xl border border-white/5">
-            {['12h', '24h'].map(format => (
+            {(['12h', '24h'] as const).map(format => (
               <button
                 key={format}
                 onClick={() => settings.setTimeFormat(format)}
@@ -730,7 +731,7 @@ const AppPreferencesPanel = ({ isOpen, onClose, settings }: any) => {
         <div className="space-y-3">
           <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Date Format</label>
           <div className="flex flex-col gap-2">
-            {['DD/MM/YYYY', 'MM/DD/YYYY'].map(format => (
+            {(['DD/MM/YYYY', 'MM/DD/YYYY'] as const).map(format => (
               <button
                 key={format}
                 onClick={() => settings.setDateFormat(format)}
@@ -768,9 +769,9 @@ const AppPreferencesPanel = ({ isOpen, onClose, settings }: any) => {
   );
 };
 
-const CurrencyUnitsPanel = ({ isOpen, onClose, settings }: any) => {
+const CurrencyUnitsPanel = ({ onClose, settings }: SettingsPanelProps) => {
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Currency & Units" icon={Globe}>
+    <BottomSheet onClose={onClose} title="Currency & Units" icon={Globe}>
       <div className="space-y-8">
         <div className="space-y-4">
           <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Currency</label>
@@ -793,7 +794,7 @@ const CurrencyUnitsPanel = ({ isOpen, onClose, settings }: any) => {
         <div className="space-y-4">
           <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Distance Unit</label>
           <div className="flex bg-black/40 p-1 rounded-2xl border border-white/5">
-            {['KM', 'MI'].map(unit => (
+            {(['KM', 'MI'] as const).map(unit => (
               <button
                 key={unit}
                 onClick={() => settings.setDistanceUnit(unit)}
@@ -812,7 +813,7 @@ const CurrencyUnitsPanel = ({ isOpen, onClose, settings }: any) => {
   );
 };
 
-const PrivacySecurityPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
+const PrivacySecurityPanel = ({ onClose, clerkUser }: SecurityPanelProps) => {
   const [deleteStep, setDeleteStep] = React.useState(0);
   const [deleteInput, setDeleteInput] = React.useState('');
   
@@ -836,8 +837,8 @@ const PrivacySecurityPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
       setNewPassword('');
       setConfirmPassword('');
       alert("Password updated successfully");
-    } catch (err: any) {
-      alert(err.errors?.[0]?.message || "Failed to update password");
+    } catch (err: unknown) {
+      alert(errorMessage(err, "Failed to update password"));
     } finally {
       setIsChangingPassword(false);
     }
@@ -848,7 +849,7 @@ const PrivacySecurityPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
       await clerkUser?.delete();
       await db.delete();
       localStorage.clear();
-      window.location.href = '/';
+      window.location.assign(new URL('/', window.location.origin));
     } catch (err) {
       console.error(err);
     }
@@ -865,7 +866,7 @@ const PrivacySecurityPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
   };
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Privacy & Security" icon={Shield}>
+    <BottomSheet onClose={onClose} title="Privacy & Security" icon={Shield}>
       <div className="space-y-6">
         
         {/* Group 1: Authentication */}
@@ -979,13 +980,13 @@ const PrivacySecurityPanel = ({ isOpen, onClose, user, clerkUser }: any) => {
   );
 };
 
-const LogoutConfirmSheet = ({ isOpen, onClose, user, onConfirm }: any) => {
+const LogoutConfirmSheet = ({ onClose, user, onConfirm }: LogoutPanelProps) => {
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Sign Out" icon={LogOut}>
+    <BottomSheet onClose={onClose} title="Sign Out" icon={LogOut}>
       <div className="space-y-8 flex flex-col items-center text-center">
         <div className="w-20 h-20 rounded-full bg-zinc-900 border border-white/5 relative overflow-hidden mb-2">
           {user?.image ? (
-            <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+            <Image src={user.image} alt={user.name} width={80} height={80} unoptimized className="w-full h-full object-cover" />
           ) : (
             <User className="w-1/2 h-1/2 text-zinc-700 mx-auto mt-5" />
           )}

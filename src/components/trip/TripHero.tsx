@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { format, parseISO, differenceInDays, startOfDay, isToday, isBefore, isAfter } from 'date-fns';
@@ -14,12 +14,6 @@ interface TripHeroProps {
 
 export const TripHero = ({ trip }: TripHeroProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [supportsViewTransitions, setSupportsViewTransitions] = useState(false);
-
-  // Check if browser supports view transitions API after mount
-  useEffect(() => {
-    setSupportsViewTransitions('startViewTransition' in window && typeof window !== 'undefined');
-  }, []);
   
   const metadata = useMemo(() => {
     const start = parseISO(trip.startDate);
@@ -93,7 +87,7 @@ export const TripHero = ({ trip }: TripHeroProps) => {
           {/* Main Title (Clamp Logic) */}
           <h1
             className="text-[clamp(1.5rem,8vw,3rem)] font-black text-white tracking-tighter mb-4 leading-none drop-shadow-2xl px-4"
-            style={supportsViewTransitions ? { viewTransitionName: `trip-title-${trip.id}` } as React.CSSProperties : {}}
+            style={{ viewTransitionName: `trip-title-${trip.id}` }}
           >
             {trip.destination}
           </h1>

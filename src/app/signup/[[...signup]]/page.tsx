@@ -7,12 +7,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { OtpForm } from '@/components/auth/OtpForm';
+import { errorMessage } from '@/lib/utils';
 
 export default function SignUpPage() {
-  const signUpHook = useSignUp() as any;
+  const signUpHook = useSignUp();
   const router = useRouter();
   const [step, setStep] = useState<'form' | 'otp'>('form');
-  const [mounted, setMounted] = useState(false);
 
   // Fields state
   const [firstName, setFirstName] = useState('');
@@ -23,11 +23,7 @@ export default function SignUpPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted || !signUpHook || !signUpHook.isLoaded) {
+  if (!signUpHook.isLoaded) {
     return (
       <main className="min-h-screen bg-black flex items-center justify-center font-sans">
         <Loader2 className="w-8 h-8 text-primary animate-spin" />
@@ -62,8 +58,8 @@ export default function SignUpPage() {
       });
 
       setStep('otp');
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'Sign up failed. Please try again.');
+    } catch (err: unknown) {
+      setError(errorMessage(err, 'Sign up failed. Please try again.'));
     } finally {
       setIsLoading(false);
     }
@@ -78,8 +74,8 @@ export default function SignUpPage() {
         redirectUrl: '/sso-callback',
         redirectUrlComplete: '/trips',
       });
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'OAuth initialization failed');
+    } catch (err: unknown) {
+      setError(errorMessage(err, 'OAuth initialization failed'));
       setIsLoading(false);
     }
   };
@@ -99,8 +95,8 @@ export default function SignUpPage() {
       } else {
         setError('Incorrect or expired verification code');
       }
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'Verification failed. Please try again.');
+    } catch (err: unknown) {
+      setError(errorMessage(err, 'Verification failed. Please try again.'));
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +108,7 @@ export default function SignUpPage() {
       await signUp.prepareEmailAddressVerification({
         strategy: 'email_code',
       });
-    } catch (err: any) {
+    } catch {
       setError('Failed to resend code');
     }
   };

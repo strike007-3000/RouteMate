@@ -10,9 +10,10 @@ export async function getNearbySuggestions(
   lng: number,
   vibe?: string
 ): Promise<Suggestion[]> {
+  void lat;
+  void lng;
+  void vibe;
   // MVP: return static suggestions; real implementation would call OpenRouter/Groq
-  // with a prompt like: "Given location lat,lng and vibe, suggest 3 nearby places"
-  const prompt = `Suggest 3 nearby places near ${lat},${lng}${vibe ? ` with vibe ${vibe}` : ''}. Return JSON array.`;
   // Placeholder – no external call to keep cost $0 for MVP
   return [
     { title: 'Local café', description: 'Cozy spot near your stop', category: 'Food' },

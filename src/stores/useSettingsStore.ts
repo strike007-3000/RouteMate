@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface SettingsState {
+export interface SettingsState {
   openRouterApiKey: string;
   groqApiKey: string;
   hereApiKey: string;
