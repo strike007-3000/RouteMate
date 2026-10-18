@@ -1,4 +1,4 @@
-const { calculateBalances, groupExpensesByCurrency } = require('../src/lib/expenses.ts');
+const { calculateBalances, groupExpensesByCurrency } = require('../src/lib/expenses.js');
 
 function testSplit() {
   const expenses = [

@@ -23,10 +23,11 @@ export const Checklist = ({ tripId }: ChecklistProps) => {
   const [type, setType] = useState<'packing'|'todo'|'shopping'>('packing');
   const [title, setTitle] = useState('');
   const [newItem, setNewItem] = useState('');
+  const [itemDrafts, setItemDrafts] = useState<Record<number, string>>({});
 
   const createList = async () => {
-    if (!title) return;
     const customItem = newItem.trim();
+    if (!title.trim() || (type !== 'packing' && !customItem)) return;
     const itemNames = type === 'packing'
       ? [...PACKING_TEMPLATES.packing, ...(customItem ? [customItem] : [])]
       : customItem ? [customItem] : [];
@@ -38,7 +39,7 @@ export const Checklist = ({ tripId }: ChecklistProps) => {
     await db.tripLists.add({
       tripId,
       type,
-      title,
+      title: title.trim(),
       items,
       createdAt: new Date().toISOString()
     });
@@ -51,6 +52,17 @@ export const Checklist = ({ tripId }: ChecklistProps) => {
     if (!list) return;
     const items = list.items.map(it => it.id === itemId ? { ...it, checked: !it.checked } : it);
     await db.tripLists.update(listId, { items });
+  };
+
+  const addItem = async (listId: number) => {
+    const text = itemDrafts[listId]?.trim();
+    if (!text) return;
+    const list = await db.tripLists.get(listId);
+    if (!list) return;
+    await db.tripLists.update(listId, {
+      items: [...list.items, { id: crypto.randomUUID(), text, checked: false }]
+    });
+    setItemDrafts(drafts => ({ ...drafts, [listId]: '' }));
   };
 
   return (
@@ -80,6 +92,19 @@ export const Checklist = ({ tripId }: ChecklistProps) => {
                 </li>
               ))}
             </ul>
+            {list.id && (
+              <div className="flex gap-2 mt-3">
+                <input
+                  value={itemDrafts[list.id] ?? ''}
+                  onChange={event => setItemDrafts(drafts => ({ ...drafts, [list.id!]: event.target.value }))}
+                  placeholder="Add item"
+                  className="auth-input flex-1 min-w-0"
+                />
+                <button type="button" onClick={() => addItem(list.id!)} className="btn-primary px-4">
+                  Add
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

@@ -4,12 +4,17 @@ const path = require('path');
 const read = (relativePath) => fs.readFileSync(path.join(__dirname, '..', relativePath), 'utf8');
 
 const timeline = read('src/app/trip/[id]/timeline/TimelineClient.tsx');
+const trips = read('src/app/trips/TripsClient.tsx');
 const timelineItem = read('src/components/timeline/TimelineItem.tsx');
 const checklist = read('src/components/trip/Checklist.tsx');
 const tripStore = read('src/stores/useTripStore.ts');
 
 if (!/<ExpenseTracker tripId={tripId} \/>/.test(timeline) || !/<Checklist tripId={tripId} \/>/.test(timeline)) {
   throw new Error('Trip tools are not mounted on the reachable timeline route');
+}
+
+if (!/<TripPortability tripId={tripId} \/>/.test(timeline) || !/<TripPortability \/>/.test(trips)) {
+  throw new Error('Trip import/export controls are not reachable');
 }
 
 if (!/viewMode === 'timeline' && \(\s*<NotesEditor item={point} \/>/.test(timelineItem)) {

@@ -20,6 +20,7 @@ import { Sparkles, Calendar } from 'lucide-react';
 import { TripHero } from '@/components/trip/TripHero';
 import { ExpenseTracker } from '@/components/trip/ExpenseTracker';
 import { Checklist } from '@/components/trip/Checklist';
+import { TripPortability } from '@/components/trip/TripPortability';
 import { cn } from '@/lib/utils';
 
 // Sub-component to handle drag controls per item
@@ -153,6 +154,7 @@ export function TimelineClient() {
       <section className="relative z-10 px-[var(--gutter,24px)] grid gap-4">
         <ExpenseTracker tripId={tripId} />
         <Checklist tripId={tripId} />
+        <TripPortability tripId={tripId} />
       </section>
       
       <div className="relative z-10 px-[var(--gutter,24px)] mt-4">

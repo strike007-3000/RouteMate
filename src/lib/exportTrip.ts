@@ -1,23 +1,5 @@
-import { db, type ItineraryItem, type Trip, type TripExpense, type TripList } from '@/lib/db';
-
-interface TripExport {
-  trip: Trip;
-  itinerary: ItineraryItem[];
-  expenses: TripExpense[];
-  lists: TripList[];
-}
-
-function isTripExport(value: unknown): value is TripExport {
-  if (!value || typeof value !== 'object') return false;
-  const data = value as Partial<TripExport>;
-  return Boolean(
-    data.trip
-    && typeof data.trip.name === 'string'
-    && Array.isArray(data.itinerary)
-    && Array.isArray(data.expenses)
-    && Array.isArray(data.lists)
-  );
-}
+import { db } from '@/lib/db';
+import { isTripExport } from '@/lib/tripExportValidation';
 
 export async function exportTrip(tripId: number) {
   const trip = await db.trips.get(tripId);
