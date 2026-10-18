@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.21.0] - 2026-10-18
+
+### Features
+
+* Add local expense tracking with per-currency totals and participant balances.
+* Add packing, to-do, and shopping checklists plus notes and links for itinerary stops.
+* Add local JSON trip export/import across trips, itinerary items, expenses, and checklists.
+
+### Fixed
+
+* Expose trip tools on the navigable timeline route and allow notes to be added to empty items.
+* Preserve custom packing items and remove expense/checklist records when their trip is deleted.
+* Preserve expenses and checklists when duplicating a trip and reject non-ISO imported dates.
+* Normalize Smart Paste itinerary types and reject empty parsed participant lists.
+* Reject reversed imported trip ranges and deduplicate expense participants.
+* Canonicalize expense identities, reject duplicate checklist item IDs, and document the complete Dexie schema.
+* Reject imported itinerary records with conflicting types or dates outside their trip range.
+* Harden expense identity keys, trim imported participants, enforce date-only trip bounds, and display saved expense notes.
+
 ## [3.20.0](https://github.com/strike007-3000/RouteMate/compare/v3.19.0...v3.20.0) (2026-09-27)
 
 

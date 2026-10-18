@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getPointType } from '@/lib/tripExportValidation';
 
 interface Highlight {
   title: string;
@@ -282,6 +283,7 @@ Please output this in chronological order.`;
         return {
           ...p,
           category: cat,
+          type: getPointType(cat),
           startTime,
           endTime,
           id: crypto.randomUUID()

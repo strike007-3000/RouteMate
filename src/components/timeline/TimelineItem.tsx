@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { useTripStore } from '@/stores/useTripStore';
 import { FlightStatusWidget } from './FlightStatusWidget';
 import { EditItemModal } from './EditItemModal';
+import { NotesEditor } from './NotesEditor';
 
 import { LucideIcon, Edit2 } from 'lucide-react';
 
@@ -250,6 +251,9 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
                 departureAirport={point.metadata?.departureAirport as string}
                 arrivalAirport={point.metadata?.arrivalAirport as string}
               />
+            )}
+            {viewMode === 'timeline' && (
+              <NotesEditor item={point} />
             )}
           </div>
           

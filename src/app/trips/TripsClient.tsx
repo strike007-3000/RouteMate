@@ -14,6 +14,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import { UnsplashService } from '@/services/images/UnsplashService';
 import { useSettingsStore } from '@/stores/useSettingsStore';
+import { TripPortability } from '@/components/trip/TripPortability';
 
 export function TripsClient() {
   const { createTrip } = useTripStore();
@@ -77,6 +78,9 @@ export function TripsClient() {
           <Plus className="w-5 h-5" />
           <span>Create New Trip</span>
         </button>
+        <div className="mt-4">
+          <TripPortability />
+        </div>
       </div>
 
       <section className="px-[var(--gutter,24px)] space-y-12 pb-10">
