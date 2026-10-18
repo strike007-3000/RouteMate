@@ -118,6 +118,8 @@ function isExpense(value) {
 function isList(value) {
   if (!isRecord(value)) return false;
   const list = /** @type {Record<string, unknown>} */ (value);
+  const items = Array.isArray(list.items) ? list.items : [];
+  const itemIds = new Set(items.filter(isRecord).map(item => item.id));
   return hasOptionalNumericId(list.id)
     && typeof list.tripId === 'number'
     && Number.isFinite(list.tripId)
@@ -125,13 +127,14 @@ function isList(value) {
     && listTypes.has(list.type)
     && isNonEmptyString(list.title)
     && Array.isArray(list.items)
-    && list.items.every((item) => {
+    && items.every((item) => {
       if (!isRecord(item)) return false;
       const entry = /** @type {Record<string, unknown>} */ (item);
       return isNonEmptyString(entry.id)
         && isNonEmptyString(entry.text)
         && typeof entry.checked === 'boolean';
     })
+    && itemIds.size === items.length
     && isDateString(list.createdAt);
 }
 

@@ -89,7 +89,9 @@ graph TD
     J --> C[Dexie.js - Grouped & Manual Schema]
     B --> C
     C --> D[(Trips Table)]
-    C --> E[(Itinerary Table - Categories & CustomOrder)]
+    C --> E[(Itinerary Table - Categories, CustomOrder, Notes & Links)]
+    C --> N[(Trip Expenses Table)]
+    C --> O[(Trip Lists Table)]
     A --> F[Multi-Provider AI Core - OpenRouter & Groq]
     A --> G[Logistics Engine - 50km Rule]
     A --> K[Unsplash Image Engine - Caching Service]

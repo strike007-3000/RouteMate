@@ -14,6 +14,14 @@ function testSplit() {
   if (Math.abs(balances['Bob'] + 10) > 0.001) throw new Error('Bob balance wrong');
   if (Math.abs(balances['Carol'] + 20) > 0.001) throw new Error('Carol balance wrong');
 
+  const caseInsensitive = calculateBalances([
+    { amount: 90, payer: 'Alice', participants: ['alice', 'Bob'] }
+  ]);
+  if (Object.hasOwn(caseInsensitive, 'alice')) throw new Error('Payer identity was split by case');
+  if (Math.abs(caseInsensitive.Alice - 45) > 0.001 || Math.abs(caseInsensitive.Bob + 45) > 0.001) {
+    throw new Error('Case-insensitive balance wrong');
+  }
+
   const grouped = groupExpensesByCurrency([
     { amount: 10, currency: 'eur', payer: 'Alice', participants: ['Alice'] },
     { amount: 20, currency: 'USD', payer: 'Bob', participants: ['Bob'] }

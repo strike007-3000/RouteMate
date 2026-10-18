@@ -51,5 +51,6 @@ if (isTripExport({ ...valid, itinerary: [{ ...valid.itinerary[0], links: {} }] }
 if (isTripExport({ ...valid, expenses: [{ ...valid.expenses[0], tripId: 99 }] })) throw new Error('Mismatched child tripId was accepted');
 if (isTripExport({ ...valid, expenses: [{ ...valid.expenses[0], participants: ['Alice', 'alice'] }] })) throw new Error('Duplicate participants were accepted');
 if (isTripExport({ ...valid, lists: [{ ...valid.lists[0], items: [{ id: '', text: '', checked: false }] }] })) throw new Error('Invalid list item was accepted');
+if (isTripExport({ ...valid, lists: [{ ...valid.lists[0], items: [valid.lists[0].items[0], { id: 'passport', text: 'Backup passport', checked: false }] }] })) throw new Error('Duplicate list item IDs were accepted');
 
 console.log('PASS trip export validation');

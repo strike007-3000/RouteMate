@@ -22,15 +22,32 @@ function parseParticipants(value) {
 function calculateBalances(expenses) {
   /** @type {Record<string, number>} */
   const balances = {};
+  /** @type {Map<string, string>} */
+  const displayNames = new Map();
+
+  for (const expense of expenses) {
+    const payer = expense.payer.trim();
+    if (payer) displayNames.set(payer.toLocaleLowerCase(), payer);
+  }
+  for (const expense of expenses) {
+    for (const participant of expense.participants) {
+      const name = participant.trim();
+      if (name && !displayNames.has(name.toLocaleLowerCase())) {
+        displayNames.set(name.toLocaleLowerCase(), name);
+      }
+    }
+  }
 
   for (const expense of expenses) {
     if (!Number.isFinite(expense.amount) || expense.participants.length === 0) continue;
 
     const share = expense.amount / expense.participants.length;
-    balances[expense.payer] = (balances[expense.payer] ?? 0) + expense.amount;
+    const payer = displayNames.get(expense.payer.trim().toLocaleLowerCase()) ?? expense.payer.trim();
+    balances[payer] = (balances[payer] ?? 0) + expense.amount;
 
     for (const participant of expense.participants) {
-      balances[participant] = (balances[participant] ?? 0) - share;
+      const name = displayNames.get(participant.trim().toLocaleLowerCase()) ?? participant.trim();
+      balances[name] = (balances[name] ?? 0) - share;
     }
   }
 
