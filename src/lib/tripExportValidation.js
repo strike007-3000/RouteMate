@@ -73,17 +73,19 @@ function isTrip(value) {
 function isItineraryItem(value) {
   if (!isRecord(value)) return false;
   const item = /** @type {Record<string, unknown>} */ (value);
+  const expectedType = typeof item.category === 'string' ? getPointType(item.category) : undefined;
   return hasOptionalNumericId(item.id)
     && typeof item.tripId === 'number'
     && Number.isFinite(item.tripId)
-    && (item.type === undefined || (typeof item.type === 'string' && pointTypes.has(item.type)))
+    && (item.type === undefined || (typeof item.type === 'string' && pointTypes.has(item.type) && item.type === expectedType))
     && typeof item.category === 'string'
     && categories.has(item.category)
-    && getPointType(item.category) !== undefined
+    && expectedType !== undefined
     && isNonEmptyString(item.title)
     && typeof item.address === 'string'
     && isDateString(item.startTime)
     && isDateString(item.endTime)
+    && Date.parse(/** @type {string} */ (item.endTime)) >= Date.parse(/** @type {string} */ (item.startTime))
     && typeof item.sortOrder === 'number'
     && Number.isFinite(item.sortOrder)
     && (item.isTimeExplicit === undefined || typeof item.isTimeExplicit === 'boolean')
@@ -152,11 +154,22 @@ function isTripExport(value) {
 
   const sourceTripId = /** @type {Record<string, unknown>} */ (data.trip).id;
   if (typeof sourceTripId !== 'number') return false;
+  const trip = /** @type {Record<string, unknown>} */ (data.trip);
+  const tripStart = /** @type {string} */ (trip.startDate);
+  const tripEnd = /** @type {string} */ (trip.endDate);
 
   const belongsToTrip = (record) => isRecord(record)
     && /** @type {Record<string, unknown>} */ (record).tripId === sourceTripId;
+  const occursDuringTrip = (item) => {
+    if (!isRecord(item)) return false;
+    const record = /** @type {Record<string, unknown>} */ (item);
+    return typeof record.startTime === 'string'
+      && typeof record.endTime === 'string'
+      && record.startTime.slice(0, 10) >= tripStart
+      && record.endTime.slice(0, 10) <= tripEnd;
+  };
 
-  return data.itinerary.every(item => belongsToTrip(item) && isItineraryItem(item))
+  return data.itinerary.every(item => belongsToTrip(item) && isItineraryItem(item) && occursDuringTrip(item))
     && data.expenses.every(expense => belongsToTrip(expense) && isExpense(expense))
     && data.lists.every(list => belongsToTrip(list) && isList(list));
 }

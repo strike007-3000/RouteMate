@@ -47,6 +47,9 @@ if (isTripExport({ ...valid, trip: { ...valid.trip, startDate: '10/18/2026' } })
 if (isTripExport({ ...valid, trip: { ...valid.trip, startDate: '2026-02-31' } })) throw new Error('Invalid calendar date was accepted');
 if (isTripExport({ ...valid, trip: { ...valid.trip, startDate: '2026-10-20', endDate: '2026-10-18' } })) throw new Error('Reversed trip dates were accepted');
 if (isTripExport({ ...valid, itinerary: [{ ...valid.itinerary[0], startTime: 'invalid' }] })) throw new Error('Invalid itinerary date was accepted');
+if (isTripExport({ ...valid, itinerary: [{ ...valid.itinerary[0], startTime: '2026-10-17T12:00:00Z', endTime: '2026-10-17T13:00:00Z' }] })) throw new Error('Out-of-range itinerary item was accepted');
+if (isTripExport({ ...valid, itinerary: [{ ...valid.itinerary[0], startTime: '2026-10-18T14:00:00Z', endTime: '2026-10-18T13:00:00Z' }] })) throw new Error('Reversed itinerary times were accepted');
+if (isTripExport({ ...valid, itinerary: [{ ...valid.itinerary[0], category: 'Lodging', type: 'attraction' }] })) throw new Error('Conflicting itinerary type was accepted');
 if (isTripExport({ ...valid, itinerary: [{ ...valid.itinerary[0], links: {} }] })) throw new Error('Invalid itinerary links were accepted');
 if (isTripExport({ ...valid, expenses: [{ ...valid.expenses[0], tripId: 99 }] })) throw new Error('Mismatched child tripId was accepted');
 if (isTripExport({ ...valid, expenses: [{ ...valid.expenses[0], participants: ['Alice', 'alice'] }] })) throw new Error('Duplicate participants were accepted');

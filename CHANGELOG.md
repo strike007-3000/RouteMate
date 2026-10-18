@@ -16,6 +16,7 @@
 * Normalize Smart Paste itinerary types and reject empty parsed participant lists.
 * Reject reversed imported trip ranges and deduplicate expense participants.
 * Canonicalize expense identities, reject duplicate checklist item IDs, and document the complete Dexie schema.
+* Reject imported itinerary records with conflicting types or dates outside their trip range.
 
 ## [3.20.0](https://github.com/strike007-3000/RouteMate/compare/v3.19.0...v3.20.0) (2026-09-27)
 
