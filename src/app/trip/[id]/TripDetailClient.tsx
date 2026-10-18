@@ -9,6 +9,8 @@ import { BentoGrid } from '@/components/dashboard/BentoGrid';
 import { Timeline } from '@/components/timeline/Timeline';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { SmartPaste } from '@/components/timeline/SmartPaste';
+import { ExpenseTracker } from '@/components/trip/ExpenseTracker';
+import { Checklist } from '@/components/trip/Checklist';
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
@@ -43,7 +45,12 @@ export function TripDetailClient() {
         <BentoGrid onOpenSmartAdd={() => setIsSmartAddOpen(true)} />
       </section>
       
-      <section className="mt-0">
+      <section className="mt-0 px-[var(--gutter,24px)] grid gap-4">
+        <ExpenseTracker tripId={tripId} />
+        <Checklist tripId={tripId} />
+      </section>
+      
+      <section className="mt-4">
         <Timeline onOpenSmartAdd={() => setIsSmartAddOpen(true)} />
       </section>
 
