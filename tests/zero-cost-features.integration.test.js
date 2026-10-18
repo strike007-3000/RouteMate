@@ -30,4 +30,11 @@ if (!/db\.tripExpenses\.where\('tripId'\).*\.delete\(\)/s.test(tripStore)
   throw new Error('Trip deletion leaves child records behind');
 }
 
+if (!/const newExpenses = expenses\.map/.test(tripStore)
+  || !/const newLists = lists\.map/.test(tripStore)
+  || !/db\.tripExpenses\.bulkAdd\(newExpenses\)/.test(tripStore)
+  || !/db\.tripLists\.bulkAdd\(newLists\)/.test(tripStore)) {
+  throw new Error('Trip duplication omits expenses or checklists');
+}
+
 console.log('PASS zero-cost feature integration');

@@ -130,7 +130,7 @@ export const useTripStore = create<TripState>((set, get) => ({
     if (!trip) return;
     
     try {
-      await db.transaction('rw', [db.trips, db.itineraryItems], async () => {
+      await db.transaction('rw', [db.trips, db.itineraryItems, db.tripExpenses, db.tripLists], async () => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id: _, ...tripData } = trip;
         const newTripId = await db.trips.add({ 
@@ -145,8 +145,24 @@ export const useTripStore = create<TripState>((set, get) => ({
           delete newItem.id;
           return newItem;
         });
-        
+
+        const expenses = await db.tripExpenses.where('tripId').equals(id).toArray();
+        const newExpenses = expenses.map((expense) => {
+          const copy = { ...expense, tripId: newTripId as number };
+          delete copy.id;
+          return copy;
+        });
+
+        const lists = await db.tripLists.where('tripId').equals(id).toArray();
+        const newLists = lists.map((list) => {
+          const copy = { ...list, tripId: newTripId as number };
+          delete copy.id;
+          return copy;
+        });
+
         await db.itineraryItems.bulkAdd(newPoints);
+        await db.tripExpenses.bulkAdd(newExpenses);
+        await db.tripLists.bulkAdd(newLists);
       });
       await get().fetchTrips();
     } catch (error) {

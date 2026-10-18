@@ -41,6 +41,8 @@ const valid = {
 
 if (!isTripExport(valid)) throw new Error('Valid export was rejected');
 if (isTripExport({ ...valid, trip: { id: 4, name: 'Incomplete' } })) throw new Error('Incomplete trip was accepted');
+if (isTripExport({ ...valid, trip: { ...valid.trip, startDate: '10/18/2026' } })) throw new Error('Non-ISO trip date was accepted');
+if (isTripExport({ ...valid, trip: { ...valid.trip, startDate: '2026-02-31' } })) throw new Error('Invalid calendar date was accepted');
 if (isTripExport({ ...valid, itinerary: [{ ...valid.itinerary[0], startTime: 'invalid' }] })) throw new Error('Invalid itinerary date was accepted');
 if (isTripExport({ ...valid, itinerary: [{ ...valid.itinerary[0], links: {} }] })) throw new Error('Invalid itinerary links were accepted');
 if (isTripExport({ ...valid, expenses: [{ ...valid.expenses[0], tripId: 99 }] })) throw new Error('Mismatched child tripId was accepted');

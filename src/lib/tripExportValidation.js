@@ -8,6 +8,8 @@ const tripStatuses = new Set(['upcoming', 'past', 'draft']);
 const pointTypes = new Set(['hotel', 'flight', 'attraction', 'transit']);
 const categories = new Set(['Flight', 'Lodging', 'Train', 'Food', 'Activity', 'Rental']);
 const listTypes = new Set(['packing', 'todo', 'shopping']);
+const isoDatePattern = /^\d{4}-\d{2}-\d{2}$/;
+const isoDateTimePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})?$/;
 
 /** @param {unknown} value */
 const isRecord = (value) => Boolean(value) && typeof value === 'object';
@@ -16,7 +18,15 @@ const isRecord = (value) => Boolean(value) && typeof value === 'object';
 const isNonEmptyString = (value) => typeof value === 'string' && value.trim().length > 0;
 
 /** @param {unknown} value */
-const isDateString = (value) => isNonEmptyString(value) && !Number.isNaN(Date.parse(value));
+const isDateString = (value) => {
+  if (!isNonEmptyString(value) || (!isoDatePattern.test(value) && !isoDateTimePattern.test(value))) return false;
+  const [year, month, day] = value.slice(0, 10).split('-').map(Number);
+  const calendarDate = new Date(Date.UTC(year, month - 1, day));
+  return calendarDate.getUTCFullYear() === year
+    && calendarDate.getUTCMonth() === month - 1
+    && calendarDate.getUTCDate() === day
+    && !Number.isNaN(Date.parse(value));
+};
 
 /** @param {unknown} value */
 const hasOptionalNumericId = (value) => value === undefined || (typeof value === 'number' && Number.isFinite(value));
