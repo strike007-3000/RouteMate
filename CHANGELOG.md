@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.21.0](https://github.com/strike007-3000/RouteMate/compare/v3.20.0...v3.21.0) (2026-10-18)
+
+
+### Features
+
+* zero-cost Wanderlog parity features and UI integration ([#92](https://github.com/strike007-3000/RouteMate/issues/92)) ([4441df5](https://github.com/strike007-3000/RouteMate/commit/4441df5d98d3c622565d62783ac0e3f188891005))
+
 ## [3.21.0] - 2026-10-18
 
 ### Features
