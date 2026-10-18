@@ -47,5 +47,6 @@ if (!/parseParticipants\(participants\)/.test(expenseTracker)
   || !/if \(participantsArr\.length === 0\) return;/.test(expenseTracker)) {
   throw new Error('Empty parsed participant lists are persisted');
 }
+if (!/e\.notes\?\.trim\(\)/.test(expenseTracker)) throw new Error('Saved expense notes are not rendered');
 
 console.log('PASS zero-cost feature integration');

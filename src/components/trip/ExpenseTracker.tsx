@@ -77,6 +77,7 @@ export const ExpenseTracker = ({ tripId }: ExpenseTrackerProps) => {
           {expenses?.map(e => (
             <li key={e.id} className="text-xs text-zinc-400">
               {e.amount} {e.currency} by {e.payer} for {e.participants.join(', ')}
+              {e.notes?.trim() && <p className="mt-1 text-zinc-500">{e.notes}</p>}
             </li>
           ))}
         </ul>

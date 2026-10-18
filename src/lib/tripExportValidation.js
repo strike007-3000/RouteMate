@@ -61,7 +61,11 @@ function isTrip(value) {
   const hasRequiredFields = hasOptionalNumericId(trip.id)
     && isNonEmptyString(trip.name)
     && isNonEmptyString(trip.destination)
+    && typeof trip.startDate === 'string'
+    && isoDatePattern.test(trip.startDate)
     && isDateString(trip.startDate)
+    && typeof trip.endDate === 'string'
+    && isoDatePattern.test(trip.endDate)
     && isDateString(trip.endDate)
     && typeof trip.status === 'string'
     && tripStatuses.has(trip.status)
@@ -100,7 +104,7 @@ function isExpense(value) {
   if (!isRecord(value)) return false;
   const expense = /** @type {Record<string, unknown>} */ (value);
   const participants = Array.isArray(expense.participants) ? expense.participants : [];
-  const uniqueParticipants = new Set(participants.filter(isNonEmptyString).map(participant => participant.toLocaleLowerCase()));
+  const uniqueParticipants = new Set(participants.filter(isNonEmptyString).map(participant => participant.trim().toLocaleLowerCase()));
   return hasOptionalNumericId(expense.id)
     && typeof expense.tripId === 'number'
     && Number.isFinite(expense.tripId)

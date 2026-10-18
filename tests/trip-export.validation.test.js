@@ -44,6 +44,7 @@ const typeOmitted = { ...valid, itinerary: [{ ...valid.itinerary[0], type: undef
 if (!isTripExport(typeOmitted)) throw new Error('Derivable itinerary type was rejected');
 if (isTripExport({ ...valid, trip: { id: 4, name: 'Incomplete' } })) throw new Error('Incomplete trip was accepted');
 if (isTripExport({ ...valid, trip: { ...valid.trip, startDate: '10/18/2026' } })) throw new Error('Non-ISO trip date was accepted');
+if (isTripExport({ ...valid, trip: { ...valid.trip, startDate: '2026-10-18T00:00:00Z' } })) throw new Error('Datetime trip bound was accepted');
 if (isTripExport({ ...valid, trip: { ...valid.trip, startDate: '2026-02-31' } })) throw new Error('Invalid calendar date was accepted');
 if (isTripExport({ ...valid, trip: { ...valid.trip, startDate: '2026-10-20', endDate: '2026-10-18' } })) throw new Error('Reversed trip dates were accepted');
 if (isTripExport({ ...valid, itinerary: [{ ...valid.itinerary[0], startTime: 'invalid' }] })) throw new Error('Invalid itinerary date was accepted');
@@ -53,6 +54,7 @@ if (isTripExport({ ...valid, itinerary: [{ ...valid.itinerary[0], category: 'Lod
 if (isTripExport({ ...valid, itinerary: [{ ...valid.itinerary[0], links: {} }] })) throw new Error('Invalid itinerary links were accepted');
 if (isTripExport({ ...valid, expenses: [{ ...valid.expenses[0], tripId: 99 }] })) throw new Error('Mismatched child tripId was accepted');
 if (isTripExport({ ...valid, expenses: [{ ...valid.expenses[0], participants: ['Alice', 'alice'] }] })) throw new Error('Duplicate participants were accepted');
+if (isTripExport({ ...valid, expenses: [{ ...valid.expenses[0], participants: ['Alice', ' Alice ', 'Bob'] }] })) throw new Error('Whitespace-equivalent participants were accepted');
 if (isTripExport({ ...valid, lists: [{ ...valid.lists[0], items: [{ id: '', text: '', checked: false }] }] })) throw new Error('Invalid list item was accepted');
 if (isTripExport({ ...valid, lists: [{ ...valid.lists[0], items: [valid.lists[0].items[0], { id: 'passport', text: 'Backup passport', checked: false }] }] })) throw new Error('Duplicate list item IDs were accepted');
 

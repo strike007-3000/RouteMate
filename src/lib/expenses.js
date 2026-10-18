@@ -21,7 +21,7 @@ function parseParticipants(value) {
  */
 function calculateBalances(expenses) {
   /** @type {Record<string, number>} */
-  const balances = {};
+  const balances = Object.create(null);
   /** @type {Map<string, string>} */
   const displayNames = new Map();
 
@@ -63,7 +63,7 @@ function groupExpensesByCurrency(expenses) {
     const currency = expense.currency.trim().toUpperCase();
     (groups[currency] ??= []).push(expense);
     return groups;
-  }, /** @type {Record<string, TripExpense[]>} */ ({}));
+  }, /** @type {Record<string, TripExpense[]>} */ (Object.create(null)));
 }
 
 module.exports = { calculateBalances, groupExpensesByCurrency, parseParticipants };

@@ -21,12 +21,20 @@ function testSplit() {
   if (Math.abs(caseInsensitive.Alice - 45) > 0.001 || Math.abs(caseInsensitive.Bob + 45) > 0.001) {
     throw new Error('Case-insensitive balance wrong');
   }
+  const inheritedName = calculateBalances([
+    { amount: 20, payer: 'constructor', participants: ['constructor', '__proto__'] }
+  ]);
+  if (inheritedName.constructor !== 10 || inheritedName.__proto__ !== -10) throw new Error('Inherited names corrupted balances');
 
   const grouped = groupExpensesByCurrency([
     { amount: 10, currency: 'eur', payer: 'Alice', participants: ['Alice'] },
     { amount: 20, currency: 'USD', payer: 'Bob', participants: ['Bob'] }
   ]);
   if (grouped.EUR.length !== 1 || grouped.USD.length !== 1) throw new Error('Currencies were mixed');
+  const inheritedCurrency = groupExpensesByCurrency([
+    { amount: 10, currency: '__proto__', payer: 'Alice', participants: ['Alice'] }
+  ]);
+  if (inheritedCurrency.__PROTO__.length !== 1) throw new Error('Inherited currency key was not grouped');
   const participants = parseParticipants('Alice, Bob, bob, , Alice');
   if (participants.length !== 2 || participants[0] !== 'Alice' || participants[1] !== 'Bob') throw new Error('Participants were not normalized');
   if (parseParticipants(',,').length !== 0) throw new Error('Empty participants were retained');
