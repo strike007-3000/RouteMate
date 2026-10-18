@@ -21,6 +21,8 @@ export interface ItineraryItem extends TripPoint {
     lat: number;
     lng: number;
   };
+  notes?: string;
+  links?: string[];
 }
 
 export interface HighlightItem {
@@ -46,6 +48,8 @@ export class RouteMateDatabase extends Dexie {
   itineraryItems!: Table<ItineraryItem>;
   favorites!: Table<Favorite>;
   destinations!: Table<Destination>;
+  tripExpenses!: Table<TripExpense>;
+  tripLists!: Table<TripList>;
   points!: Table<TripPoint>; // Kept for v1 migration
   
   constructor() {
@@ -103,6 +107,32 @@ export class RouteMateDatabase extends Dexie {
       favorites: '++id, name, category, image',
       destinations: 'id, name, country, category'
     });
+
+    this.version(8).stores({
+      trips: '++id, name, destination, startDate, status',
+      itineraryItems: '++id, tripId, type, startTime, category, sortOrder, isTimeExplicit',
+      favorites: '++id, name, category, image',
+      destinations: 'id, name, country, category',
+      tripExpenses: '++id, tripId, payer, createdAt'
+    });
+
+    this.version(9).stores({
+      trips: '++id, name, destination, startDate, status',
+      itineraryItems: '++id, tripId, type, startTime, category, sortOrder, isTimeExplicit',
+      favorites: '++id, name, category, image',
+      destinations: 'id, name, country, category',
+      tripExpenses: '++id, tripId, payer, createdAt',
+      tripLists: '++id, tripId, type'
+    });
+
+    this.version(10).stores({
+      trips: '++id, name, destination, startDate, status',
+      itineraryItems: '++id, tripId, type, startTime, category, sortOrder, isTimeExplicit',
+      favorites: '++id, name, category, image',
+      destinations: 'id, name, country, category',
+      tripExpenses: '++id, tripId, payer, createdAt',
+      tripLists: '++id, tripId, type'
+    });
   }
 }
 
@@ -112,6 +142,32 @@ export interface Favorite {
   category: string;
   image: string;
   location?: string;
+}
+
+export interface TripExpense {
+  id?: number;
+  tripId: number;
+  amount: number;
+  currency: string;
+  payer: string;
+  participants: string[];
+  notes?: string;
+  createdAt: string;
+}
+
+export interface ListItem {
+  id: string;
+  text: string;
+  checked: boolean;
+}
+
+export interface TripList {
+  id?: number;
+  tripId: number;
+  type: 'packing' | 'todo' | 'shopping';
+  title: string;
+  items: ListItem[];
+  createdAt: string;
 }
 
 export const db = new RouteMateDatabase();
