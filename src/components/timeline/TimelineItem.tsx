@@ -252,7 +252,7 @@ export const TimelineItem = ({ point, prevPoint, dragControls }: { point: Itiner
                 arrivalAirport={point.metadata?.arrivalAirport as string}
               />
             )}
-            {viewMode === 'timeline' && (point.notes || point.links?.length) && (
+            {viewMode === 'timeline' && (
               <NotesEditor item={point} />
             )}
           </div>

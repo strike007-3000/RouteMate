@@ -27,6 +27,12 @@ Enterprise-grade reliability and security pass.
 - **LLM Determinism**: Enforced zero temperature configurations for smart city discovery and itinerary parsing models.
 - **Dependency Hardening**: Updated the Next.js toolchain and pinned patched transitive PostCSS releases to resolve known package vulnerabilities.
 
+### 🧳 Local Trip Toolkit
+- **Expense Splitting**: Track shared expenses offline, with totals and participant balances kept separate for each currency.
+- **Checklists**: Create packing, to-do, and shopping lists, including custom packing items alongside the starter template.
+- **Stop Notes & Links**: Save private notes and useful links directly on itinerary items in Logistics mode.
+- **Portable Trips**: Export and re-import a complete trip as JSON, including itinerary items, expenses, and checklists.
+
 ### ⛅ Live Intelligence (Weather & Flight Logistics)
 The system now proactively fetches real-time data to help you prepare for your journey.
 - **Real-Time Weather (Packing Context)**: Shows current temperatures and weather icons for today and tomorrow in your itinerary headers.

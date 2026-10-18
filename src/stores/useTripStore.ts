@@ -156,8 +156,10 @@ export const useTripStore = create<TripState>((set, get) => ({
 
   deleteTrip: async (id) => {
     try {
-      await db.transaction('rw', [db.trips, db.itineraryItems], async () => {
+      await db.transaction('rw', [db.trips, db.itineraryItems, db.tripExpenses, db.tripLists], async () => {
         await db.itineraryItems.where('tripId').equals(id).delete();
+        await db.tripExpenses.where('tripId').equals(id).delete();
+        await db.tripLists.where('tripId').equals(id).delete();
         await db.trips.delete(id);
       });
       await get().fetchTrips();

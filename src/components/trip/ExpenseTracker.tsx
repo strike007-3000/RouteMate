@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { db } from '@/lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { TripExpense } from '@/lib/db';
+import type { TripExpense } from '@/lib/db';
+import { calculateBalances, groupExpensesByCurrency } from '@/lib/expenses';
 
 interface ExpenseTrackerProps {
   tripId: number;
@@ -22,13 +23,14 @@ export const ExpenseTracker = ({ tripId }: ExpenseTrackerProps) => {
   const [notes, setNotes] = useState('');
 
   const handleAdd = async () => {
-    if (!amount || !payer || !participants) return;
+    const parsedAmount = Number(amount);
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0 || !currency.trim() || !payer.trim() || !participants.trim()) return;
     const participantsArr = participants.split(',').map(s => s.trim()).filter(Boolean);
     await db.tripExpenses.add({
       tripId,
-      amount: parseFloat(amount),
-      currency,
-      payer,
+      amount: parsedAmount,
+      currency: currency.trim().toUpperCase(),
+      payer: payer.trim(),
       participants: participantsArr,
       notes,
       createdAt: new Date().toISOString()
@@ -39,7 +41,7 @@ export const ExpenseTracker = ({ tripId }: ExpenseTrackerProps) => {
     setNotes('');
   };
 
-  const total = expenses?.reduce((sum, e) => sum + e.amount, 0) ?? 0;
+  const expenseGroups = groupExpensesByCurrency(expenses ?? []);
 
   return (
     <div className="glass-card rounded-[24px] p-6">
@@ -53,7 +55,23 @@ export const ExpenseTracker = ({ tripId }: ExpenseTrackerProps) => {
         <button onClick={handleAdd} className="btn-primary w-full">Add Expense</button>
       </div>
       <div className="mt-6 text-white/80 text-sm">
-        Total: {total.toFixed(2)} {currency}
+        {Object.entries(expenseGroups).map(([expenseCurrency, currencyExpenses]) => {
+          const total = currencyExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+          const balances = calculateBalances(currencyExpenses);
+
+          return (
+            <div key={expenseCurrency} className="mb-4 last:mb-0">
+              <p className="font-bold">Total: {total.toFixed(2)} {expenseCurrency}</p>
+              <ul className="mt-2 space-y-1">
+                {Object.entries(balances).map(([person, balance]) => (
+                  <li key={person} className="text-xs text-zinc-400">
+                    {person}: {balance >= 0 ? 'is owed' : 'owes'} {Math.abs(balance).toFixed(2)} {expenseCurrency}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
         <ul className="mt-3 space-y-1">
           {expenses?.map(e => (
             <li key={e.id} className="text-xs text-zinc-400">

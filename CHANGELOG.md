@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.20.0] - 2026-10-18
+
+### Features
+
+* Add local expense tracking with per-currency totals and participant balances.
+* Add packing, to-do, and shopping checklists plus notes and links for itinerary stops.
+* Add local JSON trip export/import across trips, itinerary items, expenses, and checklists.
+
+### Fixed
+
+* Expose trip tools on the navigable timeline route and allow notes to be added to empty items.
+* Preserve custom packing items and remove expense/checklist records when their trip is deleted.
+
 ## [3.19.1] - 2026-08-26
 
 ### Security

@@ -1,4 +1,23 @@
-import { db } from '@/lib/db';
+import { db, type ItineraryItem, type Trip, type TripExpense, type TripList } from '@/lib/db';
+
+interface TripExport {
+  trip: Trip;
+  itinerary: ItineraryItem[];
+  expenses: TripExpense[];
+  lists: TripList[];
+}
+
+function isTripExport(value: unknown): value is TripExport {
+  if (!value || typeof value !== 'object') return false;
+  const data = value as Partial<TripExport>;
+  return Boolean(
+    data.trip
+    && typeof data.trip.name === 'string'
+    && Array.isArray(data.itinerary)
+    && Array.isArray(data.expenses)
+    && Array.isArray(data.lists)
+  );
+}
 
 export async function exportTrip(tripId: number) {
   const trip = await db.trips.get(tripId);
@@ -26,9 +45,24 @@ export async function exportTrip(tripId: number) {
 
 export async function importTrip(file: File) {
   const text = await file.text();
-  const data = JSON.parse(text);
-  // Minimal validation
-  if (!data.trip || !data.trip.id) throw new Error('Invalid export');
-  // Import logic would merge into DB – simplified for MVP
-  return data;
+  const data: unknown = JSON.parse(text);
+  if (!isTripExport(data)) throw new Error('Invalid export');
+
+  return db.transaction('rw', [db.trips, db.itineraryItems, db.tripExpenses, db.tripLists], async () => {
+    const trip = { ...data.trip };
+    delete trip.id;
+    const newTripId = Number(await db.trips.add(trip));
+
+    const remap = <T extends { id?: number; tripId: number }>(record: T) => {
+      const copy = { ...record };
+      delete copy.id;
+      return { ...copy, tripId: newTripId };
+    };
+
+    await db.itineraryItems.bulkAdd(data.itinerary.map(remap));
+    await db.tripExpenses.bulkAdd(data.expenses.map(remap));
+    await db.tripLists.bulkAdd(data.lists.map(remap));
+
+    return newTripId;
+  });
 }

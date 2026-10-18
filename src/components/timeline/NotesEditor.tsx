@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { db } from '@/lib/db';
 import { ItineraryItem } from '@/lib/db';
-import { useLiveQuery } from 'dexie-react-hooks';
 
 interface NotesEditorProps {
   item: ItineraryItem;

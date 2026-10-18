@@ -1,17 +1,4 @@
-// RED phase: test expense split calculation
-function calculateBalances(expenses) {
-  const balances = {};
-  for (const e of expenses) {
-    if (!balances[e.payer]) balances[e.payer] = 0;
-    const share = e.amount / e.participants.length;
-    for (const p of e.participants) {
-      if (!balances[p]) balances[p] = 0;
-      balances[p] -= share;
-    }
-    balances[e.payer] += e.amount;
-  }
-  return balances;
-}
+const { calculateBalances, groupExpensesByCurrency } = require('../src/lib/expenses.ts');
 
 function testSplit() {
   const expenses = [
@@ -26,6 +13,12 @@ function testSplit() {
   if (Math.abs(balances['Alice'] - 30) > 0.001) throw new Error('Alice balance wrong');
   if (Math.abs(balances['Bob'] + 10) > 0.001) throw new Error('Bob balance wrong');
   if (Math.abs(balances['Carol'] + 20) > 0.001) throw new Error('Carol balance wrong');
+
+  const grouped = groupExpensesByCurrency([
+    { amount: 10, currency: 'eur', payer: 'Alice', participants: ['Alice'] },
+    { amount: 20, currency: 'USD', payer: 'Bob', participants: ['Bob'] }
+  ]);
+  if (grouped.EUR.length !== 1 || grouped.USD.length !== 1) throw new Error('Currencies were mixed');
   console.log('PASS split calc');
 }
 

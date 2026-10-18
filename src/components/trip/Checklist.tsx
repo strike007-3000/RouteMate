@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { db } from '@/lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { TripList, ListItem } from '@/lib/db';
-import { Plus, Check } from 'lucide-react';
+import type { TripList, ListItem } from '@/lib/db';
+import { Check } from 'lucide-react';
 
 interface ChecklistProps {
   tripId: number;
@@ -26,9 +26,15 @@ export const Checklist = ({ tripId }: ChecklistProps) => {
 
   const createList = async () => {
     if (!title) return;
-    const items: ListItem[] = type === 'packing' && PACKING_TEMPLATES.packing
-      ? PACKING_TEMPLATES.packing.map(t => ({ id: crypto.randomUUID(), text: t, checked: false }))
-      : [{ id: crypto.randomUUID(), text: newItem, checked: false }].filter(i => i.text);
+    const customItem = newItem.trim();
+    const itemNames = type === 'packing'
+      ? [...PACKING_TEMPLATES.packing, ...(customItem ? [customItem] : [])]
+      : customItem ? [customItem] : [];
+    const items: ListItem[] = itemNames.map(text => ({
+      id: crypto.randomUUID(),
+      text,
+      checked: false
+    }));
     await db.tripLists.add({
       tripId,
       type,

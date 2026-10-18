@@ -60,6 +60,11 @@ To resolve vulnerabilities in transitive dependencies (e.g. security warnings in
 
 The itinerary engine uses a highly contextual logistical hierarchy to manage travel flows. Itinerary items carry classification, temporal, and directional metadata.
 
+### 1.0 Local Trip Data (Schema v8-v10)
+Dexie schema versions `8` through `10` add per-trip expenses, checklists, and optional itinerary notes/links. The reachable `/trip/[id]/timeline` route exposes these tools alongside the existing itinerary. Expense totals and balances are calculated independently per currency; no implicit exchange-rate conversion occurs.
+
+JSON export includes the trip, itinerary, expenses, and checklists. Import validates all four collections, creates a new trip ID, removes exported primary keys, remaps each child record to the new trip, and commits the complete import in one transaction. Deleting a trip removes all itinerary, expense, and checklist child records in the same transaction.
+
 - **Category Mapping**: AI extracts entries into `Flight`, `Lodging`, `Food`, `Train`, `Activity`, or `Rental`.
 - **Coordinate Fidelity**: Every item stores a `coordinates` object for point-to-point transit calculations.
 
