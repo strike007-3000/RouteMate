@@ -1,6 +1,21 @@
 /** @typedef {import('./db').TripExpense} TripExpense */
 
 /**
+ * @param {string} value
+ * @returns {string[]}
+ */
+function parseParticipants(value) {
+  const participants = new Map();
+  for (const entry of value.split(',')) {
+    const name = entry.trim();
+    if (name && !participants.has(name.toLocaleLowerCase())) {
+      participants.set(name.toLocaleLowerCase(), name);
+    }
+  }
+  return [...participants.values()];
+}
+
+/**
  * @param {Array<Pick<TripExpense, 'amount' | 'payer' | 'participants'>>} expenses
  * @returns {Record<string, number>}
  */
@@ -34,4 +49,4 @@ function groupExpensesByCurrency(expenses) {
   }, /** @type {Record<string, TripExpense[]>} */ ({}));
 }
 
-module.exports = { calculateBalances, groupExpensesByCurrency };
+module.exports = { calculateBalances, groupExpensesByCurrency, parseParticipants };

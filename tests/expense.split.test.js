@@ -1,4 +1,4 @@
-const { calculateBalances, groupExpensesByCurrency } = require('../src/lib/expenses.js');
+const { calculateBalances, groupExpensesByCurrency, parseParticipants } = require('../src/lib/expenses.js');
 
 function testSplit() {
   const expenses = [
@@ -19,6 +19,9 @@ function testSplit() {
     { amount: 20, currency: 'USD', payer: 'Bob', participants: ['Bob'] }
   ]);
   if (grouped.EUR.length !== 1 || grouped.USD.length !== 1) throw new Error('Currencies were mixed');
+  const participants = parseParticipants('Alice, Bob, bob, , Alice');
+  if (participants.length !== 2 || participants[0] !== 'Alice' || participants[1] !== 'Bob') throw new Error('Participants were not normalized');
+  if (parseParticipants(',,').length !== 0) throw new Error('Empty participants were retained');
   console.log('PASS split calc');
 }
 

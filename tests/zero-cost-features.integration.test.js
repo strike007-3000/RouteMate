@@ -43,7 +43,8 @@ if (!/type: record\.type \?\? getPointType\(record\.category\)/.test(exportTrip)
   throw new Error('Imported itinerary types are not normalized');
 }
 
-if (!/if \(participantsArr\.length === 0\) return;/.test(expenseTracker)) {
+if (!/parseParticipants\(participants\)/.test(expenseTracker)
+  || !/if \(participantsArr\.length === 0\) return;/.test(expenseTracker)) {
   throw new Error('Empty parsed participant lists are persisted');
 }
 

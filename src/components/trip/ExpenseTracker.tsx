@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { db } from '@/lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
 import type { TripExpense } from '@/lib/db';
-import { calculateBalances, groupExpensesByCurrency } from '@/lib/expenses';
+import { calculateBalances, groupExpensesByCurrency, parseParticipants } from '@/lib/expenses';
 
 interface ExpenseTrackerProps {
   tripId: number;
@@ -25,7 +25,7 @@ export const ExpenseTracker = ({ tripId }: ExpenseTrackerProps) => {
   const handleAdd = async () => {
     const parsedAmount = Number(amount);
     if (!Number.isFinite(parsedAmount) || parsedAmount <= 0 || !currency.trim() || !payer.trim() || !participants.trim()) return;
-    const participantsArr = participants.split(',').map(s => s.trim()).filter(Boolean);
+    const participantsArr = parseParticipants(participants);
     if (participantsArr.length === 0) return;
     await db.tripExpenses.add({
       tripId,

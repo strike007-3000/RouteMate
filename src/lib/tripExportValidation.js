@@ -58,7 +58,7 @@ const isCoordinates = (value) => {
 function isTrip(value) {
   if (!isRecord(value)) return false;
   const trip = /** @type {Record<string, unknown>} */ (value);
-  return hasOptionalNumericId(trip.id)
+  const hasRequiredFields = hasOptionalNumericId(trip.id)
     && isNonEmptyString(trip.name)
     && isNonEmptyString(trip.destination)
     && isDateString(trip.startDate)
@@ -66,6 +66,7 @@ function isTrip(value) {
     && typeof trip.status === 'string'
     && tripStatuses.has(trip.status)
     && (trip.coverImage === undefined || typeof trip.coverImage === 'string');
+  return hasRequiredFields && Date.parse(/** @type {string} */ (trip.endDate)) >= Date.parse(/** @type {string} */ (trip.startDate));
 }
 
 /** @param {unknown} value */
@@ -96,6 +97,8 @@ function isItineraryItem(value) {
 function isExpense(value) {
   if (!isRecord(value)) return false;
   const expense = /** @type {Record<string, unknown>} */ (value);
+  const participants = Array.isArray(expense.participants) ? expense.participants : [];
+  const uniqueParticipants = new Set(participants.filter(isNonEmptyString).map(participant => participant.toLocaleLowerCase()));
   return hasOptionalNumericId(expense.id)
     && typeof expense.tripId === 'number'
     && Number.isFinite(expense.tripId)
@@ -104,9 +107,9 @@ function isExpense(value) {
     && expense.amount > 0
     && isNonEmptyString(expense.currency)
     && isNonEmptyString(expense.payer)
-    && Array.isArray(expense.participants)
-    && expense.participants.length > 0
-    && expense.participants.every(isNonEmptyString)
+    && participants.length > 0
+    && participants.every(isNonEmptyString)
+    && uniqueParticipants.size === participants.length
     && (expense.notes === undefined || typeof expense.notes === 'string')
     && isDateString(expense.createdAt);
 }
