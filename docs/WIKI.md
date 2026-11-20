@@ -9,7 +9,7 @@ Deep-dive documentation for routemate.top Architecture.
 routemate.top is built on a hybrid architecture that balances local-first performance with live cloud intelligence.
 
 ### 0.1 Core Stack
-- **Framework**: Next.js 14+ (App Router, Server Actions)
+- **Framework**: Next.js 16 (App Router, Server Actions)
 - **Authentication**: Clerk (Session Management & Social/Magic Links)
 - **State Management**: Zustand (Global Store) + Dexie.js (Offline Persistence)
 - **Styling**: Tailwind CSS + Framer Motion (Micro-animations)
@@ -52,7 +52,7 @@ To enforce the application's premium dark mode aesthetics, routemate.top complet
 To resolve vulnerabilities in transitive dependencies (e.g. security warnings inside `uuid` imported by Clerk UI's Solana wallet adapters) and clean up deprecation warnings in builds, routemate.top enforces package-level overrides in `package.json`:
 - **`uuid`**: Overridden to `^11.1.1` to patch moderate-severity bounds checks and deprecations.
 - **`postcss`**: Overridden to `^8.5.23` to prevent source-map path traversal and arbitrary file disclosure.
-- **Next.js image stack**: Next.js `16.3.0` requires patched Sharp `^0.35.3`; the lockfile also pins patched `brace-expansion` and `@babel/core` transitive releases.
+- **Next.js image stack**: Next.js `16.4.6` (with matching `eslint-config-next`) resolves the open Dependabot `next` advisories (patched in 16.4.5). It uses patched Sharp `^0.35.3` (currently `0.35.5`); the lockfile also carries patched `brace-expansion`, `@babel/core` and `zod` (`>=4.6.6`) transitive releases. `npm audit` reports 0 vulnerabilities as of 2026-11-20.
 
 ---
 
