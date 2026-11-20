@@ -46,6 +46,7 @@ To enforce the application's premium dark mode aesthetics, routemate.top complet
   - **Social Button**: Google button uses `.auth-google-btn` with inline SVG logo styling and matches the `rounded-[24px]` and `h-14` height of inputs.
 - **Two-Step Verification Step**:
   - Both flows transition using Framer Motion animations to the **Step 2 (OTP code verification)** screen. This includes a custom 6-box input layout (`.auth-otp-box`) with auto-advance and backspace focus tracking, a resend code 60-second countdown timer, and field-level inline error validation messages.
+- **Route Protection** (`src/proxy.ts`, Clerk middleware): `/trips`, `/trip/*`, `/account`, `/explore` and `/radar` require sign-in via `auth.protect()`; `/`, `/login`, `/signup`, `/privacy`, `/terms` and the SSO callback stay public.
 - **Routing Configuration**:
   - `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login`
   - `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/signup`
@@ -75,20 +76,27 @@ To ensure maximum performance and logical consistency, the engine uses a **two-p
 1. **Pass 1 (Pre-calculation)**: Generates a temporary metadata object for every item, resolving dates, normalizing titles, and determining logistical ranks in a single $O(N)$ pass.
 2. **Pass 2 (Sort)**: Performs the final sort using the pre-calculated keys, minimizing expensive operations like `new Date()` or `format()` during the $O(N \log N)$ comparison phase.
 
-The logistical ranking sequence remains:
-1. **Rank 1: Check-out** (Departure from lodging)
-2. **Rank 2: Departure** (Flight takeoff or Train departure)
-3. **Rank 3: Arrival** (Landing or station arrival)
-4. **Rank 4: Check-in** (Arrival at new lodging)
-5. **Rank 5: Activities & Leisure** (Food, attractions, rentals)
-6. **Rank 2000: Return Flight Anchor** (Home-bound arrivals forced to the absolute bottom)
+The logistical ranking (lower sorts first within a day; implemented in `src/lib/itineraryUtils.ts`):
+| Rank | Item |
+| :--- | :--- |
+| `-100` | Day 1 flight departure (absolute top) |
+| `1` | Lodging check-out |
+| `2` | Flight departure |
+| `3` | Other flight entries |
+| `4` | Flight arrival |
+| `5` | Activities, food, rentals (default) |
+| `10` | Lodging check-in |
+| `1000` | Day 1 check-out from the home city |
+| `1999` / `2000` | Return flight departure / arrival (anchored to the end of the trip) |
+
+Default clock times used when an item has no explicit time: check-out 10:00, flight departure 11:00, activity 13:00, flight arrival 16:00, check-in 18:00.
 
 ### 1.2 Smart Return-Flight Detection
 The engine dynamically identifies the "Home Base" by analyzing the very first flight departure of the trip. 
 - **Comparison Logic**: If a flight's `arrivalCity` matches the detected `homeBase`, it is marked as a **Return Flight**.
 - **Priority Override**: Return flights are assigned a high tie-breaker rank (2000) to ensure they always anchor the end of the trip.
 - **Day 1 Exception**: Conversely, flight departures on Day 1 are assigned a negative rank (-100) to force them to the absolute top.
-- **Origin Suppression**: Specifically suppresses redundant check-out events from the home city on Day 1.
+- **Origin De-prioritisation**: Redundant check-out events from the home city on Day 1 are pushed to the bottom of the day (rank 1000).
 - **Midnight Lodging Rule**: If a `Lodging` check-in has a time of exactly `00:00` (often from AI date-only extractions), the system overrides the explicit time and uses the **Evening Rank** (18:00) to prevent it from overlapping with morning flights.
 
 ### 1.3 Smart Paste & Date Hardening
@@ -174,10 +182,11 @@ routemate.top utilizes a global `viewMode` state (`summary` | `logistics`) to ma
 ## 5. Smart Add Intelligence (Multi-Provider AI)
 
 The extraction prompt in `/api/parse-itinerary` handles logistical hardening via a **Dual-Provider Stack**:
-- **Dynamic Configurable Routing**: The execution queue dynamically re-sorts itself. It checks the local client's "Preferred AI" toggle (`x-preferred-ai`), falls back to the server's `PRIMARY_AI_PROVIDER` environment variable, and defaults to OpenRouter.
+- **Dynamic Configurable Routing**: The execution queue dynamically re-sorts itself. It checks the local client's "Preferred AI" toggle (`x-preferred-ai`), falls back to the server's `PRIMARY_AI_PROVIDER` environment variable, and then to a per-route default: **Groq** for `/api/parse-itinerary` (Smart Paste) and **OpenRouter** for `/api/explore-city`, which splits quota between the two providers.
 - **Provider Architecture**:
-    - **OpenRouter** (`openrouter/free`, `llama-3.3-70b-instruct:free`).
+    - **OpenRouter** (`openrouter/free`, `meta-llama/llama-3.3-70b-instruct:free`, `google/gemma-3-27b-it:free`).
     - **Groq** (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`).
+    - Queue order differs per route (each is then stably re-sorted so the primary provider's models run first). Setting a key to `MOCK_MODE` returns canned data for development.
 - **Tiered Resilience Layer**:
     1. **Primary Pass**: Attempts extraction via the preferred provider's fastest model.
     2. **Failover Loop**: If a provider returns a 429 or invalid JSON, the engine automatically traverses the dynamically sorted queue to the next available provider/model.
@@ -185,9 +194,10 @@ The extraction prompt in `/api/parse-itinerary` handles logistical hardening via
 - **Headers & Config**: 
     - `x-user-openrouter-key`: For OpenRouter access.
     - `x-user-groq-key`: For Groq access.
+    - `x-user-unsplash-key`, `x-user-weatherstack-key`, `x-user-aviationstack-key`: Optional per-user overrides for `/api/unsplash-image`, `/api/weather` and `/api/flight-status`.
     - `x-preferred-ai`: Injected per request based on user's Dev Settings or Settings Modal.
 - **User Keys**: Stored locally in the `routemate-settings` IndexedDB store (Zustand `persist`) or `localStorage` for Dev Settings, and injected per request.
-- **Settings Store Schema Migration**: In version 1 of `routemate-settings`, any legacy default state that persisted `preferredAiProvider: 'OpenRouter'` (version 0) is dynamically migrated to an empty string `""` on rehydration. This permits the API gateway to correctly route to server-side preferences unless the user has explicitly selected a custom provider.
+- **Settings Store Schema Migration** (`routemate-settings`, currently version 2): v0 state that persisted `preferredAiProvider: 'OpenRouter'` is migrated to an empty string `""` on rehydration; v1 → v2 back-fills the newer preference fields (`currency` EUR, `distanceUnit` KM, `homeCity`, `travelStyles`, `preferredCabin` Economy, `defaultViewMode` summary, `timeFormat` 24h, `dateFormat` DD/MM/YYYY, `smartPasteAutoDetect` false). This permits the API gateway to correctly route to server-side preferences unless the user has explicitly selected a custom provider.
 - **Address & Destination Preservation**: Enforces high geocoding fidelity by preserving destination countries in builder request payloads (`city: dest.country ? \`\${dest.name}, \${dest.country}\` : dest.name`) and serializing discovered landmark addresses in parse prompts to prevent vague or hallucinated address generations.
 
 ---
@@ -203,7 +213,7 @@ The system provides localized forecasts for packing and situational awareness.
 ## 7. Live Flight Logistics (AviationStack)
 
 Real-time flight tracking uses a proximity-triggered execution layer.
-- **Proximity Trigger (24h Rule)**: Live status (gates, terminals, delays) is only fetched when a flight is within **24 hours** of its scheduled departure. 
+- **Proximity Trigger (24h Rule)**: Live status (gates, terminals, delays) is only fetched when a flight departs within the next **24 hours** (the widget also stays active up to 2 hours after departure). 
 - **Route-Based Search**: If a `flightNumber` is missing, the system uses the AI-extracted `dep_iata` and `arr_iata` codes to find matching flights for that day. 
 - **Metadata Synchronization**: Selecting a flight from the suggestion list dynamically updates the `itineraryItem` metadata via the `updatePointMetadata` store action.
 
