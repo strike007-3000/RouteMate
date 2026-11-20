@@ -25,7 +25,7 @@ Enterprise-grade reliability and security pass.
 - **RSC Split Architecture**: Converted core pages into React Server Component shells to minimize client-side javascript parsing footprints.
 - **Image Optimization & Proxy**: Upgraded raw images to Next.js `<Image>` components, optimized package imports in `next.config.ts`, and implemented a secure backend API proxy route for Unsplash imagery.
 - **LLM Determinism**: Enforced zero temperature configurations for smart city discovery and itinerary parsing models.
-- **Dependency Hardening**: Updated the Next.js toolchain and pinned patched transitive PostCSS releases to resolve known package vulnerabilities.
+- **Dependency Hardening**: Upgraded to Next.js 16.4.6 and refreshed in-range dependencies (React 19.3, Clerk, Tailwind, Dexie, date-fns); patched `zod` and other transitive advisories. `npm audit` is clean.
 
 ### 🧳 Local Trip Toolkit
 - **Expense Splitting**: Track shared expenses offline, with totals and participant balances kept separate for each currency.
@@ -69,7 +69,7 @@ Seamless integration with Clerk for user management and secure authentication.
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js (App Router)
+- **Framework**: Next.js 16 (App Router) + React 19
 - **Authentication**: Clerk (Embedded Components & Social/Magic Links)
 - **Styling**: Tailwind CSS + Framer Motion
 - **Database**: Dexie.js (IndexedDB)
