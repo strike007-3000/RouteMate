@@ -46,7 +46,7 @@ Advanced navigation logic that understands the context of your journey.
 - **Hub Precision**: Intelligent handoff detection ensures navigation routes directly to specific **Airport Terminals** (using IATA codes) rather than generic city centers.
 
 ### 🧠 Adaptive Intelligence Engine (Hybrid AI Core)
-- **Dynamic Provider Routing**: The extraction engine execution queue dynamically re-sorts itself based on your preferences. It checks the local client's "Preferred AI" toggle, falls back to the server's `PRIMARY_AI_PROVIDER` environment variable, and defaults to OpenRouter.
+- **Dynamic Provider Routing**: The extraction engine execution queue dynamically re-sorts itself based on your preferences. It checks the local client's "Preferred AI" toggle, falls back to the server's `PRIMARY_AI_PROVIDER` environment variable, and then to a per-route default (Groq for Smart Paste, OpenRouter for Explore).
 - **Multi-Tier Failover**: Implemented a hardened resilience layer. If the preferred provider fails or is rate-limited, the engine automatically traverses the queue to the next provider/model (e.g., failing over from OpenRouter Free to Groq Llama 3.3).
 - **JSON Object Enforcement**: Native `json_object` mode eliminates markdown artifacts and parsing failures.
 
@@ -60,10 +60,15 @@ A dual-mode discovery dashboard that blends pre-curated locations with dynamic, 
 - **Balanced API Load Sharing**: Split provider default routes, directing Smart Paste extractions to Groq and Explore Discovery to OpenRouter to balance API limits.
 - **Favorites Integration**: Easily toggle places to a Saved page, synchronizing to local IndexedDB.
 
+### 📡 Radar & Nearby Stops
+- **Transit Radar** (`/radar`): Uses browser geolocation (with graceful permission-denied handling) to show a "Nearby Stops" panel, plus a curated list of global transit hubs (e.g. London St Pancras, Grand Central NYC, Tokyo Station).
+- **Zero-Cost Suggestions**: `getNearbySuggestions` returns static placeholder suggestions (café, park, museum) so the feature costs nothing; it is an MVP stub for a future AI-backed version.
+
 ### 🔒 Secure Authentication
 Seamless integration with Clerk for user management and secure authentication.
 - **Embedded Interface**: Uses custom-styled, dark mode Clerk forms embedded directly on `/login` and `/signup` routes.
 - **Single Sign-On (SSO)**: Supports fast onboarding using Google Sign-in.
+- **Protected Routes**: Clerk middleware (`src/proxy.ts`) requires sign-in for `/trips`, `/trip/*`, `/account`, `/explore` and `/radar`.
 
 ---
 
@@ -115,7 +120,7 @@ graph TD
    * **Local Development (Infisical)**: The `npm run dev` and `npm run build` scripts automatically detect if the Infisical CLI is installed; if it is, they run with the `infisical run --` wrapper. If not, they fallback to standard Next.js execution.
    * **Alternative Local Config**: If you prefer not to use Infisical locally, copy `.env.example` to `.env` and fill in the keys (Clerk, OpenRouter/Groq, Unsplash, OpenRouteService, WeatherStack, AviationStack). See the Wiki's API Service Layer table for what each key powers.
 
-   *Note: `PRIMARY_AI_PROVIDER` controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default.*
+   *Note: `PRIMARY_AI_PROVIDER` (`OpenRouter` or `Groq`) controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default.*
 3. **Pre-flight Integrity Check**:
    Before deploying or testing, verify your configuration and AI logic:
    ```bash

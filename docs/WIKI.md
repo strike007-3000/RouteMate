@@ -316,6 +316,13 @@ To comply with Google OAuth consent screen brand verification, routemate.top imp
 
 ---
 
+## 11b. Radar & Nearby Suggestions
+
+- **`/radar`** (`RadarClient`): reads position through `useGeolocation` / `GeolocationProvider`; shows a loading state, a permission-denied state and a "Nearby Stops" panel, followed by a static list of global transit hubs.
+- **`getNearbySuggestions(lat, lng, vibe?)`** (`src/lib/suggestions.ts`): intentionally returns three static suggestions (no external call, "zero-cost" MVP). Replace with an OpenRouter/Groq call when budget allows; covered by `tests/suggestions.schema.test.js`.
+
+---
+
 ## 12. Testing, Tooling & CI
 
 - **Unit/integration tests**: `npm test` runs `node --test tests/*.test.js`. Suites cover expense splitting and schemas, checklist/notes/suggestion schemas, itinerary typing, trip export/import validation, and the zero-cost feature integration path. Pure logic lives in plain `.js` modules (`src/lib/expenses.js`, `src/lib/tripExportValidation.js`) so tests need no build step.
