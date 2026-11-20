@@ -14,9 +14,10 @@ Thank you for your interest in contributing to RouteMate! We are excited to buil
 
 ### Pull Requests
 1. **Fork the repo** and create your branch from `main`.
-2. **Setup environment**: Use the `Settings` UI in the app to add your **OpenRouter API Key** for testing.
+2. **Setup environment**: Run `npm install`, copy `.env.example` to `.env` (or use Infisical), or add your **OpenRouter API Key** through the `Settings` UI for testing.
 3. **Commit Messages**: We use [Conventional Commits](https://www.conventionalcommits.org/).
 4. **Test your changes**: 
+    - Run `npm run lint`, `npm test` and `npm run build`; all must pass. Add a test in `tests/` for new logic.
     - Verify on mobile viewport (500x855).
     - If modifying data flow, verify real-time reactivity (LiveQuery).
     - If modifying sorting logic, verify chronological flow using the "Human-First" 6-rank engine.

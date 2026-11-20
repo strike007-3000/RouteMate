@@ -7,7 +7,8 @@
     "build": "node scripts/run-with-infisical.js build",
     "start": "node scripts/run-with-infisical.js start",
     "lint": "eslint src",
-    "test:integrity": "node scripts/integrity-check.js"
+    "test:integrity": "node scripts/integrity-check.js",
+    "test": "node --test tests/*.test.js"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.4.2",

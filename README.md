@@ -72,11 +72,11 @@ Seamless integration with Clerk for user management and secure authentication.
 - **Framework**: Next.js 16 (App Router) + React 19
 - **Authentication**: Clerk (Embedded Components & Social/Magic Links)
 - **Styling**: Tailwind CSS + Framer Motion
-- **Database**: Dexie.js (IndexedDB)
+- **State & Database**: Zustand + Dexie.js (IndexedDB, local-first)
 - **AI Core**: OpenRouter + Groq (Multi-Provider Hybrid Stack)
 - **Intelligence APIs**: WeatherStack (Weather) + AviationStack (Flight Status)
 - **Imaging**: Unsplash API
-- **Logistics**: OpenRouteService (Geocoding) + Google Maps (Transit Handoff)
+- **Logistics**: OpenRouteService (Geocoding & short walks) → Transitous (open transit data) → Google Maps (deep-link handoff) → built-in mock fallback. A HERE Maps provider exists but is inactive until a `HERE_API_KEY` is wired in.
 
 ---
 
@@ -107,12 +107,13 @@ graph TD
 1. **Clone & Install**:
    ```bash
    git clone https://github.com/strike007-3000/RouteMate.git
+   cd RouteMate
    npm install
    ```
 2. **Environment Variables**:
    * **Production (Vercel)**: Environment variables are securely managed in the Vercel Dashboard under Project Settings.
    * **Local Development (Infisical)**: The `npm run dev` and `npm run build` scripts automatically detect if the Infisical CLI is installed; if it is, they run with the `infisical run --` wrapper. If not, they fallback to standard Next.js execution.
-   * **Alternative Local Config**: If you prefer not to use Infisical locally, you can create a local `.env` file using the keys outlined in `.env.example`.
+   * **Alternative Local Config**: If you prefer not to use Infisical locally, copy `.env.example` to `.env` and fill in the keys (Clerk, OpenRouter/Groq, Unsplash, OpenRouteService, WeatherStack, AviationStack). See the Wiki's API Service Layer table for what each key powers.
 
    *Note: `PRIMARY_AI_PROVIDER` controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default.*
 3. **Pre-flight Integrity Check**:
@@ -124,6 +125,21 @@ graph TD
    ```bash
    npm run dev
    ```
+
+---
+
+## 🧪 Development Commands
+
+| Command | Purpose |
+| :--- | :--- |
+| `npm run dev` / `build` / `start` | Run, build, serve (Infisical-aware) |
+| `npm run lint` | ESLint over `src` |
+| `npm test` | Unit/schema/integration tests in `tests/` (Node test runner, no extra deps) |
+| `npm run test:integrity` | Interactive AI-provider and extraction pre-flight check |
+
+## 🧭 Routes
+
+`/` landing · `/trips` · `/trip/[id]` · `/trip/[id]/timeline` · `/explore` · `/radar` · `/account` · `/login` · `/signup` · `/privacy` · `/terms`. API routes under `/api`: `parse-itinerary`, `explore-city`, `transit`, `weather`, `flight-status`, `unsplash-image`.
 
 ---
 Built with ❤️ for travelers who value intelligence, design, and precision.

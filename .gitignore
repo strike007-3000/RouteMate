@@ -49,3 +49,4 @@ Modelfile
 /.clerk/
 
 graphify-out/
+!.env.example

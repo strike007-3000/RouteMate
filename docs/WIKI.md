@@ -21,8 +21,10 @@ routemate.top is built on a hybrid architecture that balances local-first perfor
 | **Clerk** | Authentication Gateway | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` |
 | **OpenRouter** | Primary AI Extraction | `OPENROUTER_API_KEY` |
 | **Groq** | Failover AI / Llama 3.3 | `GROQ_API_KEY` |
+| **AI default** | Server-side default provider queue | `PRIMARY_AI_PROVIDER` |
+| **NVIDIA NIM** | Optional; integrity-check script only | `NVIDIA_NIM_API_KEY` |
 | **Unsplash** | Luxury Imagery | `UNSPLASH_ACCESS_KEY` |
-| **ORS (OpenRouteService)** | Geocoding & Local Routes | `NEXT_PUBLIC_ORS_API_KEY` |
+| **ORS (OpenRouteService)** | Geocoding & Local Routes | `ORS_API_KEY` (server) / `NEXT_PUBLIC_ORS_API_KEY` |
 | **WeatherStack** | Real-time Weather | `WEATHERSTACK_API_KEY` |
 | **AviationStack** | Live Flight Tracking | `AVIATIONSTACK_API_KEY` |
 
@@ -156,6 +158,7 @@ Navigation between dashboard pages and sub-pages uses the browser's native **Vie
 The logistics engine calculates distance thresholds using the **Haversine Formula**.
 - **The 50km Rule**: If the distance between two stops is > 50km, the system suggests **Driving Directions**; otherwise, it defaults to **Transit**.
 - **Contextual Routing**: Navigation logic is **context-aware**. It retrieves the `prevPoint` from the previous stop (even across day boundaries) to calculate the route, ensuring a continuous journey thread.
+- **Provider Chain** (`src/services/transit/TransitService.ts`): providers are tried in order and the first usable suggestion wins: `OpenRouteServiceProvider` (accurate short walks) → `TransitousProvider` (open transit data) → `GoogleMapsProvider` (deep-link handoff) → `MockProvider`. If every provider throws, a safe "Unknown" walking suggestion is returned. `HereMapsProvider` is a dormant stub awaiting a `HERE_API_KEY`.
 - **Hub Detection**: The engine uses `departureAirport` or `arrivalAirport` metadata to ensure routing points to specific terminals rather than generic city pins.
 
 ---
@@ -301,3 +304,13 @@ To comply with Google OAuth consent screen brand verification, routemate.top imp
 ### 11.3 Middleware Bootstrap
 - Next.js 16 renames the standard `middleware.ts` convention to `proxy.ts`. RouteMate utilizes `src/proxy.ts` as the primary configuration entrypoint to coordinate Clerk routing parameters. Creating a redundant `src/middleware.ts` alongside `src/proxy.ts` is rejected by the Next compiler and has been cleaned up.
 
+---
+
+## 12. Testing, Tooling & CI
+
+- **Unit/integration tests**: `npm test` runs `node --test tests/*.test.js`. Suites cover expense splitting and schemas, checklist/notes/suggestion schemas, itinerary typing, trip export/import validation, and the zero-cost feature integration path. Pure logic lives in plain `.js` modules (`src/lib/expenses.js`, `src/lib/tripExportValidation.js`) so tests need no build step.
+- **Lint & types**: `npm run lint` (ESLint 9 + `eslint-config-next`); `npm run build` type-checks.
+- **Integrity check**: `npm run test:integrity` is an interactive pre-flight that exercises the AI extraction chain with your keys (skips providers without keys).
+- **Releases**: `release-please` opens Release PRs from Conventional Commits and maintains `CHANGELOG.md`; do not edit the changelog by hand.
+- **Wiki sync**: pushes to `main` that change `docs/WIKI.md` are copied to the GitHub Wiki `Home` page by `.github/workflows/sync-wiki.yml`.
+- **Dependencies**: Dependabot PRs are reviewed with `npm audit`, `npm run lint` and `npm run build`. Major upgrades (ESLint, TypeScript, Framer Motion) are done in dedicated PRs.
