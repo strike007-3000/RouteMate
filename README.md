@@ -1,4 +1,4 @@
-# routemate.top — Immersive Travel Intelligence 🌌✨
+# routemate.top Immersive Travel Intelligence 🌌✨
 
 routemate.top is a mobile-first, offline-capable travel intelligence application driven by a **Date-Grouped Intelligence Engine**, a **Dual-View Distinction System**, and **Live API Intelligence** (Weather & Flight Tracking).
 
