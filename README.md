@@ -25,7 +25,7 @@ Enterprise-grade reliability and security pass.
 - **RSC Split Architecture**: Converted core pages into React Server Component shells to minimize client-side javascript parsing footprints.
 - **Image Optimization & Proxy**: Upgraded raw images to Next.js `<Image>` components, optimized package imports in `next.config.ts`, and implemented a secure backend API proxy route for Unsplash imagery.
 - **LLM Determinism**: Enforced zero temperature configurations for smart city discovery and itinerary parsing models.
-- **Dependency Hardening**: Updated the Next.js toolchain and pinned patched transitive PostCSS releases to resolve known package vulnerabilities.
+- **Dependency Hardening**: Upgraded to Next.js 16.4.6 and refreshed in-range dependencies (React 19.3, Clerk, Tailwind, Dexie, date-fns); patched `zod` and other transitive advisories. `npm audit` is clean.
 
 ### 🧳 Local Trip Toolkit
 - **Expense Splitting**: Track shared expenses offline, with totals and participant balances kept separate for each currency.
@@ -46,7 +46,7 @@ Advanced navigation logic that understands the context of your journey.
 - **Hub Precision**: Intelligent handoff detection ensures navigation routes directly to specific **Airport Terminals** (using IATA codes) rather than generic city centers.
 
 ### 🧠 Adaptive Intelligence Engine (Hybrid AI Core)
-- **Dynamic Provider Routing**: The extraction engine execution queue dynamically re-sorts itself based on your preferences. It checks the local client's "Preferred AI" toggle, falls back to the server's `PRIMARY_AI_PROVIDER` environment variable, and defaults to OpenRouter.
+- **Dynamic Provider Routing**: The extraction engine execution queue dynamically re-sorts itself based on your preferences. It checks the local client's "Preferred AI" toggle, falls back to the server's `PRIMARY_AI_PROVIDER` environment variable, and then to a per-route default (Groq for Smart Paste, OpenRouter for Explore).
 - **Multi-Tier Failover**: Implemented a hardened resilience layer. If the preferred provider fails or is rate-limited, the engine automatically traverses the queue to the next provider/model (e.g., failing over from OpenRouter Free to Groq Llama 3.3).
 - **JSON Object Enforcement**: Native `json_object` mode eliminates markdown artifacts and parsing failures.
 
@@ -60,23 +60,28 @@ A dual-mode discovery dashboard that blends pre-curated locations with dynamic, 
 - **Balanced API Load Sharing**: Split provider default routes, directing Smart Paste extractions to Groq and Explore Discovery to OpenRouter to balance API limits.
 - **Favorites Integration**: Easily toggle places to a Saved page, synchronizing to local IndexedDB.
 
+### 📡 Radar & Nearby Stops
+- **Transit Radar** (`/radar`): Uses browser geolocation (with graceful permission-denied handling) to show a "Nearby Stops" panel, plus a curated list of global transit hubs (e.g. London St Pancras, Grand Central NYC, Tokyo Station).
+- **Zero-Cost Suggestions**: `getNearbySuggestions` returns static placeholder suggestions (café, park, museum) so the feature costs nothing; it is an MVP stub for a future AI-backed version.
+
 ### 🔒 Secure Authentication
 Seamless integration with Clerk for user management and secure authentication.
 - **Embedded Interface**: Uses custom-styled, dark mode Clerk forms embedded directly on `/login` and `/signup` routes.
 - **Single Sign-On (SSO)**: Supports fast onboarding using Google Sign-in.
+- **Protected Routes**: Clerk middleware (`src/proxy.ts`) requires sign-in for `/trips`, `/trip/*`, `/account`, `/explore` and `/radar`.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js (App Router)
+- **Framework**: Next.js 16 (App Router) + React 19
 - **Authentication**: Clerk (Embedded Components & Social/Magic Links)
 - **Styling**: Tailwind CSS + Framer Motion
-- **Database**: Dexie.js (IndexedDB)
+- **State & Database**: Zustand + Dexie.js (IndexedDB, local-first)
 - **AI Core**: OpenRouter + Groq (Multi-Provider Hybrid Stack)
 - **Intelligence APIs**: WeatherStack (Weather) + AviationStack (Flight Status)
 - **Imaging**: Unsplash API
-- **Logistics**: OpenRouteService (Geocoding) + Google Maps (Transit Handoff)
+- **Logistics**: OpenRouteService (Geocoding & short walks) → Transitous (open transit data) → Google Maps (deep-link handoff) → built-in mock fallback. A HERE Maps provider exists but is inactive until a `HERE_API_KEY` is wired in.
 
 ---
 
@@ -107,14 +112,15 @@ graph TD
 1. **Clone & Install**:
    ```bash
    git clone https://github.com/strike007-3000/RouteMate.git
+   cd RouteMate
    npm install
    ```
 2. **Environment Variables**:
    * **Production (Vercel)**: Environment variables are securely managed in the Vercel Dashboard under Project Settings.
    * **Local Development (Infisical)**: The `npm run dev` and `npm run build` scripts automatically detect if the Infisical CLI is installed; if it is, they run with the `infisical run --` wrapper. If not, they fallback to standard Next.js execution.
-   * **Alternative Local Config**: If you prefer not to use Infisical locally, you can create a local `.env` file using the keys outlined in `.env.example`.
+   * **Alternative Local Config**: If you prefer not to use Infisical locally, copy `.env.example` to `.env` and fill in the keys (Clerk, OpenRouter/Groq, Unsplash, OpenRouteService, WeatherStack, AviationStack). See the Wiki's API Service Layer table for what each key powers.
 
-   *Note: `PRIMARY_AI_PROVIDER` controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default.*
+   *Note: `PRIMARY_AI_PROVIDER` (`OpenRouter` or `Groq`) controls the server-side default model queue. If a client explicitly saves a Preferred AI Provider in the UI Settings Modal, it will override this default.*
 3. **Pre-flight Integrity Check**:
    Before deploying or testing, verify your configuration and AI logic:
    ```bash
@@ -124,6 +130,21 @@ graph TD
    ```bash
    npm run dev
    ```
+
+---
+
+## 🧪 Development Commands
+
+| Command | Purpose |
+| :--- | :--- |
+| `npm run dev` / `build` / `start` | Run, build, serve (Infisical-aware) |
+| `npm run lint` | ESLint over `src` |
+| `npm test` | Unit/schema/integration tests in `tests/` (Node test runner, no extra deps) |
+| `npm run test:integrity` | Interactive AI-provider and extraction pre-flight check |
+
+## 🧭 Routes
+
+`/` landing · `/trips` · `/trip/[id]` · `/trip/[id]/timeline` · `/explore` · `/radar` · `/account` · `/login` · `/signup` · `/privacy` · `/terms`. API routes under `/api`: `parse-itinerary`, `explore-city`, `transit`, `weather`, `flight-status`, `unsplash-image`.
 
 ---
 Built with ❤️ for travelers who value intelligence, design, and precision.

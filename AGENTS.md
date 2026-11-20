@@ -19,26 +19,28 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## 3. Workflow & Documentation Rules
 * **Pull Requests (PRs):** Always create a new feature branch and open a Pull Request (PR) for your changes. Avoid pushing directly to the `main` branch unless explicitly authorized.
 * **Issue Tracking:** If you encounter bugs, regressions, or type errors during development or testing, log them clearly and verify their resolution before completing tasks.
-* **Documentation Maintenance:** Keep `README.md`, `docs/WIKI.md`, and metadata files completely in sync with any structural or API changes made during coding.
+* **Documentation Maintenance:** Keep `README.md`, `docs/WIKI.md`, `SECURITY.md`, `CONTRIBUTING.md`, `.env.example` and metadata files completely in sync with any structural or API changes made during coding.
 * **Versioning & Releases:** Ensure proper versioning and changelog entries are maintained correctly according to semantic release guidelines.
 
 ## 4. Core Intelligence & Logistics Rules
 * **Two-Pass Sorting System:** When sorting timeline/itinerary events, use the two-pass architecture. Run a single $O(N)$ pre‑calculation pass to resolve temporal metadata, followed by sorting on those keys.
 * **Sorting Sequence Hierarchy:**
-  1. Rank 1: Check‑out
-  2. Rank 2: Departure
-  3. Rank 3: Arrival
-  4. Rank 4: Check‑in
-  5. Rank 5: Activities & Leisure
-  6. Rank 2000: Return Flight Anchor (forced to bottom of trip)
+  1. Rank 1: Lodging check-out
+  2. Rank 2: Flight departure (3 = other flight entries, 4 = arrival)
+  3. Rank 5: Activities & Leisure (default)
+  4. Rank 10: Lodging check-in
+  5. Rank 1000: Day 1 check-out from the home city
+  6. Rank 1999/2000: Return flight departure/arrival (forced to bottom of trip)
+  (Source of truth: `src/lib/itineraryUtils.ts`.)
 * **Date Adjustments & Day 1 overrides:**
   * Flight departures on Day 1 receive rank `-100` to sit at the absolute top of the itinerary. Origin check‑out events from the home city on Day 1 are suppressed.
   * If lodging check‑in is missing a time (hallucinated as `00:00`), override it to the evening rank (18:00) to prevent morning overlaps.
 * **Transit Suggestions (50km Rule):** If the Haversine distance between two consecutive stops is greater than 50km, default suggestions to **Driving Directions**; otherwise, default to **Transit**. Always calculate directions contextually from the previous stop (`prevPoint`).
 * **Weather & Flight Triggers:**
   * **Next‑Day Weather Rule:** Only fetch weather forecasts for the current day and the next day of the trip. Suppress future dates to minimize API load.
-  * **24h Flight Rule:** Fetch live status details (gates, delays) only when the flight departure is within 24 hours.
-* **AI Core Provider Load Balancing:** Direct all Smart Paste extractions to the **Groq** provider, and all dynamic Explore/City Discovery queries to **OpenRouter** to manage API quotas.
+  * **24h Flight Rule:** Fetch live status details (gates, delays) only when the flight departs within 24 hours (the widget tolerates up to 2 hours after departure).
+* **AI Core Provider Load Balancing:** Smart Paste (`/api/parse-itinerary`) defaults to **Groq** and Explore/City Discovery (`/api/explore-city`) defaults to **OpenRouter** to manage API quotas; `x-preferred-ai` or `PRIMARY_AI_PROVIDER` override the default.
+* **Testing:** Run `npm run lint`, `npm test` and `npm run build` before opening a PR; add tests under `tests/` for new logic. Dependency bumps must keep `npm audit` clean.
 
 ## 5. Stitch MCP Integration Guidelines
 * The project uses the **StitchMCP** server for design‑system generation, screen creation, and design‑system application.

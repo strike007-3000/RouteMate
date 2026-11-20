@@ -6,7 +6,8 @@ We actively support the latest version of routemate.top.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 3.16.x  | :white_check_mark: |
+| 3.21.x  | :white_check_mark: |
+| < 3.21  | :x:                |
 
 ## Reporting a Vulnerability
 
@@ -21,5 +22,7 @@ If you discover a security vulnerability within routemate.top, please do not dis
 routemate.top uses a **Hybrid Secret Management** system:
 - **Server-side**: API keys are stored in environment variables (Vercel).
 - **Client-side**: Users can input their own keys in the **Settings** UI, which are stored in the browser's `localStorage`.
+
+Dependencies are monitored with Dependabot; security advisories are patched promptly and `npm audit` is expected to stay clean.
 
 **Warning**: Never hardcode API keys directly into the source code or commit them to the repository.

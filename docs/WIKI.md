@@ -9,7 +9,7 @@ Deep-dive documentation for routemate.top Architecture.
 routemate.top is built on a hybrid architecture that balances local-first performance with live cloud intelligence.
 
 ### 0.1 Core Stack
-- **Framework**: Next.js 14+ (App Router, Server Actions)
+- **Framework**: Next.js 16 (App Router, Server Actions) + React 19.3
 - **Authentication**: Clerk (Session Management & Social/Magic Links)
 - **State Management**: Zustand (Global Store) + Dexie.js (Offline Persistence)
 - **Styling**: Tailwind CSS + Framer Motion (Micro-animations)
@@ -21,8 +21,10 @@ routemate.top is built on a hybrid architecture that balances local-first perfor
 | **Clerk** | Authentication Gateway | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` |
 | **OpenRouter** | Primary AI Extraction | `OPENROUTER_API_KEY` |
 | **Groq** | Failover AI / Llama 3.3 | `GROQ_API_KEY` |
+| **AI default** | Server-side default provider queue | `PRIMARY_AI_PROVIDER` |
+| **NVIDIA NIM** | Optional; integrity-check script only | `NVIDIA_NIM_API_KEY` |
 | **Unsplash** | Luxury Imagery | `UNSPLASH_ACCESS_KEY` |
-| **ORS (OpenRouteService)** | Geocoding & Local Routes | `NEXT_PUBLIC_ORS_API_KEY` |
+| **ORS (OpenRouteService)** | Geocoding & Local Routes | `ORS_API_KEY` (server) / `NEXT_PUBLIC_ORS_API_KEY` |
 | **WeatherStack** | Real-time Weather | `WEATHERSTACK_API_KEY` |
 | **AviationStack** | Live Flight Tracking | `AVIATIONSTACK_API_KEY` |
 
@@ -44,6 +46,7 @@ To enforce the application's premium dark mode aesthetics, routemate.top complet
   - **Social Button**: Google button uses `.auth-google-btn` with inline SVG logo styling and matches the `rounded-[24px]` and `h-14` height of inputs.
 - **Two-Step Verification Step**:
   - Both flows transition using Framer Motion animations to the **Step 2 (OTP code verification)** screen. This includes a custom 6-box input layout (`.auth-otp-box`) with auto-advance and backspace focus tracking, a resend code 60-second countdown timer, and field-level inline error validation messages.
+- **Route Protection** (`src/proxy.ts`, Clerk middleware): `/trips`, `/trip/*`, `/account`, `/explore` and `/radar` require sign-in via `auth.protect()`; `/`, `/login`, `/signup`, `/privacy`, `/terms` and the SSO callback stay public.
 - **Routing Configuration**:
   - `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login`
   - `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/signup`
@@ -52,7 +55,7 @@ To enforce the application's premium dark mode aesthetics, routemate.top complet
 To resolve vulnerabilities in transitive dependencies (e.g. security warnings inside `uuid` imported by Clerk UI's Solana wallet adapters) and clean up deprecation warnings in builds, routemate.top enforces package-level overrides in `package.json`:
 - **`uuid`**: Overridden to `^11.1.1` to patch moderate-severity bounds checks and deprecations.
 - **`postcss`**: Overridden to `^8.5.23` to prevent source-map path traversal and arbitrary file disclosure.
-- **Next.js image stack**: Next.js `16.3.0` requires patched Sharp `^0.35.3`; the lockfile also pins patched `brace-expansion` and `@babel/core` transitive releases.
+- **Next.js image stack**: Next.js `16.4.6` (with matching `eslint-config-next`) resolves the open Dependabot `next` advisories (patched in 16.4.5). It uses patched Sharp `^0.35.3` (currently `0.35.5`); the lockfile also carries patched `brace-expansion`, `@babel/core` and `zod` (`>=4.6.6`) transitive releases. `npm audit` reports 0 vulnerabilities as of 2026-11-20. In-range packages (Clerk 7.10, Tailwind 4.3, Dexie 4.4.7, date-fns 4.4, Framer Motion 12.43) were refreshed the same day. Deliberately not upgraded (major versions): ESLint 10, Framer Motion 14, TypeScript 7, `@types/node` 26.
 
 ---
 
@@ -73,20 +76,27 @@ To ensure maximum performance and logical consistency, the engine uses a **two-p
 1. **Pass 1 (Pre-calculation)**: Generates a temporary metadata object for every item, resolving dates, normalizing titles, and determining logistical ranks in a single $O(N)$ pass.
 2. **Pass 2 (Sort)**: Performs the final sort using the pre-calculated keys, minimizing expensive operations like `new Date()` or `format()` during the $O(N \log N)$ comparison phase.
 
-The logistical ranking sequence remains:
-1. **Rank 1: Check-out** (Departure from lodging)
-2. **Rank 2: Departure** (Flight takeoff or Train departure)
-3. **Rank 3: Arrival** (Landing or station arrival)
-4. **Rank 4: Check-in** (Arrival at new lodging)
-5. **Rank 5: Activities & Leisure** (Food, attractions, rentals)
-6. **Rank 2000: Return Flight Anchor** (Home-bound arrivals forced to the absolute bottom)
+The logistical ranking (lower sorts first within a day; implemented in `src/lib/itineraryUtils.ts`):
+| Rank | Item |
+| :--- | :--- |
+| `-100` | Day 1 flight departure (absolute top) |
+| `1` | Lodging check-out |
+| `2` | Flight departure |
+| `3` | Other flight entries |
+| `4` | Flight arrival |
+| `5` | Activities, food, rentals (default) |
+| `10` | Lodging check-in |
+| `1000` | Day 1 check-out from the home city |
+| `1999` / `2000` | Return flight departure / arrival (anchored to the end of the trip) |
+
+Default clock times used when an item has no explicit time: check-out 10:00, flight departure 11:00, activity 13:00, flight arrival 16:00, check-in 18:00.
 
 ### 1.2 Smart Return-Flight Detection
 The engine dynamically identifies the "Home Base" by analyzing the very first flight departure of the trip. 
 - **Comparison Logic**: If a flight's `arrivalCity` matches the detected `homeBase`, it is marked as a **Return Flight**.
 - **Priority Override**: Return flights are assigned a high tie-breaker rank (2000) to ensure they always anchor the end of the trip.
 - **Day 1 Exception**: Conversely, flight departures on Day 1 are assigned a negative rank (-100) to force them to the absolute top.
-- **Origin Suppression**: Specifically suppresses redundant check-out events from the home city on Day 1.
+- **Origin De-prioritisation**: Redundant check-out events from the home city on Day 1 are pushed to the bottom of the day (rank 1000).
 - **Midnight Lodging Rule**: If a `Lodging` check-in has a time of exactly `00:00` (often from AI date-only extractions), the system overrides the explicit time and uses the **Evening Rank** (18:00) to prevent it from overlapping with morning flights.
 
 ### 1.3 Smart Paste & Date Hardening
@@ -156,6 +166,7 @@ Navigation between dashboard pages and sub-pages uses the browser's native **Vie
 The logistics engine calculates distance thresholds using the **Haversine Formula**.
 - **The 50km Rule**: If the distance between two stops is > 50km, the system suggests **Driving Directions**; otherwise, it defaults to **Transit**.
 - **Contextual Routing**: Navigation logic is **context-aware**. It retrieves the `prevPoint` from the previous stop (even across day boundaries) to calculate the route, ensuring a continuous journey thread.
+- **Provider Chain** (`src/services/transit/TransitService.ts`): providers are tried in order and the first usable suggestion wins: `OpenRouteServiceProvider` (accurate short walks) → `TransitousProvider` (open transit data) → `GoogleMapsProvider` (deep-link handoff) → `MockProvider`. If every provider throws, a safe "Unknown" walking suggestion is returned. `HereMapsProvider` is a dormant stub awaiting a `HERE_API_KEY`.
 - **Hub Detection**: The engine uses `departureAirport` or `arrivalAirport` metadata to ensure routing points to specific terminals rather than generic city pins.
 
 ---
@@ -171,10 +182,11 @@ routemate.top utilizes a global `viewMode` state (`summary` | `logistics`) to ma
 ## 5. Smart Add Intelligence (Multi-Provider AI)
 
 The extraction prompt in `/api/parse-itinerary` handles logistical hardening via a **Dual-Provider Stack**:
-- **Dynamic Configurable Routing**: The execution queue dynamically re-sorts itself. It checks the local client's "Preferred AI" toggle (`x-preferred-ai`), falls back to the server's `PRIMARY_AI_PROVIDER` environment variable, and defaults to OpenRouter.
+- **Dynamic Configurable Routing**: The execution queue dynamically re-sorts itself. It checks the local client's "Preferred AI" toggle (`x-preferred-ai`), falls back to the server's `PRIMARY_AI_PROVIDER` environment variable, and then to a per-route default: **Groq** for `/api/parse-itinerary` (Smart Paste) and **OpenRouter** for `/api/explore-city`, which splits quota between the two providers.
 - **Provider Architecture**:
-    - **OpenRouter** (`openrouter/free`, `llama-3.3-70b-instruct:free`).
+    - **OpenRouter** (`openrouter/free`, `meta-llama/llama-3.3-70b-instruct:free`, `google/gemma-3-27b-it:free`).
     - **Groq** (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`).
+    - Queue order differs per route (each is then stably re-sorted so the primary provider's models run first). Setting a key to `MOCK_MODE` returns canned data for development.
 - **Tiered Resilience Layer**:
     1. **Primary Pass**: Attempts extraction via the preferred provider's fastest model.
     2. **Failover Loop**: If a provider returns a 429 or invalid JSON, the engine automatically traverses the dynamically sorted queue to the next available provider/model.
@@ -182,9 +194,10 @@ The extraction prompt in `/api/parse-itinerary` handles logistical hardening via
 - **Headers & Config**: 
     - `x-user-openrouter-key`: For OpenRouter access.
     - `x-user-groq-key`: For Groq access.
+    - `x-user-unsplash-key`, `x-user-weatherstack-key`, `x-user-aviationstack-key`: Optional per-user overrides for `/api/unsplash-image`, `/api/weather` and `/api/flight-status`.
     - `x-preferred-ai`: Injected per request based on user's Dev Settings or Settings Modal.
 - **User Keys**: Stored locally in the `routemate-settings` IndexedDB store (Zustand `persist`) or `localStorage` for Dev Settings, and injected per request.
-- **Settings Store Schema Migration**: In version 1 of `routemate-settings`, any legacy default state that persisted `preferredAiProvider: 'OpenRouter'` (version 0) is dynamically migrated to an empty string `""` on rehydration. This permits the API gateway to correctly route to server-side preferences unless the user has explicitly selected a custom provider.
+- **Settings Store Schema Migration** (`routemate-settings`, currently version 2): v0 state that persisted `preferredAiProvider: 'OpenRouter'` is migrated to an empty string `""` on rehydration; v1 → v2 back-fills the newer preference fields (`currency` EUR, `distanceUnit` KM, `homeCity`, `travelStyles`, `preferredCabin` Economy, `defaultViewMode` summary, `timeFormat` 24h, `dateFormat` DD/MM/YYYY, `smartPasteAutoDetect` false). This permits the API gateway to correctly route to server-side preferences unless the user has explicitly selected a custom provider.
 - **Address & Destination Preservation**: Enforces high geocoding fidelity by preserving destination countries in builder request payloads (`city: dest.country ? \`\${dest.name}, \${dest.country}\` : dest.name`) and serializing discovered landmark addresses in parse prompts to prevent vague or hallucinated address generations.
 
 ---
@@ -200,7 +213,7 @@ The system provides localized forecasts for packing and situational awareness.
 ## 7. Live Flight Logistics (AviationStack)
 
 Real-time flight tracking uses a proximity-triggered execution layer.
-- **Proximity Trigger (24h Rule)**: Live status (gates, terminals, delays) is only fetched when a flight is within **24 hours** of its scheduled departure. 
+- **Proximity Trigger (24h Rule)**: Live status (gates, terminals, delays) is only fetched when a flight departs within the next **24 hours** (the widget also stays active up to 2 hours after departure). 
 - **Route-Based Search**: If a `flightNumber` is missing, the system uses the AI-extracted `dep_iata` and `arr_iata` codes to find matching flights for that day. 
 - **Metadata Synchronization**: Selecting a flight from the suggestion list dynamically updates the `itineraryItem` metadata via the `updatePointMetadata` store action.
 
@@ -301,3 +314,20 @@ To comply with Google OAuth consent screen brand verification, routemate.top imp
 ### 11.3 Middleware Bootstrap
 - Next.js 16 renames the standard `middleware.ts` convention to `proxy.ts`. RouteMate utilizes `src/proxy.ts` as the primary configuration entrypoint to coordinate Clerk routing parameters. Creating a redundant `src/middleware.ts` alongside `src/proxy.ts` is rejected by the Next compiler and has been cleaned up.
 
+---
+
+## 11b. Radar & Nearby Suggestions
+
+- **`/radar`** (`RadarClient`): reads position through `useGeolocation` / `GeolocationProvider`; shows a loading state, a permission-denied state and a "Nearby Stops" panel, followed by a static list of global transit hubs.
+- **`getNearbySuggestions(lat, lng, vibe?)`** (`src/lib/suggestions.ts`): intentionally returns three static suggestions (no external call, "zero-cost" MVP). Replace with an OpenRouter/Groq call when budget allows; covered by `tests/suggestions.schema.test.js`.
+
+---
+
+## 12. Testing, Tooling & CI
+
+- **Unit/integration tests**: `npm test` runs `node --test tests/*.test.js`. Suites cover expense splitting and schemas, checklist/notes/suggestion schemas, itinerary typing, trip export/import validation, and the zero-cost feature integration path. Pure logic lives in plain `.js` modules (`src/lib/expenses.js`, `src/lib/tripExportValidation.js`) so tests need no build step.
+- **Lint & types**: `npm run lint` (ESLint 9 + `eslint-config-next`); `npm run build` type-checks.
+- **Integrity check**: `npm run test:integrity` is an interactive pre-flight that exercises the AI extraction chain with your keys (skips providers without keys).
+- **Releases**: `release-please` opens Release PRs from Conventional Commits and maintains `CHANGELOG.md`; do not edit the changelog by hand.
+- **Wiki sync**: pushes to `main` that change `docs/WIKI.md` are copied to the GitHub Wiki `Home` page by `.github/workflows/sync-wiki.yml`.
+- **Dependencies**: Dependabot PRs are reviewed with `npm audit`, `npm run lint` and `npm run build`. Major upgrades (ESLint, TypeScript, Framer Motion) are done in dedicated PRs.
